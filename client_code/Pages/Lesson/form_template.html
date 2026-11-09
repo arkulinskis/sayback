@@ -1,0 +1,75 @@
+<anvil-form layout="Sayback.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap sb-lesson">
+      <a class="sb-back" href="#home" anvil:name="back_link"><i class="ic ic-back"></i><span data-t>Library</span></a>
+      <header class="sb-lesson-head">
+        <anvil-component type="Label" name="title" prop:role='["page-title"]'></anvil-component>
+        <anvil-component type="Label" name="meta" prop:role='["sb-lesson-meta"]'></anvil-component>
+        <div class="sb-chips">
+          <span class="sb-chip"><i class="ic ic-map"></i><anvil-component type="Label" name="situation" prop:role='["sb-chip-text"]'></anvil-component></span>
+          <span class="sb-chip"><i class="ic ic-heart"></i><anvil-component type="Label" name="emotion" prop:role='["sb-chip-text"]'></anvil-component></span>
+        </div>
+      </header>
+
+      <section class="ui-card sb-player-card" anvil:name="player_card">
+        <anvil-component type="Sayback.Components.Player" name="player"></anvil-component>
+        <anvil-component type="Label" name="resume_note" prop:role='["fine-print", "sb-resume-note"]' prop:visible="false"></anvil-component>
+      </section>
+      <section class="ui-card sb-locked" anvil:name="locked_card">
+        <i class="ic ic-lock sb-locked-ic"></i>
+        <div>
+          <anvil-component type="Label" name="locked_title" prop:role='["sb-card-title"]'></anvil-component>
+          <anvil-component type="Label" name="locked_text" prop:role='["sb-card-text"]'></anvil-component>
+          <div class="ui-row">
+            <a class="ui-btn primary" href="#buy" anvil:name="unlock_link"><i class="ic ic-cart"></i><span data-t>See the courses</span></a>
+          </div>
+        </div>
+      </section>
+      <section class="ui-card sb-locked" anvil:name="noaudio_card">
+        <i class="ic ic-headphones sb-locked-ic"></i>
+        <div>
+          <div class="sb-card-title" data-t>This lesson's audio is on its way</div>
+          <p class="sb-card-text" data-t>The lessons are being uploaded. Try again a little later: your place in the course is saved.</p>
+        </div>
+      </section>
+      <section class="ui-card sb-done" anvil:name="done_card">
+        <div class="sb-stamp" aria-hidden="true"><i class="ic ic-check"></i></div>
+        <div>
+          <div class="sb-card-title" data-t>Lesson done. Well spoken!</div>
+          <anvil-component type="Label" name="done_text" prop:role='["sb-card-text"]'></anvil-component>
+          <div class="ui-row">
+            <anvil-component type="Button" name="next_button" prop:text="Next lesson" prop:role='["btn", "btn-primary", "ic-arrow"]'></anvil-component>
+            <a class="ui-btn" href="#home" anvil:name="lib_link"><span data-t>Back to the library</span></a>
+          </div>
+        </div>
+      </section>
+
+      <div class="sb-lesson-grid">
+        <section class="sb-sheet">
+          <div class="sb-sheet-head">
+            <h2 data-t>Today's new phrases</h2>
+            <anvil-component type="Button" name="quiz_button" prop:text="Quiz yourself" prop:role='["btn", "btn-sm", "ic-eye"]'></anvil-component>
+          </div>
+          <anvil-component type="Label" name="sheet_note" prop:role='["fine-print"]'></anvil-component>
+          <anvil-component type="RepeatingPanel" name="pairs_panel" prop:item_template="Sayback.Items.PairRow" prop:role='["sb-pairs"]'></anvil-component>
+        </section>
+        <aside class="sb-side">
+          <section class="ui-card sb-culture">
+            <h3 data-t>Culture moment</h3>
+            <anvil-component type="Label" name="culture" prop:role='["sb-culture-text"]'></anvil-component>
+          </section>
+          <section class="ui-card sb-files" anvil:name="files_card">
+            <h3 data-t>Take it with you</h3>
+            <a class="ui-btn block" anvil:name="dl_mp3" href="#" target="_blank" rel="noopener"><i class="ic ic-download"></i><span data-t>Download the MP3</span></a>
+            <a class="ui-btn block" anvil:name="dl_txt" href="#" target="_blank" rel="noopener"><i class="ic ic-book"></i><span data-t>Download the transcript</span></a>
+            <anvil-component type="Button" name="done_button" prop:role='["btn", "btn-block", "btn-ghost", "ic-check"]'></anvil-component>
+          </section>
+          <nav class="sb-prevnext" aria-label="Lessons" data-ta="aria-label">
+            <a class="sb-pn" href="#home" anvil:name="prev_link"><small data-t>Previous lesson</small><anvil-component type="Label" name="prev_title" prop:role='["sb-pn-title"]'></anvil-component></a>
+            <a class="sb-pn sb-pn-next" href="#home" anvil:name="next_link"><small data-t>Next lesson</small><anvil-component type="Label" name="next_title" prop:role='["sb-pn-title"]'></anvil-component></a>
+          </nav>
+        </aside>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

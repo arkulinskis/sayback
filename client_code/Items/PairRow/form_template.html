@@ -1,0 +1,8 @@
+<div class="sb-pr-host">
+  <button type="button" class="sb-pr" anvil:name="btn" anvil:on-dom:click="self.btn_click">
+    <span class="sb-pr-n" anvil:name="n_box"></span>
+    <span class="sb-pr-p"><anvil-component type="Label" name="prompt" bind:text="self.item['p']"></anvil-component></span>
+    <span class="sb-pr-a"><anvil-component type="Label" name="answer" bind:text="self.item['a']"></anvil-component></span>
+    <anvil-component type="Label" name="who" prop:role='["sb-pr-who"]'></anvil-component>
+  </button>
+</div>

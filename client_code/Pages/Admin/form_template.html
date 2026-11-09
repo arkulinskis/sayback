@@ -1,0 +1,156 @@
+<anvil-form layout="Sayback.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap">
+      <div class="ui-page-head"><div><h1>Admin</h1><p class="muted">Only admins see this page.</p></div></div>
+      <nav class="ui-tabs">
+        <a href="#admin/overview" anvil:name="tab_overview"><i class="ic ic-grid"></i>Overview</a>
+        <a href="#admin/sales" anvil:name="tab_sales"><i class="ic ic-cart"></i>Sales</a>
+        <a href="#admin/waitlist" anvil:name="tab_waitlist"><i class="ic ic-mail"></i>Waitlist</a>
+        <a href="#admin/shop" anvil:name="tab_shop"><i class="ic ic-sliders"></i>Shop &amp; setup</a>
+        <a href="#admin/feedback" anvil:name="tab_feedback"><i class="ic ic-inbox"></i>Feedback</a>
+        <a href="#admin/users" anvil:name="tab_users"><i class="ic ic-users"></i>Users</a>
+        <a href="#admin/demo" anvil:name="tab_demo"><i class="ic ic-database"></i>Demo data</a>
+      </nav>
+
+      <div anvil:name="overview_part">
+        <div class="ad-stats">
+          <a class="ui-card ui-stat ad-stat" href="#admin/sales"><anvil-component type="Label" name="s_revenue" prop:role='["stat-num"]'></anvil-component><span>revenue (Stripe, not refunded)</span></a>
+          <a class="ui-card ui-stat ad-stat" href="#admin/sales"><anvil-component type="Label" name="s_buyers" prop:role='["stat-num"]'></anvil-component><span>people with a course</span></a>
+          <a class="ui-card ui-stat ad-stat" href="#admin/waitlist"><anvil-component type="Label" name="s_waitlist" prop:role='["stat-num"]'></anvil-component><span>on the waitlist</span></a>
+          <a class="ui-card ui-stat ad-stat" href="#admin/users"><anvil-component type="Label" name="s_users" prop:role='["stat-num"]'></anvil-component><span>accounts</span></a>
+          <div class="ui-card ui-stat ad-stat"><anvil-component type="Label" name="s_listeners" prop:role='["stat-num"]'></anvil-component><span>listened this week</span></div>
+          <div class="ui-card ui-stat ad-stat"><anvil-component type="Label" name="s_minutes" prop:role='["stat-num"]'></anvil-component><span>minutes heard this week</span></div>
+        </div>
+        <div class="ui-card ad-setup">
+          <h3>Before you sell: setup</h3>
+          <ul class="ad-check">
+            <li anvil:name="chk_audio"><i class="ic ic-check ok-ic"></i><i class="ic ic-x bad-ic"></i><anvil-component type="Label" name="chk_audio_text"></anvil-component></li>
+            <li anvil:name="chk_links"><i class="ic ic-check ok-ic"></i><i class="ic ic-x bad-ic"></i><anvil-component type="Label" name="chk_links_text"></anvil-component></li>
+            <li anvil:name="chk_webhook"><i class="ic ic-check ok-ic"></i><i class="ic ic-x bad-ic"></i><anvil-component type="Label" name="chk_webhook_text"></anvil-component></li>
+          </ul>
+          <a class="ui-btn" href="#admin/shop"><i class="ic ic-sliders"></i>Open Shop &amp; setup</a>
+        </div>
+        <anvil-component type="Label" name="demo_line" prop:role='["fine-print", "ad-demo-line"]'></anvil-component>
+      </div>
+
+      <div anvil:name="sales_part">
+        <div class="ui-card ad-grant">
+          <h3>Give someone a course</h3>
+          <p class="muted small">A gift, a tester, or a fix after a payment problem. If they don't have an account yet, it waits for that email.</p>
+          <div class="ad-grant-row">
+            <label class="ui-field"><span>Email</span><anvil-component type="TextBox" name="grant_email" prop:type="email"></anvil-component></label>
+            <label class="ui-field"><span>What</span><anvil-component type="DropDown" name="grant_product"></anvil-component></label>
+            <label class="ui-field"><span>Note (optional)</span><anvil-component type="TextBox" name="grant_note"></anvil-component></label>
+            <anvil-component type="Button" name="grant_button" prop:text="Give it" prop:role='["btn", "btn-primary", "ic-plus"]'></anvil-component>
+          </div>
+        </div>
+        <anvil-component type="Label" name="sales_line" prop:role='["fine-print", "ad-line"]'></anvil-component>
+        <anvil-component type="RepeatingPanel" name="sales_panel" prop:item_template="Sayback.Items.SaleRow" prop:role='["ad-list"]'></anvil-component>
+        <div class="ui-empty" anvil:name="no_sales"><i class="ic ic-cart"></i><h2>No sales yet</h2><p>Purchases from Stripe and the courses you give appear here.</p></div>
+      </div>
+
+      <div anvil:name="waitlist_part">
+        <div class="ui-row ad-line">
+          <anvil-component type="Label" name="wait_line" prop:role='["fine-print"]'></anvil-component>
+          <span class="ui-spacer"></span>
+          <anvil-component type="Button" name="csv_button" prop:text="Download CSV" prop:role='["btn", "ic-download"]'></anvil-component>
+        </div>
+        <p class="muted small">People who pressed a buy button before the shop was open. They agreed to one email: the day it opens. Demo entries are left out of the CSV.</p>
+        <anvil-component type="RepeatingPanel" name="wait_panel" prop:item_template="Sayback.Items.WaitRow" prop:role='["ad-list"]'></anvil-component>
+        <div class="ui-empty" anvil:name="no_wait"><i class="ic ic-mail"></i><h2>Nobody on the list yet</h2><p>It fills up from the buy buttons while no Stripe link is set.</p></div>
+      </div>
+
+      <div anvil:name="shop_part" class="ad-shop">
+        <div class="ui-card ui-stack">
+          <h3>Prices</h3>
+          <div class="ad-form-grid">
+            <label class="ui-field"><span>Level 1</span><anvil-component type="TextBox" name="price_level1" prop:type="number"></anvil-component></label>
+            <label class="ui-field"><span>Complete course</span><anvil-component type="TextBox" name="price_complete" prop:type="number"></anvil-component></label>
+            <label class="ui-field"><span>Upgrade (Levels 2 to 5, for Level 1 owners)</span><anvil-component type="TextBox" name="price_upgrade" prop:type="number"></anvil-component></label>
+            <label class="ui-field"><span>Currency sign</span><anvil-component type="TextBox" name="currency"></anvil-component></label>
+            <label class="ui-field"><span>Currency code</span><anvil-component type="TextBox" name="currency_code"></anvil-component></label>
+            <label class="ui-field"><span>Guarantee (days)</span><anvil-component type="TextBox" name="guarantee_days" prop:type="number"></anvil-component></label>
+            <label class="ui-field"><span>Free lessons (Level 1, with an account)</span><anvil-component type="TextBox" name="free_lessons" prop:type="number"></anvil-component></label>
+          </div>
+          <p class="muted small">The prices shown on the pages. The amount people actually pay is set in each Stripe Payment Link: keep them the same.</p>
+        </div>
+
+        <div class="ui-card ui-stack">
+          <h3>Stripe Payment Links</h3>
+          <ol class="ad-steps">
+            <li>In Stripe, make one product + Payment Link for each line below (one-time price).</li>
+            <li>In each link's settings, "After payment" &gt; "Don't show confirmation page" &gt; redirect to the address under its box.</li>
+            <li>Paste the link (https://buy.stripe.com/...) in its box and press Save.</li>
+          </ol>
+          <div class="ad-links">
+            <label class="ui-field"><span>Sayback Spanish · Level 1</span><anvil-component type="TextBox" name="link_es1" prop:placeholder="https://buy.stripe.com/..."></anvil-component><anvil-component type="Label" name="ok_es1" prop:role='["fine-print", "ad-success"]'></anvil-component></label>
+            <label class="ui-field"><span>Sayback Spanish · Complete</span><anvil-component type="TextBox" name="link_esall" prop:placeholder="https://buy.stripe.com/..."></anvil-component><anvil-component type="Label" name="ok_esall" prop:role='["fine-print", "ad-success"]'></anvil-component></label>
+            <label class="ui-field"><span>Sayback Spanish · Upgrade</span><anvil-component type="TextBox" name="link_esup" prop:placeholder="https://buy.stripe.com/..."></anvil-component><anvil-component type="Label" name="ok_esup" prop:role='["fine-print", "ad-success"]'></anvil-component></label>
+            <label class="ui-field"><span>Sayback Inglés · Level 1</span><anvil-component type="TextBox" name="link_en1" prop:placeholder="https://buy.stripe.com/..."></anvil-component><anvil-component type="Label" name="ok_en1" prop:role='["fine-print", "ad-success"]'></anvil-component></label>
+            <label class="ui-field"><span>Sayback Inglés · Complete</span><anvil-component type="TextBox" name="link_enall" prop:placeholder="https://buy.stripe.com/..."></anvil-component><anvil-component type="Label" name="ok_enall" prop:role='["fine-print", "ad-success"]'></anvil-component></label>
+            <label class="ui-field"><span>Sayback Inglés · Upgrade</span><anvil-component type="TextBox" name="link_enup" prop:placeholder="https://buy.stripe.com/..."></anvil-component><anvil-component type="Label" name="ok_enup" prop:role='["fine-print", "ad-success"]'></anvil-component></label>
+          </div>
+        </div>
+
+        <div class="ui-card ui-stack">
+          <h3>Stripe webhook (unlocks lessons the moment people pay)</h3>
+          <p class="muted small">Stripe > Developers > Webhooks > Add endpoint. Address below; events <code>checkout.session.completed</code>, <code>checkout.session.async_payment_succeeded</code> and <code>charge.refunded</code>. Then copy its signing secret (whsec_...) into the Anvil editor: App Secrets > <code>stripe_webhook_secret</code>.</p>
+          <anvil-component type="Label" name="webhook_url" prop:role='["ad-code"]'></anvil-component>
+          <anvil-component type="Label" name="webhook_status"></anvil-component>
+        </div>
+
+        <div class="ui-card ui-stack">
+          <h3>Lesson audio</h3>
+          <anvil-component type="Label" name="audio_status"></anvil-component>
+          <p class="muted small">The 300 lessons live in a private Cloudflare R2 bucket. Upload them with <code>python tools/upload_r2.py</code> in the sayback folder, then add the App Secret <code>r2_url</code> = <code>r2://ACCESS_KEY_ID:SECRET@ACCOUNT_ID/BUCKET</code>. For a quick test only, a public address can stand in (anyone with a link could download):</p>
+          <label class="ui-field"><span>Public test address (optional)</span><anvil-component type="TextBox" name="audio_base" prop:placeholder="https://pub-....r2.dev"></anvil-component></label>
+          <div class="ui-row">
+            <anvil-component type="Button" name="audio_test_button" prop:text="Try lesson 1" prop:role='["btn", "ic-play"]'></anvil-component>
+          </div>
+        </div>
+        <div class="ui-row end">
+          <anvil-component type="Button" name="shop_save_button" prop:text="Save" prop:role='["btn", "btn-primary", "btn-lg"]'></anvil-component>
+        </div>
+      </div>
+
+      <div anvil:name="feedback_part">
+        <div class="ui-row ad-filter">
+          <div class="ui-seg">
+            <anvil-component type="Button" name="f_new" prop:text="New" prop:role='["seg"]'></anvil-component>
+            <anvil-component type="Button" name="f_read" prop:text="Read" prop:role='["seg"]'></anvil-component>
+            <anvil-component type="Button" name="f_done" prop:text="Done" prop:role='["seg"]'></anvil-component>
+            <anvil-component type="Button" name="f_all" prop:text="All" prop:role='["seg"]'></anvil-component>
+          </div>
+        </div>
+        <anvil-component type="RepeatingPanel" name="feedback_panel" prop:item_template="Sayback.Items.FeedbackRow" prop:role='["ad-fb"]'></anvil-component>
+        <div class="ui-empty" anvil:name="no_feedback">
+          <i class="ic ic-inbox"></i>
+          <h2>No messages here</h2>
+          <p>New feedback goes to Prepsto (prepsto.com). Older messages and requests from the app show up here.</p>
+        </div>
+      </div>
+
+      <div anvil:name="users_part">
+        <div class="ui-row ad-search">
+          <anvil-component type="TextBox" name="search_box" prop:placeholder="Search by name or email" prop:role='["ad-search-box"]'></anvil-component>
+          <anvil-component type="Button" name="search_button" prop:text="Search" prop:role='["btn", "ic-search"]'></anvil-component>
+          <anvil-component type="Label" name="users_count" prop:role='["fine-print"]'></anvil-component>
+        </div>
+        <div class="ad-table ad-users-head"><b>Name</b><b>Email</b><b>Joined</b><b>Admin</b><b>Active</b></div>
+        <anvil-component type="RepeatingPanel" name="users_panel" prop:item_template="Sayback.Items.UserRow"></anvil-component>
+      </div>
+
+      <div anvil:name="demo_part">
+        <div class="ui-card ui-narrow ad-demo">
+          <h3>Demo data</h3>
+          <p class="muted">Five made-up listeners with purchases, listening days and finished lessons, plus a few waitlist emails, so the admin pages never look empty. Demo rows are flagged, so removing them never touches real data. Once removed, it stays removed until you load it again.</p>
+          <anvil-component type="Label" name="demo_status"></anvil-component>
+          <div class="ui-row">
+            <anvil-component type="Button" name="demo_load_button" prop:text="Load demo data" prop:role='["btn", "btn-primary", "ic-refresh"]'></anvil-component>
+            <anvil-component type="Button" name="demo_remove_button" prop:text="Remove demo data" prop:role='["btn", "btn-danger", "ic-trash"]'></anvil-component>
+          </div>
+        </div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

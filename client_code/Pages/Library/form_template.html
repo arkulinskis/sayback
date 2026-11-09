@@ -1,0 +1,62 @@
+<anvil-form layout="Sayback.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap sb-lib">
+      <div class="sb-lib-head">
+        <div>
+          <anvil-component type="Label" name="hello" prop:role='["page-title"]'></anvil-component>
+          <anvil-component type="Label" name="course_line" prop:role='["fine-print"]'></anvil-component>
+        </div>
+        <nav class="ui-seg sb-switch" aria-label="Course" data-ta="aria-label">
+          <a href="#home/en-es" anvil:name="sw_es" data-t>Learn Spanish</a>
+          <a href="#home/es-en" anvil:name="sw_en" data-t>Learn English</a>
+        </nav>
+      </div>
+
+      <div class="sb-lib-top">
+        <section class="ui-card sb-next" anvil:name="next_card">
+          <anvil-component type="Label" name="next_title" prop:role='["sb-next-title"]'></anvil-component>
+          <anvil-component type="Label" name="next_meta" prop:role='["sb-next-meta"]'></anvil-component>
+          <div class="sb-next-bar" anvil:name="next_bar"><i anvil:name="next_fill"></i></div>
+          <div class="ui-row sb-next-actions">
+            <anvil-component type="Button" name="play_button" prop:text="Play lesson" prop:role='["btn", "btn-primary", "btn-lg", "ic-play"]'></anvil-component>
+            <anvil-component type="Button" name="car_button" prop:text="Car mode" prop:role='["btn", "btn-lg", "ic-car"]'></anvil-component>
+          </div>
+        </section>
+        <section class="ui-card sb-next sb-unlock" anvil:name="unlock_card">
+          <anvil-component type="Label" name="unlock_title" prop:role='["sb-next-title"]'></anvil-component>
+          <anvil-component type="Label" name="unlock_text" prop:role='["sb-next-meta"]'></anvil-component>
+          <div class="ui-row sb-next-actions">
+            <a class="ui-btn primary lg" href="#buy" anvil:name="unlock_link"><i class="ic ic-cart"></i><span data-t>See the courses</span></a>
+          </div>
+        </section>
+        <section class="ui-card sb-next sb-finished" anvil:name="finished_card">
+          <div class="sb-next-title" data-t>You finished all 150 lessons.</div>
+          <p class="sb-next-meta" data-t>That's about 112 hours of speaking out loud. Pick any lesson to keep it fresh, or try the other direction with a friend.</p>
+        </section>
+        <section class="ui-card sb-stats">
+          <div class="sb-stat-row">
+            <div class="sb-stat"><anvil-component type="Label" name="week_min" prop:role='["sb-stat-num"]'></anvil-component><span data-t>stolen minutes this week</span></div>
+            <div class="sb-stat"><anvil-component type="Label" name="streak" prop:role='["sb-stat-num"]'></anvil-component><span data-t>day streak</span></div>
+            <div class="sb-stat"><anvil-component type="Label" name="done_count" prop:role='["sb-stat-num"]'></anvil-component><span data-t>lessons done</span></div>
+          </div>
+          <anvil-component type="RepeatingPanel" name="bars" prop:item_template="Sayback.Items.DayBar" prop:role='["sb-bars"]'></anvil-component>
+          <p class="small muted sb-stats-note" data-t>The last two weeks. A day counts once you've listened for a minute.</p>
+        </section>
+      </div>
+
+      <anvil-component type="Label" name="audio_warn" prop:role='["msg-note", "sb-audio-warn"]' prop:visible="false"></anvil-component>
+
+      <anvil-component type="RepeatingPanel" name="levels_panel" prop:item_template="Sayback.Items.LevelChip" prop:role='["sb-levels"]'></anvil-component>
+      <div class="sb-level-head">
+        <anvil-component type="Label" name="level_title" prop:role='["sb-level-title"]'></anvil-component>
+        <anvil-component type="Label" name="level_note" prop:role='["fine-print"]'></anvil-component>
+      </div>
+      <anvil-component type="RepeatingPanel" name="lessons_panel" prop:item_template="Sayback.Items.LessonTile" prop:role='["sb-tiles"]'></anvil-component>
+
+      <section class="sb-lib-offer" anvil:name="offer_part">
+        <h2 data-t>Unlock the rest of the course</h2>
+        <anvil-component type="RepeatingPanel" name="offers" prop:item_template="Sayback.Items.ProductCard" prop:role='["sb-plans-panel"]'></anvil-component>
+      </section>
+    </div>
+  </anvil-block>
+</anvil-form>

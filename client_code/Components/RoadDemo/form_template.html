@@ -1,0 +1,29 @@
+---
+custom_component: true
+properties:
+  - name: course
+    type: string
+    default_value: en-es
+    description: Which lesson clip plays, en-es (Sayback Spanish) or es-en (Sayback Inglés)
+    default_binding_prop: true
+  - name: lang
+    type: string
+    default_value: en
+    description: Language of the labels (en or es)
+events:
+  - name: ended
+toolbox_item:
+  title: Lesson road demo
+  group: Sayback
+help_text: |
+  The landing hero: 90 seconds of the real lesson 1 with its phrases driving past on a road
+  (theme/assets/sb-road.js, timings from tools/make_hero.py). The still frame below shows if the script can't run.
+---
+<div class="rd-host">
+  <div anvil:dom-node="mount" class="rd-mount">
+    <div class="rd rd-static">
+      <div class="rd-stage"><div class="rd-cue">Your turn: say it out loud</div><div class="rd-line"><span class="rd-text">Good morning.</span></div></div>
+      <div class="rd-road"><div class="rd-lane"></div><div class="rd-head"></div></div>
+    </div>
+  </div>
+</div>

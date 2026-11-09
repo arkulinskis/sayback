@@ -1,0 +1,31 @@
+<anvil-form layout="Sayback.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap sb-buy">
+      <div class="ui-page-head">
+        <div>
+          <anvil-component type="Label" name="heading" prop:role='["page-title"]'></anvil-component>
+          <anvil-component type="Label" name="sub" prop:role='["fine-print"]'></anvil-component>
+        </div>
+        <nav class="ui-seg sb-switch" aria-label="Course" data-ta="aria-label">
+          <a href="#buy/en-es" anvil:name="sw_es" data-t>Learn Spanish</a>
+          <a href="#buy/es-en" anvil:name="sw_en" data-t>Learn English</a>
+        </nav>
+      </div>
+      <anvil-component type="Label" name="closed_note" prop:role='["msg-note"]' prop:visible="false"></anvil-component>
+      <anvil-component type="RepeatingPanel" name="offers" prop:item_template="Sayback.Items.ProductCard" prop:role='["sb-plans-panel"]'></anvil-component>
+      <div class="sb-guarantee">
+        <div class="sb-seal"><anvil-component type="Label" name="days" prop:text="30" prop:role='["sb-seal-num"]'></anvil-component><span data-t>days</span></div>
+        <div><h2 class="sb-g-title" data-t>Speak or it's free.</h2><p data-t>Do the first five lessons, out loud. If you can't greet someone, order a coffee and ask for directions, write to us within the guarantee period for a full refund. No forms, no questions.</p></div>
+      </div>
+      <ul class="sb-facts">
+        <li><i class="ic ic-lock"></i><span data-t>Secure checkout by Stripe. We never see your card.</span></li>
+        <li><i class="ic ic-check"></i><span data-t>One payment. No subscription, nothing to cancel.</span></li>
+        <li><i class="ic ic-headphones"></i><span data-t>Lessons unlock the moment you pay, in the app and as MP3s.</span></li>
+      </ul>
+      <div class="sb-buy-free" anvil:name="free_part">
+        <p data-t>Not sure yet? Make a free account and the whole of lesson 1 is yours.</p>
+        <a class="ui-btn" href="#auth/signup"><span data-t>Listen to lesson 1 free</span></a>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

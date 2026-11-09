@@ -1,0 +1,16 @@
+<anvil-form layout="Sayback.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap ui-narrow sb-thanks">
+      <div class="ui-card sb-thanks-card">
+        <div class="sb-road-dots" anvil:name="waiting_art" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="sb-stamp" anvil:name="done_art" aria-hidden="true"><i class="ic ic-check"></i></div>
+        <anvil-component type="Label" name="heading" prop:role='["page-title"]'></anvil-component>
+        <anvil-component type="Label" name="text" prop:role='["sb-card-text"]'></anvil-component>
+        <div class="ui-row sb-thanks-actions">
+          <anvil-component type="Button" name="start_button" prop:role='["btn", "btn-primary", "btn-lg", "ic-play"]' prop:visible="false"></anvil-component>
+          <a class="ui-btn lg" href="#home" anvil:name="lib_link"><span data-t>Open your library</span></a>
+        </div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

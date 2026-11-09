@@ -1,0 +1,52 @@
+<anvil-form layout="Sayback.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap ui-narrow">
+      <div class="pf-head">
+        <anvil-component type="Label" name="initials" prop:role='["pf-avatar"]'></anvil-component>
+        <div>
+          <anvil-component type="Label" name="name_title" prop:role='["pf-title"]'></anvil-component>
+          <anvil-component type="Label" name="email_line" prop:role='["fine-print"]'></anvil-component>
+        </div>
+      </div>
+      <div class="ui-card pf-courses">
+        <div class="ui-row between"><h3 data-t>Your courses</h3><a class="ui-btn sm" href="#buy"><i class="ic ic-cart"></i><span data-t>Prices</span></a></div>
+        <anvil-component type="RepeatingPanel" name="purchases_panel" prop:item_template="Sayback.Items.PurchaseRow"></anvil-component>
+        <p class="muted small" anvil:name="no_purchases" data-t>Nothing bought yet. Lesson 1 of each course is free with your account.</p>
+      </div>
+      <div class="pf-grid">
+        <div class="ui-card ui-stack">
+          <h3 data-t>Your name</h3>
+          <label class="ui-field"><span data-t>How we greet you</span>
+            <anvil-component type="TextBox" name="name_box"></anvil-component>
+          </label>
+          <anvil-component type="Button" name="save_button" prop:text="Save" prop:role='["btn", "btn-primary"]'></anvil-component>
+          <h3 class="pf-pw" data-t>Language of the app</h3>
+          <div class="ui-seg" role="group" aria-label="Language" data-ta="aria-label">
+            <button type="button" anvil:name="lang_en" data-lang="en" anvil:on-dom:click="self.lang_click" lang="en">English</button>
+            <button type="button" anvil:name="lang_es" data-lang="es" anvil:on-dom:click="self.lang_click" lang="es">Español</button>
+          </div>
+        </div>
+        <div class="ui-card ui-stack">
+          <h3 data-t>Appearance</h3>
+          <p class="muted small" data-t>Follow your device, or pick one.</p>
+          <div class="ui-seg">
+            <button type="button" anvil:name="theme_auto" data-theme-pick="auto" anvil:on-dom:click="self.theme_click" data-t>Auto</button>
+            <button type="button" anvil:name="theme_light" data-theme-pick="light" anvil:on-dom:click="self.theme_click" data-t>Light</button>
+            <button type="button" anvil:name="theme_dark" data-theme-pick="dark" anvil:on-dom:click="self.theme_click" data-t>Dark</button>
+          </div>
+          <h3 class="pf-pw" data-t>Password</h3>
+          <p class="muted small" data-t>We'll email you a link to choose a new one.</p>
+          <anvil-component type="Button" name="reset_button" prop:text="Email me a reset link" prop:role='["btn", "ic-mail"]'></anvil-component>
+        </div>
+      </div>
+      <div class="ui-card pf-more">
+        <div class="pf-links">
+          <a href="#admin" anvil:name="admin_link"><i class="ic ic-shield"></i><span>Admin</span></a>
+          <button type="button" anvil:on-dom:click="self.feedback_click"><i class="ic ic-chat"></i><span data-t>Submit feedback</span></button>
+          <button type="button" data-lk-open="overview"><i class="ic ic-lock"></i><span data-t>Privacy &amp; Terms, and your data</span></button>
+          <button type="button" anvil:on-dom:click="self.sign_out_click"><i class="ic ic-logout"></i><span data-t>Sign out</span></button>
+        </div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

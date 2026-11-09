@@ -1,0 +1,213 @@
+<anvil-form layout="Sayback.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="page-landing sb-landing">
+      <!-- Persuade mode. Keep .lp-hero and the sign-up link inside it (tests and hero shots look for them).
+           The Spanish twin of this page is Pages/LandingEs: change both. -->
+      <section class="lp-hero sb-hero">
+        <div class="ui-wrap">
+          <div class="sb-hero-copy">
+            <h1>Speak Spanish on the drive you're already taking.</h1>
+            <p class="lp-lead">45-minute audio lessons for the car, the dishes and the laundry. You hear it in English, you say it in Spanish, out loud. No screen, no homework.</p>
+            <div class="lp-cta" anvil:name="guest_cta">
+              <a class="ui-btn primary lg" href="#auth/signup">Listen to lesson 1 free <i class="ic ic-arrow"></i></a>
+              <a class="ui-btn lg" href="#offer" data-scroll>See the price</a>
+            </div>
+            <div class="lp-cta" anvil:name="member_cta">
+              <a class="ui-btn primary lg" href="#home">Open your library <i class="ic ic-arrow"></i></a>
+              <a class="ui-btn lg" href="#buy/en-es">See the courses</a>
+            </div>
+            <ul class="sb-proof">
+              <li><b>150</b> lessons</li>
+              <li><b>112</b> hours of speaking</li>
+              <li><b>3,000</b> phrases</li>
+            </ul>
+            <p class="sb-other-lang"><a href="#es" lang="es">¿Hablas español? Aprende inglés <i class="ic ic-arrow"></i></a></p>
+          </div>
+          <div class="sb-windshield">
+            <div class="sb-ws-head"><span class="sb-ws-dot"></span><span>Lesson 1 · Hello and first words</span></div>
+            <anvil-component type="Sayback.Components.RoadDemo" name="road" prop:course="en-es" prop:lang="en"></anvil-component>
+            <p class="sb-ws-note">Press play, then answer out loud in the pause. Yes, really. Out loud.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="sb-band" id="minutes">
+        <div class="ui-wrap">
+          <h2>You don't need more time. You need the time you already lose.</h2>
+          <p class="sb-band-lead">Every app and every class asks you to <em>find</em> time: sit down, open a screen, focus. That's why most people quit by week three. Sayback asks for nothing new. It fills the minutes your hands are busy and your head is free.</p>
+          <ol class="sb-day">
+            <li><time>7:40</time><b>The commute</b><span>Your car becomes a classroom. Eyes on the road, voice on Spanish.</span></li>
+            <li><time>12:30</time><b>The walk</b><span>A dog walk is the perfect length for a lesson.</span></li>
+            <li><time>18:15</time><b>The dishes</b><span>Twenty minutes at the sink: forty phrases said out loud.</span></li>
+            <li><time>20:40</time><b>The laundry</b><span>Folding shirts while you order dinner in Madrid.</span></li>
+          </ol>
+          <p class="sb-math">45 minutes a day, five workdays a week = <b>3¾ hours of speaking practice</b>. Level 1 done in six weeks, without "finding time" once.</p>
+        </div>
+      </section>
+
+      <section class="lp-section" id="how">
+        <div class="ui-wrap sb-why">
+          <div class="sb-why-text">
+            <h2>Apps make you tap. Sayback makes you talk.</h2>
+            <p>You can recognise a thousand words on a screen and still freeze when a real person asks you something. Recognising isn't speaking. <strong>The only way to learn to speak is to speak</strong>: pulling the phrase out of your own memory, in the pause, before you hear the answer.</p>
+            <p>That moment of effort is what locks it in. In the 1960s, the linguist Dr. Paul Pimsleur showed that a phrase recalled at growing intervals (seconds, then minutes, then days) moves into long-term memory. Sayback times every phrase that way. You don't schedule anything. The lessons do it for you.</p>
+            <p class="sb-question">Can you see why 45 minutes of speaking does more than 45 minutes of tapping?</p>
+          </div>
+          <ol class="sb-item" aria-label="One practice item">
+            <li class="sb-item-p"><small>You hear</small><span>“Where is the station?”</span></li>
+            <li class="sb-item-say"><small>Your turn · 3 seconds and a beat</small><span>You say it in Spanish</span></li>
+            <li class="sb-item-a"><small>Then you hear</small><span lang="es">“¿Dónde está la estación?”</span></li>
+            <li class="sb-item-m"><small>Underneath</small><span>Soft, slow music</span></li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="lp-section sb-inside">
+        <div class="ui-wrap">
+          <h2>Exactly 45 minutes. Exactly one rhythm.</h2>
+          <div class="sb-tl" role="img" aria-label="Lesson timeline: intro at the start, a pep talk at 15 and 30 minutes, the wrap-up at 44 minutes">
+            <div class="sb-tl-bar"><i class="t-intro"></i><i class="t-part"></i><i class="t-pep"></i><i class="t-part"></i><i class="t-pep"></i><i class="t-part"></i><i class="t-outro"></i></div>
+            <div class="sb-tl-marks">
+              <span style="left:0%"><b>0:00</b>Intro: today's situation, feeling and a culture moment</span>
+              <span style="left:33.3%"><b>15:00</b>“You're doing great”</span>
+              <span style="left:66.6%"><b>30:00</b>“Two thirds done”</span>
+              <span style="left:100%"><b>45:00</b>Wrap-up</span>
+            </div>
+          </div>
+          <p class="sb-inside-note">Each lesson opens with a real-life situation, a feeling to express and a culture moment, so you learn how people <em>live</em>, not just what they say. About 250 to 320 times a lesson, a phrase comes out of your own mouth.</p>
+        </div>
+      </section>
+
+      <section class="lp-section sb-beliefs">
+        <div class="ui-wrap">
+          <h2>If you've tried before, read this.</h2>
+          <div class="sb-belief"><blockquote>“Apps never worked for me.”</blockquote><p>They weren't built to make you speak. Streaks and quizzes teach recognition. Sayback is all production: every phrase comes out of <em>your</em> mouth, hundreds of times a lesson.</p></div>
+          <div class="sb-belief"><blockquote>“I'm just not a language person.”</blockquote><p>You learned English by hearing it and saying it back, long before you could read. Sayback uses that same route. No grammar tables, no spelling tests. If you can talk, you can do this.</p></div>
+          <div class="sb-belief"><blockquote>“I don't have time.”</blockquote><p>You don't need any new time. If you drive, clean, cook or walk, you already have the 45 minutes. Sayback just gives those minutes a second job.</p></div>
+        </div>
+      </section>
+
+      <section class="lp-section sb-levels-sec" id="lessons">
+        <div class="ui-wrap">
+          <h2>30 real situations in Level 1. 3,000 phrases in all.</h2>
+          <p class="sb-sec-lead">Every lesson is a moment from real life with the feeling that comes with it: nerves when you meet someone, relief when you find your way, pride when the waiter understands you the first time.</p>
+          <!-- lessons:start (tools/make_landing_lists.py writes this list; don't edit by hand) -->
+          <ol class="sb-lessons">
+            <li><b>Hello and first words</b><span>You meet someone new at a friend&#x27;s house.</span></li>
+            <li><b>Please, thank you and sorry</b><span>You ask small favours and say thank you in a busy shop.</span></li>
+            <li><b>Where are you from?</b><span>A taxi driver asks where you are from, and you ask back.</span></li>
+            <li><b>At the café</b><span>You order breakfast at a busy café counter.</span></li>
+            <li><b>Numbers and prices at the market</b><span>You buy fruit at an open-air market.</span></li>
+            <li><b>How are you, really?</b><span>A friend notices you look tired and asks how you really are.</span></li>
+            <li><b>My family</b><span>You show photos of your family on your phone.</span></li>
+            <li><b>Lost in the city</b><span>You are lost in an old town and ask strangers for directions.</span></li>
+            <li><b>Days, times and plans</b><span>You make plans with a new friend for the weekend.</span></li>
+            <li><b>Dinner at a restaurant</b><span>You have dinner with friends at a family restaurant.</span></li>
+            <li><b>Shopping for clothes</b><span>You try on clothes in a small shop.</span></li>
+            <li><b>Checking into the hotel</b><span>You arrive tired at your hotel late at night.</span></li>
+            <li><b>Buses, taxis and trains</b><span>You are running late and need to get across the city.</span></li>
+            <li><b>Talking about the weather</b><span>You make small talk with a neighbour about the weather.</span></li>
+            <li><b>What do you like?</b><span>You talk about hobbies with a new friend.</span></li>
+            <li><b>Invited to someone&#x27;s home</b><span>A friend invites you for dinner at their home.</span></li>
+            <li><b>On the phone</b><span>You call to make an appointment and the line is bad.</span></li>
+            <li><b>At the pharmacy</b><span>You feel unwell and ask a pharmacist for advice.</span></li>
+            <li><b>What do you do?</b><span>At a party, people ask what you do for a living.</span></li>
+            <li><b>Friends and invitations</b><span>You invite friends to a party, and get invited too.</span></li>
+            <li><b>Oops! Mistakes and apologies</b><span>You spill a drink on someone and have to apologise.</span></li>
+            <li><b>Celebrations</b><span>You join a birthday and a big holiday with a local family.</span></li>
+            <li><b>Food and flavours</b><span>You try local dishes at a food market and talk about flavours.</span></li>
+            <li><b>Help! Emergencies</b><span>Something goes wrong in the street and you need help fast.</span></li>
+            <li><b>Describing people</b><span>You describe a friend you want someone to meet.</span></li>
+            <li><b>Money and the bank</b><span>Your card doesn&#x27;t work and you need cash.</span></li>
+            <li><b>My neighbourhood</b><span>You meet your new neighbours and explore the area.</span></li>
+            <li><b>Love and compliments</b><span>You go on a first date.</span></li>
+            <li><b>Goodbyes and keeping in touch</b><span>Your trip is ending and you say goodbye to new friends.</span></li>
+            <li><b>A whole day in a new language</b><span>You live a whole day in your new language, from breakfast to a night out.</span></li>
+          </ol>
+          <!-- lessons:end -->
+          <ol class="sb-levelbar">
+            <li><b>1</b><span>First Steps</span></li>
+            <li><b>2</b><span>Everyday Life</span></li>
+            <li><b>3</b><span>Real Conversations</span></li>
+            <li><b>4</b><span>Feelings and Stories</span></li>
+            <li><b>5</b><span>Fluent and Local</span></li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="lp-section sb-bridge">
+        <div class="ui-wrap">
+          <h2>Your neighbour is learning the same phrases. In English.</h2>
+          <p class="sb-sec-lead">Sayback is built in both directions. The phrases you practise in Spanish are the same ones Spanish speakers practise in English, with culture notes explaining each side to the other. Why tipping matters in the US. Why nobody brings the bill in Madrid. When you finally sit down together, you'll both be ready.</p>
+          <div class="sb-pair">
+            <div><small>You learn</small><b lang="es">“¿Te ayudo?”</b><span>and why “mi casa es su casa” is meant sincerely.</span></div>
+            <div><small>They learn</small><b>“Can I help you?”</b><span>and why Americans ask “Can I bring anything?”</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lp-section sb-offer" id="offer">
+        <div class="ui-wrap">
+          <h2>Less than one lesson with a private tutor.</h2>
+          <p class="sb-sec-lead">A private tutor typically costs $25 to $40 an hour. Level 1 alone is 22½ hours of guided speaking, and it fits in your car.</p>
+          <div class="sb-plans">
+            <div class="ui-card sb-plan">
+              <h3>Level 1 · First Steps</h3>
+              <div class="sb-price"><anvil-component type="Label" name="price_level1" prop:text="$39" prop:role='["sb-price-num"]'></anvil-component><span>one time, yours to keep</span></div>
+              <ul class="sb-ticks">
+                <li><i class="ic ic-check"></i>30 lessons × 45 minutes (22½ hours)</li>
+                <li><i class="ic ic-check"></i>600 phrases in 30 real situations</li>
+                <li><i class="ic ic-check"></i>A culture moment in every lesson</li>
+                <li><i class="ic ic-check"></i>Phrase sheet and full transcript for each lesson</li>
+                <li><i class="ic ic-check"></i>Play in the app or download the MP3s</li>
+              </ul>
+              <anvil-component type="Button" name="buy_level1" prop:text="Get Level 1" prop:role='["btn", "btn-block", "btn-lg"]'></anvil-component>
+            </div>
+            <div class="ui-card sb-plan sb-plan-best">
+              <h3>Complete course · Levels 1 to 5</h3>
+              <div class="sb-price"><anvil-component type="Label" name="price_complete" prop:text="$129" prop:role='["sb-price-num"]'></anvil-component><span>one time, all five levels</span></div>
+              <ul class="sb-ticks">
+                <li><i class="ic ic-check"></i>All 150 lessons × 45 minutes (112 hours)</li>
+                <li><i class="ic ic-check"></i>3,000 phrases, from “hola” to a friendly debate</li>
+                <li><i class="ic ic-check"></i>Everything in Level 1</li>
+                <li><i class="ic ic-check"></i>Mexico, Spain, Argentina and Colombia in Level 5</li>
+                <li><i class="ic ic-check"></i>Less than buying the levels one by one</li>
+              </ul>
+              <anvil-component type="Button" name="buy_complete" prop:text="Get the complete course" prop:role='["btn", "btn-primary", "btn-block", "btn-lg"]'></anvil-component>
+            </div>
+          </div>
+          <div class="sb-guarantee">
+            <div class="sb-seal"><anvil-component type="Label" name="guarantee_days" prop:text="30" prop:role='["sb-seal-num"]'></anvil-component><span>days</span></div>
+            <div><h3>Speak or it's free.</h3><p>Do the first five lessons, out loud. If you can't greet someone, order a coffee and ask for directions in Spanish, write to us within the guarantee period for a full refund. No forms, no questions.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lp-section" id="faq">
+        <div class="ui-wrap">
+          <h2 class="sb-center">Questions</h2>
+          <div class="lp-faq">
+            <details><summary>Is it safe to use while driving?</summary><p>Sayback is audio only and never asks you to look at anything. Speaking out loud is like talking to a passenger. Keep your attention on the road; if traffic gets busy, just listen, or pause. Car mode in the app gives you one huge play button and nothing else.</p></details>
+            <details><summary>Which Spanish does it teach?</summary><p>Clear, neutral Spanish understood everywhere, using “ustedes” rather than Spain-only “vosotros”. The culture notes cover Spain, Mexico and South America, and Level 5 adds regional flavour.</p></details>
+            <details><summary>How long until I can have a conversation?</summary><p>By the end of Level 1 (about six weeks of workday commutes) you can handle greetings, cafés, shops, directions, hotels, the pharmacy, small talk and invitations. Real conversations grow through Levels 2 and 3.</p></details>
+            <details><summary>Who are the voices?</summary><p>Natural-sounding AI voices: a woman and a man for each language, so you hear how phrases change with who is speaking (“cansado”, “cansada”). That's also how we keep the price this low.</p></details>
+            <details><summary>Do I need to do a lesson every day?</summary><p>One a day works best, because sleep is when memory sets. Missed a day? Just carry on. Every lesson reviews earlier phrases for you.</p></details>
+            <details><summary>Can I repeat a lesson?</summary><p>Yes, and if a lesson felt hard, you should. A good rule: move on when you get about 80% of the answers out loud.</p></details>
+            <details><summary>How do I get the lessons?</summary><p>They unlock in your Sayback library the moment you pay. Play them in the app (it remembers where you stopped, and works from your lock screen and car), or download the MP3s and transcripts for any music app, CarPlay or a USB stick.</p></details>
+            <details><summary>Can I try it first?</summary><p>Yes. Make a free account and the whole of lesson 1 is yours: all 45 minutes.</p></details>
+          </div>
+        </div>
+      </section>
+
+      <section class="lp-section">
+        <div class="ui-wrap">
+          <div class="lp-band sb-final">
+            <div><h2>Tomorrow's drive can be your first Spanish lesson.</h2><p>Or it can be another 45 minutes of the same radio. You choose.</p></div>
+            <a class="ui-btn lg sb-final-btn" href="#auth/signup" anvil:name="band_link">Listen to lesson 1 free</a>
+          </div>
+          <p class="sb-credit">Inspired by the published spaced-recall research of Dr. Paul Pimsleur. Not affiliated with Pimsleur® or Simon &amp; Schuster.</p>
+        </div>
+      </section>
+    </div>
+  </anvil-block>
+</anvil-form>

@@ -1,0 +1,21 @@
+---
+custom_component: true
+events:
+  - name: tick
+    parameters:
+      - name: position
+      - name: listened
+      - name: done
+  - name: ended
+  - name: failed
+  - name: next
+toolbox_item:
+  title: Lesson player
+  group: Sayback
+help_text: |
+  The lesson player (theme/assets/sb-player.js): big controls, chapter marks, lock-screen controls, car mode.
+  Call load(src, start, title, album, marks, labels); it raises tick every ~20 s of listening, on pause and at the end.
+---
+<div class="pl-host">
+  <div anvil:dom-node="mount"></div>
+</div>

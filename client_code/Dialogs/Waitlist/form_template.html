@@ -1,0 +1,22 @@
+<div class="sb-wait">
+  <div anvil:name="ask_part">
+    <h2 data-t>Sayback opens for sale very soon</h2>
+    <p class="muted" data-t>Lesson 1 is already yours. Leave your email and we'll write once, the day the full course is ready, with an early-listener price.</p>
+    <label class="ui-field"><span data-t>Your email</span>
+      <anvil-component type="TextBox" name="email_box" prop:type="email" prop:placeholder="you@example.com"></anvil-component>
+    </label>
+    <p class="small muted" data-t>We only use it for this one message. You can ask us to remove it any time.</p>
+    <anvil-component type="Label" name="message" prop:role='["msg-error"]' prop:visible="false"></anvil-component>
+    <div class="ui-row end">
+      <anvil-component type="Button" name="close_button" prop:text="Not now" prop:role='["btn", "btn-ghost"]'></anvil-component>
+      <anvil-component type="Button" name="join_button" prop:text="Tell me when it opens" prop:role='["btn", "btn-primary"]'></anvil-component>
+    </div>
+  </div>
+  <div anvil:name="done_part">
+    <h2 data-t>You're on the list</h2>
+    <p class="muted" data-t>We'll write once, the day it opens. Until then, lesson 1 is waiting in your library.</p>
+    <div class="ui-row end">
+      <anvil-component type="Button" name="ok_button" prop:text="Great" prop:role='["btn", "btn-primary"]'></anvil-component>
+    </div>
+  </div>
+</div>

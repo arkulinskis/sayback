@@ -1,0 +1,213 @@
+<anvil-form layout="Sayback.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="page-landing sb-landing" lang="es">
+      <!-- La página de ventas en español (Sayback Inglés). Su gemela en inglés es Pages/Landing: cambia las dos.
+           Keep .lp-hero and the sign-up link inside it (tests and hero shots look for them). -->
+      <section class="lp-hero sb-hero">
+        <div class="ui-wrap">
+          <div class="sb-hero-copy">
+            <h1>Habla inglés en el camino que ya haces todos los días.</h1>
+            <p class="lp-lead">Lecciones de audio de 45 minutos para el carro, los platos y la ropa. Lo escuchas en español, lo dices en inglés, en voz alta. Sin pantalla, sin tareas.</p>
+            <div class="lp-cta" anvil:name="guest_cta">
+              <a class="ui-btn primary lg" href="#auth/signup">Escucha la lección 1 gratis <i class="ic ic-arrow"></i></a>
+              <a class="ui-btn lg" href="#offer" data-scroll>Ver el precio</a>
+            </div>
+            <div class="lp-cta" anvil:name="member_cta">
+              <a class="ui-btn primary lg" href="#home">Abre tu biblioteca <i class="ic ic-arrow"></i></a>
+              <a class="ui-btn lg" href="#buy/es-en">Ver los cursos</a>
+            </div>
+            <ul class="sb-proof">
+              <li><b>150</b> lecciones</li>
+              <li><b>112</b> horas hablando</li>
+              <li><b>3.000</b> frases</li>
+            </ul>
+            <p class="sb-other-lang"><a href="#landing" lang="en">Speak English? Learn Spanish <i class="ic ic-arrow"></i></a></p>
+          </div>
+          <div class="sb-windshield">
+            <div class="sb-ws-head"><span class="sb-ws-dot"></span><span>Lección 1 · Hola y primeras palabras</span></div>
+            <anvil-component type="Sayback.Components.RoadDemo" name="road" prop:course="es-en" prop:lang="es"></anvil-component>
+            <p class="sb-ws-note">Dale play y responde en voz alta en la pausa. Sí, de verdad. En voz alta.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="sb-band" id="minutes">
+        <div class="ui-wrap">
+          <h2>No necesitas más tiempo. Necesitas el tiempo que ya pierdes.</h2>
+          <p class="sb-band-lead">Todas las apps y todas las clases te piden que <em>encuentres</em> tiempo: sentarte, abrir una pantalla, concentrarte. Por eso casi todo el mundo lo deja a la tercera semana. Sayback no te pide nada nuevo. Llena los minutos en que tus manos están ocupadas y tu cabeza está libre.</p>
+          <ol class="sb-day">
+            <li><time>7:40</time><b>El camino al trabajo</b><span>Tu carro se vuelve un salón de clases. La vista en el camino, la voz en inglés.</span></li>
+            <li><time>12:30</time><b>La caminata</b><span>Sacar al perro dura justo una lección.</span></li>
+            <li><time>18:15</time><b>Los platos</b><span>Veinte minutos en el fregadero: cuarenta frases dichas en voz alta.</span></li>
+            <li><time>20:40</time><b>La ropa</b><span>Doblas camisas mientras pides un café en Nueva York.</span></li>
+          </ol>
+          <p class="sb-math">45 minutos al día, cinco días laborales = <b>3 horas y 45 minutos de práctica hablando</b>. El nivel 1 terminado en seis semanas, sin "buscar tiempo" ni una sola vez.</p>
+        </div>
+      </section>
+
+      <section class="lp-section" id="how">
+        <div class="ui-wrap sb-why">
+          <div class="sb-why-text">
+            <h2>Las apps te hacen tocar la pantalla. Sayback te hace hablar.</h2>
+            <p>Puedes reconocer mil palabras en una pantalla y aun así quedarte en blanco cuando alguien te pregunta algo de verdad. Reconocer no es hablar. <strong>La única forma de aprender a hablar es hablando</strong>: sacar la frase de tu propia memoria, en la pausa, antes de oír la respuesta.</p>
+            <p>Ese pequeño esfuerzo es lo que la fija. En los años sesenta, el lingüista Paul Pimsleur demostró que una frase recordada a intervalos cada vez más largos (segundos, luego minutos, luego días) pasa a la memoria de largo plazo. Sayback programa cada frase así. Tú no organizas nada: las lecciones lo hacen por ti.</p>
+            <p class="sb-question">¿Ves por qué 45 minutos hablando valen más que 45 minutos tocando una pantalla?</p>
+          </div>
+          <ol class="sb-item" aria-label="Un ejercicio">
+            <li class="sb-item-p"><small>Escuchas</small><span>“¿Dónde está la estación?”</span></li>
+            <li class="sb-item-say"><small>Tu turno · 3 segundos y un poco más</small><span>Lo dices en inglés</span></li>
+            <li class="sb-item-a"><small>Luego escuchas</small><span lang="en">“Where is the station?”</span></li>
+            <li class="sb-item-m"><small>De fondo</small><span>Música suave y lenta</span></li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="lp-section sb-inside">
+        <div class="ui-wrap">
+          <h2>Exactamente 45 minutos. Siempre el mismo ritmo.</h2>
+          <div class="sb-tl" role="img" aria-label="Línea de tiempo: introducción al inicio, ánimo a los 15 y 30 minutos, cierre a los 44 minutos">
+            <div class="sb-tl-bar"><i class="t-intro"></i><i class="t-part"></i><i class="t-pep"></i><i class="t-part"></i><i class="t-pep"></i><i class="t-part"></i><i class="t-outro"></i></div>
+            <div class="sb-tl-marks">
+              <span style="left:0%"><b>0:00</b>Intro: la situación, la emoción y un momento cultural</span>
+              <span style="left:33.3%"><b>15:00</b>“Lo estás haciendo muy bien”</span>
+              <span style="left:66.6%"><b>30:00</b>“Ya llevas dos tercios”</span>
+              <span style="left:100%"><b>45:00</b>Cierre</span>
+            </div>
+          </div>
+          <p class="sb-inside-note">Cada lección empieza con una situación real, una emoción para expresar y un momento cultural, para que aprendas cómo <em>vive</em> la gente, no solo lo que dice. Entre 250 y 320 veces por lección, una frase sale de tu propia boca.</p>
+        </div>
+      </section>
+
+      <section class="lp-section sb-beliefs">
+        <div class="ui-wrap">
+          <h2>Si ya lo intentaste antes, lee esto.</h2>
+          <div class="sb-belief"><blockquote>“Las apps nunca me funcionaron.”</blockquote><p>No estaban hechas para que hables. Las rachas y los cuestionarios enseñan a reconocer. Sayback es pura producción: cada frase sale de <em>tu</em> boca, cientos de veces por lección.</p></div>
+          <div class="sb-belief"><blockquote>“Yo no sirvo para los idiomas.”</blockquote><p>Aprendiste español escuchando y repitiendo, mucho antes de saber leer. Sayback usa ese mismo camino. Sin tablas de gramática, sin dictados. Si puedes hablar, puedes hacer esto.</p></div>
+          <div class="sb-belief"><blockquote>“No tengo tiempo.”</blockquote><p>No necesitas tiempo nuevo. Si manejas, limpias, cocinas o caminas, ya tienes los 45 minutos. Sayback solo les da un segundo trabajo.</p></div>
+        </div>
+      </section>
+
+      <section class="lp-section sb-levels-sec" id="lessons">
+        <div class="ui-wrap">
+          <h2>30 situaciones reales en el nivel 1. 3.000 frases en total.</h2>
+          <p class="sb-sec-lead">Cada lección es un momento de la vida real con la emoción que lo acompaña: los nervios al conocer a alguien, el alivio de encontrar el camino, el orgullo cuando te entienden a la primera.</p>
+          <!-- lessons:start (tools/make_landing_lists.py writes this list; don't edit by hand) -->
+          <ol class="sb-lessons">
+            <li><b>Hola y primeras palabras</b><span>Conoces a alguien nuevo en casa de un amigo.</span></li>
+            <li><b>Por favor, gracias y perdón</b><span>Pides pequeños favores y das las gracias en una tienda llena de gente.</span></li>
+            <li><b>¿De dónde eres?</b><span>Un taxista te pregunta de dónde eres, y tú le preguntas también.</span></li>
+            <li><b>En la cafetería</b><span>Pides el desayuno en la barra de una cafetería llena.</span></li>
+            <li><b>Números y precios en el mercado</b><span>Compras fruta en un mercado al aire libre.</span></li>
+            <li><b>¿Cómo estás de verdad?</b><span>Una amiga nota que te ves cansado y te pregunta cómo estás de verdad.</span></li>
+            <li><b>Mi familia</b><span>Enseñas fotos de tu familia en el teléfono.</span></li>
+            <li><b>Perdido en la ciudad</b><span>Te pierdes en el centro histórico y pides indicaciones a desconocidos.</span></li>
+            <li><b>Días, horas y planes</b><span>Haces planes para el fin de semana con una amiga nueva.</span></li>
+            <li><b>Cena en un restaurante</b><span>Cenas con amigos en un restaurante familiar.</span></li>
+            <li><b>De compras</b><span>Te pruebas ropa en una tienda pequeña.</span></li>
+            <li><b>En el hotel</b><span>Llegas cansado a tu hotel tarde por la noche.</span></li>
+            <li><b>Autobuses, taxis y trenes</b><span>Vas tarde y necesitas cruzar la ciudad.</span></li>
+            <li><b>Hablando del tiempo</b><span>Charlas del tiempo con un vecino.</span></li>
+            <li><b>¿Qué te gusta?</b><span>Hablas de pasatiempos con un amigo nuevo.</span></li>
+            <li><b>Invitado a casa</b><span>Un amigo te invita a cenar a su casa.</span></li>
+            <li><b>Por teléfono</b><span>Llamas para pedir una cita y la línea se oye mal.</span></li>
+            <li><b>En la farmacia</b><span>Te sientes mal y pides consejo al farmacéutico.</span></li>
+            <li><b>¿A qué te dedicas?</b><span>En una fiesta, te preguntan a qué te dedicas.</span></li>
+            <li><b>Amigos e invitaciones</b><span>Invitas a unos amigos a una fiesta, y también te invitan a ti.</span></li>
+            <li><b>¡Uy! Errores y disculpas</b><span>Le tiras una bebida encima a alguien y tienes que disculparte.</span></li>
+            <li><b>Celebraciones</b><span>Celebras un cumpleaños y una gran fiesta con una familia local.</span></li>
+            <li><b>Comida y sabores</b><span>Pruebas platos locales en un mercado de comida y hablas de sabores.</span></li>
+            <li><b>¡Ayuda! Emergencias</b><span>Algo sale mal en la calle y necesitas ayuda rápido.</span></li>
+            <li><b>Describir a las personas</b><span>Describes a una amiga que quieres presentar a alguien.</span></li>
+            <li><b>El dinero y el banco</b><span>Tu tarjeta no funciona y necesitas efectivo.</span></li>
+            <li><b>Mi barrio</b><span>Conoces a tus vecinos nuevos y exploras la zona.</span></li>
+            <li><b>Amor y piropos</b><span>Tienes una primera cita.</span></li>
+            <li><b>Despedidas y seguir en contacto</b><span>Tu viaje termina y te despides de tus nuevos amigos.</span></li>
+            <li><b>Un día entero en otro idioma</b><span>Vives un día entero en tu nuevo idioma, desde el desayuno hasta salir de noche.</span></li>
+          </ol>
+          <!-- lessons:end -->
+          <ol class="sb-levelbar">
+            <li><b>1</b><span>Primeros pasos</span></li>
+            <li><b>2</b><span>La vida diaria</span></li>
+            <li><b>3</b><span>Conversaciones reales</span></li>
+            <li><b>4</b><span>Sentimientos e historias</span></li>
+            <li><b>5</b><span>Fluido y local</span></li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="lp-section sb-bridge">
+        <div class="ui-wrap">
+          <h2>Tu vecino está aprendiendo las mismas frases. En español.</h2>
+          <p class="sb-sec-lead">Sayback funciona en los dos sentidos. Las frases que practicas en inglés son las mismas que los angloparlantes practican en español, con notas culturales que explican cada lado al otro. Por qué la propina importa tanto en Estados Unidos. Por qué allá te traen la cuenta sin pedirla. Cuando por fin se sienten a la misma mesa, los dos van a estar listos.</p>
+          <div class="sb-pair">
+            <div><small>Tú aprendes</small><b lang="en">“Can I bring anything?”</b><span>y por qué en una cena estadounidense se pregunta.</span></div>
+            <div><small>Ellos aprenden</small><b>“¿Te ayudo?”</b><span>y por qué “mi casa es su casa” se dice de corazón.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lp-section sb-offer" id="offer">
+        <div class="ui-wrap">
+          <h2>Menos que una clase con un profesor particular.</h2>
+          <p class="sb-sec-lead">Un profesor particular cuesta normalmente entre 25 y 40 dólares la hora. Solo el nivel 1 son 22 horas y media de práctica guiada, y cabe en tu carro.</p>
+          <div class="sb-plans">
+            <div class="ui-card sb-plan">
+              <h3>Nivel 1 · Primeros pasos</h3>
+              <div class="sb-price"><anvil-component type="Label" name="price_level1" prop:text="$39" prop:role='["sb-price-num"]'></anvil-component><span>pago único, tuyo para siempre</span></div>
+              <ul class="sb-ticks">
+                <li><i class="ic ic-check"></i>30 lecciones de 45 minutos (22,5 horas)</li>
+                <li><i class="ic ic-check"></i>600 frases en 30 situaciones reales</li>
+                <li><i class="ic ic-check"></i>Un momento cultural en cada lección</li>
+                <li><i class="ic ic-check"></i>Hoja de frases y transcripción de cada lección</li>
+                <li><i class="ic ic-check"></i>Escúchalas en la app o descarga los MP3</li>
+              </ul>
+              <anvil-component type="Button" name="buy_level1" prop:text="Quiero el nivel 1" prop:role='["btn", "btn-block", "btn-lg"]'></anvil-component>
+            </div>
+            <div class="ui-card sb-plan sb-plan-best">
+              <h3>Curso completo · Niveles 1 a 5</h3>
+              <div class="sb-price"><anvil-component type="Label" name="price_complete" prop:text="$129" prop:role='["sb-price-num"]'></anvil-component><span>pago único, los cinco niveles</span></div>
+              <ul class="sb-ticks">
+                <li><i class="ic ic-check"></i>Las 150 lecciones de 45 minutos (112 horas)</li>
+                <li><i class="ic ic-check"></i>3.000 frases, de “hello” a debatir con soltura</li>
+                <li><i class="ic ic-check"></i>Todo lo del nivel 1</li>
+                <li><i class="ic ic-check"></i>Inglés de EE. UU., Reino Unido, Canadá y Australia en el nivel 5</li>
+                <li><i class="ic ic-check"></i>Menos que comprar los niveles uno por uno</li>
+              </ul>
+              <anvil-component type="Button" name="buy_complete" prop:text="Quiero el curso completo" prop:role='["btn", "btn-primary", "btn-block", "btn-lg"]'></anvil-component>
+            </div>
+          </div>
+          <div class="sb-guarantee">
+            <div class="sb-seal"><anvil-component type="Label" name="guarantee_days" prop:text="30" prop:role='["sb-seal-num"]'></anvil-component><span>días</span></div>
+            <div><h3>Hablas o es gratis.</h3><p>Haz las primeras cinco lecciones, en voz alta. Si no puedes saludar, pedir un café y preguntar una dirección en inglés, escríbenos dentro del plazo de la garantía y te devolvemos todo. Sin formularios, sin preguntas.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lp-section" id="faq">
+        <div class="ui-wrap">
+          <h2 class="sb-center">Preguntas</h2>
+          <div class="lp-faq">
+            <details><summary>¿Es seguro usarlo mientras manejo?</summary><p>Sayback es solo audio y nunca te pide mirar nada. Hablar en voz alta es como conversar con un pasajero. Mantén la atención en el camino; si hay mucho tráfico, solo escucha o ponlo en pausa. El modo carro de la app te deja un solo botón de play, enorme, y nada más.</p></details>
+            <details><summary>¿Qué inglés enseña?</summary><p>Un inglés claro y natural que se entiende en todas partes. Las notas culturales hablan de Estados Unidos, Canadá y el Reino Unido, y el nivel 5 añade expresiones de cada región.</p></details>
+            <details><summary>¿Cuánto tardo en poder tener una conversación?</summary><p>Al terminar el nivel 1 (unas seis semanas de trayectos al trabajo) puedes saludar, pedir en un café, comprar, preguntar direcciones, ir al hotel y a la farmacia, hacer charla casual y aceptar invitaciones. Las conversaciones de verdad crecen en los niveles 2 y 3.</p></details>
+            <details><summary>¿Quiénes son las voces?</summary><p>Voces de inteligencia artificial que suenan naturales: una de mujer y una de hombre para cada idioma, para que oigas cómo cambia una frase según quién la dice. Así también mantenemos el precio tan bajo.</p></details>
+            <details><summary>¿Tengo que hacer una lección cada día?</summary><p>Una al día funciona mejor, porque la memoria se fija mientras duermes. ¿Te saltaste un día? Sigue sin problema. Cada lección repasa las frases anteriores por ti.</p></details>
+            <details><summary>¿Puedo repetir una lección?</summary><p>Sí, y si una lección te costó, deberías hacerlo. Una buena regla: avanza cuando aciertes en voz alta más o menos el ochenta por ciento.</p></details>
+            <details><summary>¿Cómo recibo las lecciones?</summary><p>Se abren en tu biblioteca de Sayback en cuanto pagas. Escúchalas en la app (recuerda dónde te quedaste y funciona desde la pantalla de bloqueo y el carro), o descarga los MP3 y las transcripciones para cualquier app de música, CarPlay o una memoria USB.</p></details>
+            <details><summary>¿Puedo probarlo antes?</summary><p>Sí. Crea una cuenta gratis y la lección 1 completa es tuya: los 45 minutos.</p></details>
+          </div>
+        </div>
+      </section>
+
+      <section class="lp-section">
+        <div class="ui-wrap">
+          <div class="lp-band sb-final">
+            <div><h2>El camino de mañana puede ser tu primera clase de inglés.</h2><p>O pueden ser otros 45 minutos de la misma radio. Tú decides.</p></div>
+            <a class="ui-btn lg sb-final-btn" href="#auth/signup" anvil:name="band_link">Escucha la lección 1 gratis</a>
+          </div>
+          <p class="sb-credit">Inspirado en la investigación publicada del Dr. Paul Pimsleur sobre el recuerdo espaciado. Sin relación con Pimsleur® ni con Simon &amp; Schuster.</p>
+        </div>
+      </section>
+    </div>
+  </anvil-block>
+</anvil-form>
