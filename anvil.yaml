@@ -371,6 +371,7 @@ native_deps:
   head_html: |
     <script src="_/theme/legal-kit.js?v=b9b9209af1"></script>
     <!-- seo:start (APP_MAKER/seo: edit seo/apps/sayback.json and run seo.py, not here) -->
+    <link rel="canonical" href="https://sayback.anvil.app/">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="keywords" content="learn spanish in the car, spanish audio lessons, spanish for commuters, hands-free spanish course, learn spanish while driving, speak spanish out loud, spaced repetition audio course, aprender inglés en el carro, curso de inglés en audio, inglés para hispanohablantes">
     <meta name="author" content="Arkvital">
@@ -379,9 +380,16 @@ native_deps:
     <meta property="og:title" content="Sayback: speak Spanish on the drive you already take">
     <meta property="og:description" content="45-minute hands-free audio lessons for the car and the kitchen. Hear it in English, say it in Spanish, out loud. 150 lessons. Lesson 1 is free.">
     <meta property="og:locale" content="en_CA">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:url" content="https://sayback.anvil.app/">
+    <meta property="og:image" content="https://sayback.anvil.app/_/theme/og-image.png">
+    <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Sayback: Speak a new language in the minutes you already have">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Sayback: speak Spanish on the drive you already take">
     <meta name="twitter:description" content="45-minute hands-free audio lessons for the car and the kitchen. Hear it in English, say it in Spanish, out loud. 150 lessons. Lesson 1 is free.">
+    <meta name="twitter:image" content="https://sayback.anvil.app/_/theme/og-image.png">
+    <link rel="alternate" type="text/plain" title="Sayback for AI assistants" href="https://sayback.anvil.app/llms.txt">
+    <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Service", "@id": "https://sayback.anvil.app/#app", "name": "Sayback", "url": "https://sayback.anvil.app/", "description": "45-minute hands-free audio lessons for the car and the kitchen. Hear it in English, say it in Spanish, out loud. 150 lessons. Lesson 1 is free.", "image": "https://sayback.anvil.app/_/theme/og-image.png", "serviceType": "Speak a new language in the minutes you already have", "provider": {"@id": "https://arkvital.com/#org"}, "areaServed": "Worldwide", "availableChannel": {"@type": "ServiceChannel", "serviceUrl": "https://sayback.anvil.app/", "name": "Web browser"}, "availableLanguage": "en", "audience": {"@type": "Audience", "audienceType": "Busy adults who want to speak Spanish (or, in Spanish, English) and only have the commute, chores and walks to practise in"}}, {"@type": "WebSite", "@id": "https://sayback.anvil.app/#site", "url": "https://sayback.anvil.app/", "name": "Sayback", "publisher": {"@id": "https://arkvital.com/#org"}}, {"@type": "Organization", "@id": "https://arkvital.com/#org", "name": "Arkvital", "url": "https://arkvital.com", "email": "arkvital@outlook.com", "address": {"@type": "PostalAddress", "addressLocality": "Montreal", "addressRegion": "QC", "addressCountry": "CA"}}]}</script>
     <!-- seo:end -->
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#eef2f4">
