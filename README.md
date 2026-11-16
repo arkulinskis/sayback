@@ -62,7 +62,7 @@ and lock-screen controls. Built on [Anvil](https://anvil.works) as native Anvil 
 1. Anvil editor: **Create app → Clone from GitHub**, paste `https://github.com/arkulinskis/sayback`.
 2. Check the **Users** service (email + password, Continue with Google, sign-up on) and the **App Secrets** service.
 3. Accept the **Schema Mismatch** alert with **"The schema of the source code is correct"**.
-4. Run it, sign up with arkulinskis@gmail.com first (that account becomes admin), then **Publish**.
+4. Run it, sign up with your admin email (App Secret `admin_emails`) first (that account becomes admin), then **Publish**.
 
 ## Before selling (Admin > Shop & setup shows the same checklist)
 
