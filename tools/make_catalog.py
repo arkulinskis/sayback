@@ -2,6 +2,8 @@
 
     python tools/make_catalog.py
 
+    python tools/make_catalog.py --cues-only     (just server_code/cues_data.py, the thinking-time cues)
+
 Run it again whenever a lesson, title or sentence changes in sayback/content/L*.txt. The app reads only the
 generated module (titles, situation, feeling, culture note and the 20 new sentences of every lesson), so the
 course folder never has to be on Anvil. Audio files are named <course>/L<level>/L<level>-<nn>.mp3 in storage
@@ -15,6 +17,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 SAYBACK = ROOT.parent / "sayback"
 AUDIO = ROOT.parent / "sayback-audio"
 OUT = ROOT / "server_code" / "lessons_data.py"
+CUES_OUT = ROOT / "server_code" / "cues_data.py"
 sys.path.insert(0, str(SAYBACK / "tools"))
 import sayback as SB  # noqa: E402
 
@@ -46,7 +49,45 @@ def marks(course, code):
     return [round(first), round(part.get("enc1", 900)), round(part.get("enc2", 1800)), round(part.get("outro", 2670))]
 
 
+def b36(n):
+    digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+    out = ""
+    while True:
+        n, r = divmod(n, 36)
+        out = digits[r] + out
+        if not n:
+            return out.rjust(3, "0")
+
+
+def cues(course, code):
+    """Thinking-time cues: the moment each recall prompt ends (t + pd in the lesson's plan, the start of the recorded
+    thinking gap; sayback/tools/sayback.py mix_plan places the answer THINK + ad later). New phrases (kind "new") are
+    heard before they're asked, so they get no cue. Returns one string: 3 base-36 digits per cue, in deciseconds."""
+    f = SAYBACK / "plans" / course / (code + ".json")
+    if not f.exists():
+        return ""
+    ev = json.loads(f.read_text(encoding="utf-8"))["events"]
+    ts = sorted({int(round((e["t"] + e["pd"]) * 10)) for e in ev if e["kind"] in ("recall", "review") and "pd" in e})
+    return "".join(b36(t) for t in ts if t < 46656)
+
+
+def write_cues():
+    data = {}
+    for course in SB.COURSES:
+        data[course] = {SB.lesson_key(ls): cues(course, SB.lesson_key(ls)) for ls in SB.all_lessons(course)}
+        print("%s: %d cues" % (course, sum(len(v) // 3 for v in data[course].values())))
+    body = json.dumps(data, separators=(",", ":"))
+    head = ('"""Made by tools/make_catalog.py: thinking-time cues per lesson (3 base-36 digits each = the\n'
+            "deciseconds where a recall prompt ends). Kept apart from lessons_data so it loads only when a\n"
+            "lesson opens. Don't edit by hand.\"\"\"\n")
+    CUES_OUT.write_bytes((head + "import json\n\nDATA = json.loads(%r)\n" % body).encode("utf-8"))
+    print("wrote", CUES_OUT, "(%d KB)" % (CUES_OUT.stat().st_size // 1024))
+
+
 def main():
+    write_cues()
+    if "--cues-only" in sys.argv:
+        return
     data = {"levels": {str(k): v for k, v in LEVELS.items()}, "courses": {}}
     for course, meta in SB.COURSES.items():
         learner, target = meta["learner"], meta["target"]

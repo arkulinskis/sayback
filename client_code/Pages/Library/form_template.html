@@ -21,6 +21,14 @@
             <anvil-component type="Button" name="play_button" prop:text="Play lesson" prop:role='["btn", "btn-primary", "btn-lg", "ic-play"]'></anvil-component>
             <anvil-component type="Button" name="car_button" prop:text="Car mode" prop:role='["btn", "btn-lg", "ic-car"]'></anvil-component>
           </div>
+          <div class="sb-opt sb-next-trip">
+            <span class="sb-opt-label" data-t>How long is your trip?</span>
+            <div class="ui-seg sb-seg-dark" role="group" aria-label="How long is your trip?" data-ta="aria-label">
+              <button type="button" anvil:name="trip_15" data-trip="15" anvil:on-dom:click="self.trip_click" data-t>15 min</button>
+              <button type="button" anvil:name="trip_30" data-trip="30" anvil:on-dom:click="self.trip_click" data-t>30 min</button>
+              <button type="button" anvil:name="trip_0" data-trip="0" anvil:on-dom:click="self.trip_click" data-t>Whole lesson</button>
+            </div>
+          </div>
         </section>
         <section class="ui-card sb-next sb-unlock" anvil:name="unlock_card">
           <anvil-component type="Label" name="unlock_title" prop:role='["sb-next-title"]'></anvil-component>
@@ -34,11 +42,28 @@
           <p class="sb-next-meta" data-t>That's about 112 hours of speaking out loud. Pick any lesson to keep it fresh, or try the other direction with a friend.</p>
         </section>
         <section class="ui-card sb-stats">
+          <div class="sb-goal">
+            <div class="sb-ring" aria-hidden="true">
+              <svg viewBox="0 0 120 120"><circle class="sb-ring-bg" cx="60" cy="60" r="52" pathLength="100"></circle><circle class="sb-ring-fg" anvil:dom-node="ring_fg" cx="60" cy="60" r="52" pathLength="100"></circle></svg>
+              <anvil-component type="Label" name="week_min" prop:role='["sb-ring-num"]'></anvil-component>
+            </div>
+            <div class="sb-goal-body">
+              <anvil-component type="Label" name="goal_line" prop:role='["sb-goal-line"]'></anvil-component>
+              <anvil-component type="Label" name="goal_sub" prop:role='["fine-print", "sb-goal-sub"]'></anvil-component>
+              <div class="ui-seg sb-goal-seg" role="group" aria-label="Weekly goal in minutes" data-ta="aria-label">
+                <button type="button" anvil:name="goal_45" data-goal="45" anvil:on-dom:click="self.goal_click">45</button>
+                <button type="button" anvil:name="goal_90" data-goal="90" anvil:on-dom:click="self.goal_click">90</button>
+                <button type="button" anvil:name="goal_150" data-goal="150" anvil:on-dom:click="self.goal_click">150</button>
+                <button type="button" anvil:name="goal_225" data-goal="225" anvil:on-dom:click="self.goal_click">225</button>
+              </div>
+            </div>
+          </div>
           <div class="sb-stat-row">
-            <div class="sb-stat"><anvil-component type="Label" name="week_min" prop:role='["sb-stat-num"]'></anvil-component><span data-t>stolen minutes this week</span></div>
             <div class="sb-stat"><anvil-component type="Label" name="streak" prop:role='["sb-stat-num"]'></anvil-component><span data-t>day streak</span></div>
+            <div class="sb-stat"><anvil-component type="Label" name="today_min" prop:role='["sb-stat-num"]'></anvil-component><span data-t>minutes today</span></div>
             <div class="sb-stat"><anvil-component type="Label" name="done_count" prop:role='["sb-stat-num"]'></anvil-component><span data-t>lessons done</span></div>
           </div>
+          <anvil-component type="Label" name="rest_note" prop:role='["sb-rest-note"]'></anvil-component>
           <anvil-component type="RepeatingPanel" name="bars" prop:item_template="Sayback.Items.DayBar" prop:role='["sb-bars"]'></anvil-component>
           <p class="small muted sb-stats-note" data-t>The last two weeks. A day counts once you've listened for a minute.</p>
         </section>

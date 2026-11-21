@@ -174,7 +174,10 @@ assert lib["lessons"][0]["state"] == "started" and lib["next"]["position"] == 62
 assert lib["stats"]["streak"] == 1
 T.listening.add_row(user=carla, course="en-es", day=now.date() - dt.timedelta(days=1), seconds=900, is_demo=False)
 T.listening.add_row(user=carla, course="en-es", day=now.date() - dt.timedelta(days=3), seconds=900, is_demo=False)
-assert call("library", "en-es", 1, now.date().isoformat())["stats"]["streak"] == 2, "a gap ends the streak"
+st = call("library", "en-es", 1, now.date().isoformat())["stats"]
+assert st["streak"] == 3 and st["rest_used"], "one missed day in 7 is a rest day"
+T.listening.add_row(user=carla, course="en-es", day=now.date() - dt.timedelta(days=5), seconds=900, is_demo=False)
+assert call("library", "en-es", 1, now.date().isoformat())["stats"]["streak"] == 3, "a second gap within 7 days ends it"
 r = ok(call("save_progress", "en-es", "L1-01", 2600, 60, False, now.date().isoformat()))
 assert r["done"] and r["newly_done"]
 ok(call("save_progress", "en-es", "L1-01", 2650, 30, False, now.date().isoformat()))

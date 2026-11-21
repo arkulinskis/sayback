@@ -1,6 +1,10 @@
 """The member side: the library (levels, lessons, what's next), one lesson (audio link, phrase sheet, culture note),
 saved positions, and the listening stats (stolen minutes this week, streak).
 
+Streak: a day counts at 60 s of listening; one missed day per rolling 7 days is a rest day (the streak stays, it
+just doesn't grow). Weekly goal: listener_prefs.goal_minutes (45/90/150/225, default 90), read in try/except so the
+library works before the user accepts the new table.
+
 Dates: the browser sends its own date ("today", YYYY-MM-DD) so a streak follows the person's day, not UTC.
 """
 import datetime as dt
@@ -13,6 +17,10 @@ from . import Audio, Catalog, DemoData, Shop
 
 LESSON_SECONDS = 2700
 DONE_AT = 0.93          # 93% heard = done (the outro and the fade-out don't have to be sat through)
+GOALS = (45, 90, 150, 225)
+DEFAULT_GOAL = 90
+DAY_SECONDS = 60        # a day counts for the streak once you've listened this long
+REST_EVERY = 7          # one missed day per this many days is forgiven
 
 
 def _day(today):
@@ -47,16 +55,53 @@ def stats(me, course, today):
         if r["day"] is not None:
             by_day[r["day"]] = by_day.get(r["day"], 0) + (r["seconds"] or 0)
     week = sum(v for d, v in by_day.items() if 0 <= (day - d).days < 7)
-    streak, d = 0, day
-    if by_day.get(d, 0) < 60:
-        d = d - dt.timedelta(days=1)   # today not started yet: the streak still counts up to yesterday
-    while by_day.get(d, 0) >= 60:
-        streak += 1
-        d = d - dt.timedelta(days=1)
+    streak, rest_used = streak_of(by_day, day)
     last14 = [{"day": (day - dt.timedelta(days=13 - i)).isoformat(),
                "minutes": int(by_day.get(day - dt.timedelta(days=13 - i), 0) // 60)} for i in range(14)]
     return {"week_minutes": int(week // 60), "total_minutes": int(sum(by_day.values()) // 60), "streak": streak,
-            "days": last14, "today_minutes": int(by_day.get(day, 0) // 60)}
+            "rest_used": rest_used, "goal": goal_of(me), "days": last14, "today_minutes": int(by_day.get(day, 0) // 60)}
+
+
+def streak_of(by_day, day):
+    """(streak, rest_used). Walks back from today (or yesterday, if today has under a minute so far). A missed day is
+    forgiven when the day before it was listened to and no other forgiven day is within REST_EVERY days of it; rest
+    days keep the streak but don't add to it. rest_used = a forgiven day in the last 7 days."""
+    one = dt.timedelta(days=1)
+
+    def heard(x):
+        return by_day.get(x, 0) >= DAY_SECONDS
+
+    d = day if heard(day) else day - one   # today not started yet: the streak still counts up to yesterday
+    oldest = min(by_day) if by_day else day
+    streak, forgiven = 0, []
+    while d >= oldest:
+        if heard(d):
+            streak += 1
+        elif heard(d - one) and (not forgiven or (forgiven[-1] - d).days >= REST_EVERY):
+            forgiven.append(d)             # a rest day: the streak carries on behind it
+        else:
+            break
+        d -= one
+    if not streak:
+        return 0, False
+    return streak, any((day - f).days < 7 for f in forgiven)
+
+
+def goal_of(me):
+    """The person's weekly goal in minutes (default 90). Safe before the listener_prefs table exists."""
+    try:
+        r = app_tables.listener_prefs.get(user=me)
+        g = int(r["goal_minutes"] or 0) if r is not None else 0
+        return g if g in GOALS else 0
+    except Exception:
+        return 0   # 0 = not chosen (or not saved yet): the browser's choice or the default applies
+
+
+def part_of(pos, marks):
+    """Which third of the lesson a saved position is in (1-3); the pep talks at marks[1] and marks[2] start parts 2, 3."""
+    if not marks or len(marks) < 3:
+        return 1
+    return 1 + int(pos >= marks[1] - 3) + int(pos >= marks[2] - 3)
 
 
 def _tile(ls, prog, me, course):
@@ -67,7 +112,7 @@ def _tile(ls, prog, me, course):
     state = "locked" if locked else ("done" if done else ("started" if pos > 20 else "open"))
     return {"code": ls["code"], "n": ls["n"], "level": ls["level"], "title": ls["title"], "state": state,
             "free": Catalog.is_free(ls["code"]), "pct": min(100, int(pos * 100 / LESSON_SECONDS)) if pos else 0,
-            "course": course}
+            "part": part_of(pos, ls.get("marks")) if state == "started" else 1, "course": course}
 
 
 def next_lesson(me, course, prog):
@@ -106,7 +151,9 @@ def library(course=None, level=None, today="", fallback=None):
     nd = None
     if nxt is not None:
         nd = {"code": nxt["code"], "level": nxt["level"], "n": nxt["n"], "title": nxt["title"],
-              "situation": nxt["situation"], "position": int(pos), "locked": not Catalog.can_play(me, course, nxt["code"])}
+              "situation": nxt["situation"], "position": int(pos),
+              "part": part_of(pos, nxt.get("marks")) if pos > 20 else 1, "marks": nxt.get("marks"),
+              "locked": not Catalog.can_play(me, course, nxt["code"])}
     return {"course": course, "name": Catalog.course_name(course), "level": level, "levels": levels, "lessons": tiles,
             "next": nd, "stats": stats(me, course, today), "owned": sorted(owned), "is_admin": C.is_admin(me),
             "other": {"en-es": "es-en", "es-en": "en-es"}[course],
@@ -125,10 +172,13 @@ def get_lesson(course, code):
     r = app_tables.progress.get(user=me, course=course, code=code)
     prev, nxt = Catalog.neighbours(course, code)
     url = download = transcript = None
+    cues = ""
     if not why:
         url = Audio.url_for(ls["file"])
         download = Audio.url_for(ls["file"], ls["download"])
         transcript = Audio.url_for(ls["file"][:-4] + ".txt", ls["download"][:-4] + ".txt")
+        cues = lesson_cues(course, code)   # only for lessons the person may hear
+    updated = r["updated"] if r is not None else None
     def brief(c):
         x = Catalog.lesson(course, c) if c else None
         return {"code": x["code"], "title": x["title"], "locked": not Catalog.can_play(me, course, x["code"])} if x else None
@@ -139,19 +189,51 @@ def get_lesson(course, code):
                 pairs=ls["pairs"] if not why else ls["pairs"][:3], pair_count=len(ls["pairs"]),
                 url=url, download=download, transcript=transcript, audio=Audio.status() != "none",
                 position=int((r["position"] or 0) if r is not None else 0), done=bool(r is not None and r["done"]),
+                updated=int(updated.timestamp() * 1000) if updated is not None else 0, cues=cues,
                 prev=brief(prev), next=brief(nxt), shop=Shop.shop_public(course, me) if why else None)
 
 
+def lesson_cues(course, code):
+    """The thinking-time cues of a lesson (tools/make_catalog.py -> cues_data.py, imported on first use)."""
+    try:
+        from . import cues_data
+        return cues_data.DATA.get(course, {}).get(code, "")
+    except Exception:
+        return ""
+
+
 @anvil.server.callable(require_user=True)
-def save_progress(course, code, position, listened=0, done=False, today=""):
+def set_goal(minutes):
+    """The weekly goal in minutes: only the offered values, saved per account in listener_prefs."""
+    me = C.require_user()
+    try:
+        minutes = int(minutes)
+    except (TypeError, ValueError):
+        return C.fail("Pick one of the goals.")
+    if minutes not in GOALS:
+        return C.fail("Pick one of the goals.")
+    try:
+        r = app_tables.listener_prefs.get(user=me)
+        if r is None:
+            app_tables.listener_prefs.add_row(user=me, goal_minutes=minutes, updated=C.now(), is_demo=False)
+        else:
+            r.update(goal_minutes=minutes, updated=C.now())
+    except Exception:
+        return C.ok(goal=minutes, saved=False)   # table not accepted yet: the browser keeps the choice meanwhile
+    return C.ok(goal=minutes, saved=True)
+
+
+@anvil.server.callable(require_user=True)
+def save_progress(course, code, position, listened=0, done=False, today="", queued=False):
     """Called by the player every ~20 s while it plays, on pause and at the end. listened = seconds actually heard
-    since the last call (capped, so a stuck browser can't inflate the stats)."""
+    since the last call (capped, so a stuck browser can't inflate the stats). queued = it also carries seconds from
+    saves that failed earlier (a tunnel, a dead zone), so the cap is bigger."""
     me = C.require_user()
     if not Catalog.can_play(me, course, code):
         return C.fail("This lesson is locked.")
     try:
         position = max(0.0, min(float(position or 0), LESSON_SECONDS))
-        listened = max(0.0, min(float(listened or 0), 120.0))
+        listened = max(0.0, min(float(listened or 0), 600.0 if queued else 120.0))
     except (TypeError, ValueError):
         return C.fail("Bad position.")
     finished = bool(done) or position >= LESSON_SECONDS * DONE_AT

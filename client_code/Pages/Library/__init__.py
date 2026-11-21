@@ -1,4 +1,5 @@
 from anvil import *
+import anvil.server
 from anvil.js import window
 
 from ._anvil_designer import LibraryTemplate
@@ -15,10 +16,23 @@ def fmt(sec):
     return "%d:%02d" % (sec // 60, sec % 60)
 
 
+GOALS = (45, 90, 150, 225)
+DEFAULT_GOAL = 90
+TRIPS = (15, 30, 0)
+
+
+def stored_int(key, allowed, default):
+    try:
+        v = int(state.store_get(key, default) or 0)
+    except (TypeError, ValueError):
+        v = default
+    return v if v in allowed else default
+
+
 class Library(LibraryTemplate):
-    """#home[/course[/level]]: the member's library. Up next (play / resume / car mode), the stolen-minutes stats with
-    a 14-day chart, the five levels, the 30 lessons of the chosen level, and the offers for what isn't owned yet.
-    One server call (library)."""
+    """#home[/course[/level]]: the member's library. Up next (play / resume / car mode, trip length), the weekly goal
+    ring (stolen minutes this week of 45/90/150/225), the streak with its weekly rest day, a 14-day chart, the five
+    levels, the 30 lessons of the chosen level, and the offers for what isn't owned yet. One server call (library)."""
 
     def __init__(self, args=(), **properties):
         super().__init__(**properties)
@@ -57,6 +71,8 @@ class Library(LibraryTemplate):
         title = i18n.pick(n["title"])
         meta = "%s · %s · %s" % (i18n.t("Level {n}").replace("{n}", str(n["level"])),
                                  i18n.t("Lesson {n}").replace("{n}", str(n["n"])), i18n.pick(n["situation"]))
+        if n["position"] > 20 and n.get("part", 1) > 1:
+            meta += " · " + i18n.t("Part {n} of 3 next").replace("{n}", str(n["part"]))
         if n["locked"]:
             self.unlock_title.text = i18n.t("You've heard the free lesson. Ready for the rest?")
             self.unlock_text.text = i18n.t("Next up: {title}. Unlock Level 1 to keep going tomorrow morning.").replace("{title}", title)
@@ -69,15 +85,65 @@ class Library(LibraryTemplate):
         self.next_fill.style["transform"] = "scaleX(%.3f)" % min(1.0, pos / 2700.0)
         self.play_button.text = i18n.t("Resume at {t}").replace("{t}", fmt(pos)) if pos > 20 else i18n.t("Play lesson")
         self.car_button.text = i18n.t("Car mode")
+        self._show_trip()
+
+    def _show_trip(self):
+        trip = stored_int("sb.trip", TRIPS, 0)
+        for v, el in ((15, self.trip_15), (30, self.trip_30), (0, self.trip_0)):
+            el.classes["on"] = v == trip
+
+    def trip_click(self, event):
+        state.store_set("sb.trip", int(event.currentTarget.getAttribute("data-trip") or 0))
+        self._show_trip()
 
     def _stats(self, d):
         s = d["stats"]
-        self.week_min.text = str(s["week_minutes"])
         self.streak.text = str(s["streak"])
+        self.today_min.text = str(s.get("today_minutes", 0))
         self.done_count.text = str(d["done_total"])
+        if s.get("rest_used"):
+            self.rest_note.text = i18n.t("Rest day used: streak safe. Listen tomorrow to keep it going.")
+            self.rest_note.role = ["sb-rest-note", "used"]
+        else:
+            self.rest_note.text = i18n.t("One rest day a week: miss a day and your streak waits for you.")
+            self.rest_note.role = ["sb-rest-note"]
+        # the account's goal; before it's saved there (or before the new table exists), this browser's choice
+        self.goal = s.get("goal") if s.get("goal") in GOALS else stored_int("sb.goal", GOALS, DEFAULT_GOAL)
+        self._goal(s["week_minutes"])
         top = max([x["minutes"] for x in s["days"]] + [1])
         days = s["days"]
         self.bars.items = [dict(x, max=top, today=(i == len(days) - 1)) for i, x in enumerate(days)]
+
+    def _goal(self, week):
+        goal = self.goal
+        self.week_min.text = str(week)
+        self.goal_line.text = i18n.t("{n} of {goal} stolen minutes this week").replace("{n}", str(week)).replace("{goal}", str(goal))
+        left = goal - week
+        if left <= 0:
+            self.goal_sub.text = i18n.t("Goal reached. Every minute from here is a bonus.")
+        elif week == 0:
+            self.goal_sub.text = i18n.t("A fresh week. One trip gets the ring moving.")
+        else:
+            self.goal_sub.text = i18n.t("{n} minutes to go.").replace("{n}", str(left))
+        pct = min(100.0, week * 100.0 / max(1, goal))
+        self.dom_nodes["ring_fg"].style.strokeDashoffset = str(round(100 - pct, 2))
+        self.dom_nodes["ring_fg"].classList.toggle("full", left <= 0)
+        for v, el in ((45, self.goal_45), (90, self.goal_90), (150, self.goal_150), (225, self.goal_225)):
+            el.classes["on"] = v == goal
+
+    def goal_click(self, event):
+        v = int(event.currentTarget.getAttribute("data-goal") or DEFAULT_GOAL)
+        if v not in GOALS:
+            return
+        self.goal = v
+        state.store_set("sb.goal", v)
+        self._goal(self.d["stats"]["week_minutes"])
+        try:
+            r = anvil.server.call_s("set_goal", v)
+        except Exception:
+            r = None
+        if not (isinstance(r, dict) and r.get("ok")):
+            state.toast(i18n.t("Your goal is kept on this device for now."), "ok")
 
     def _levels(self, d):
         lv = d["level"]

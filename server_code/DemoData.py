@@ -28,6 +28,7 @@ PRICES = {"es1": 3900, "esall": 12900, "en1": 3900, "enall": 12900}
 LEVELS = {"es1": [1], "en1": [1], "esall": [1, 2, 3, 4, 5], "enall": [1, 2, 3, 4, 5]}
 # Tables that hold demo rows (each has an is_demo column). Children before parents.
 DEMO_TABLES = ["listening", "progress", "purchases", "waitlist"]
+DEMO_GOALS = [150, 225, 90, 45, 90]   # weekly goals (minutes) of the demo people, in DEMO_USERS order
 
 
 def state():
@@ -58,6 +59,10 @@ def load():
             lv, k = divmod(n, 30)
             app_tables.progress.add_row(user=u, course=course, code="L%d-%02d" % (lv + 1, k + 1), position=0, done=True,
                                         completions=1, updated=C.now() - dt.timedelta(days=done - n), is_demo=True)
+        try:   # listener_prefs arrives with the weekly-goal update: skipped until its schema is accepted
+            app_tables.listener_prefs.add_row(user=u, goal_minutes=DEMO_GOALS[i], updated=C.now(), is_demo=True)
+        except Exception:
+            pass
     for j, (email, course, source) in enumerate(DEMO_WAITLIST):
         app_tables.waitlist.add_row(email=email, course=course, user=None, source=source, consent="Demo entry",
                                     created=C.now() - dt.timedelta(days=j + 1, hours=3 * j), is_demo=True)
@@ -66,6 +71,11 @@ def load():
 
 
 def remove(remember=True):
+    try:
+        for r in app_tables.listener_prefs.search(is_demo=True):
+            r.delete()
+    except Exception:
+        pass
     for name in DEMO_TABLES:
         for r in getattr(app_tables, name).search(is_demo=True):
             r.delete()

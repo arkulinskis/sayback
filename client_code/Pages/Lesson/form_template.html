@@ -14,6 +14,26 @@
       <section class="ui-card sb-player-card" anvil:name="player_card">
         <anvil-component type="Sayback.Components.Player" name="player"></anvil-component>
         <anvil-component type="Label" name="resume_note" prop:role='["fine-print", "sb-resume-note"]' prop:visible="false"></anvil-component>
+        <anvil-component type="Label" name="trip_note" prop:role='["sb-trip-note"]' prop:visible="false"></anvil-component>
+        <div class="sb-opts">
+          <div class="sb-opt">
+            <span class="sb-opt-label" data-t>How long is your trip?</span>
+            <div class="ui-seg sb-seg-dark" role="group" aria-label="How long is your trip?" data-ta="aria-label">
+              <button type="button" anvil:name="trip_15" data-trip="15" anvil:on-dom:click="self.trip_click" data-t>15 min</button>
+              <button type="button" anvil:name="trip_30" data-trip="30" anvil:on-dom:click="self.trip_click" data-t>30 min</button>
+              <button type="button" anvil:name="trip_0" data-trip="0" anvil:on-dom:click="self.trip_click" data-t>Whole lesson</button>
+            </div>
+          </div>
+          <div class="sb-opt">
+            <span class="sb-opt-label" data-t>Thinking time</span>
+            <div class="ui-seg sb-seg-dark" role="group" aria-label="Thinking time" data-ta="aria-label">
+              <button type="button" anvil:name="think_0" data-think="0" anvil:on-dom:click="self.think_click" data-t>Normal</button>
+              <button type="button" anvil:name="think_2" data-think="2" anvil:on-dom:click="self.think_click" data-t>+2 s</button>
+              <button type="button" anvil:name="think_4" data-think="4" anvil:on-dom:click="self.think_click" data-t>+4 s</button>
+            </div>
+          </div>
+          <anvil-component type="Label" name="opts_hint" prop:role='["sb-opts-hint"]'></anvil-component>
+        </div>
       </section>
       <section class="ui-card sb-locked" anvil:name="locked_card">
         <i class="ic ic-lock sb-locked-ic"></i>

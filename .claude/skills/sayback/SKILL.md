@@ -12,7 +12,7 @@ description: Context, workflow and recipes for Sayback (folder sayback-app), the
 
 **Where it lives:**
 - Folder `C:\Users\arkvi\Documents\CLAUDE\sayback-app\` = the git clone of **github.com/arkulinskis/sayback**, branch `master`.
-  "git" layout: the folder *is* the Anvil app. Anvil pulls master; pushing is the deploy. Live: not published yet.
+  "git" layout: the folder *is* the Anvil app. Anvil pulls master; pushing is the deploy. Live: https://sayback.anvil.app
   The folder is `sayback-app` because `sayback` is the course project.
 - Made from `C:\Users\arkvi\Documents\CLAUDE\APP_MAKER\template-forms` (native Anvil Forms, Nov 2026). Anvil's own agent
   skills describe the same model: `client-forms`, `data-models`, `server-code`, `client-modules`, `anvil-yaml`
@@ -135,6 +135,18 @@ tools/                     check.py, assets.py, build_icons.py, make_icons.py, u
 
 ## App recipes
 
+- **Thinking-time cues** (`server_code/cues_data.py`, ~220 KB, imported only when a lesson opens): the end of every
+  recall prompt (plan event `t + pd`, kinds recall/review, not `new`), 3 base-36 digits per cue in deciseconds.
+  `python tools/make_catalog.py --cues-only` rebuilds just them; the full run rebuilds both. get_lesson sends `cues`
+  only for unlocked lessons. sb-player.js holds (pauses) for `think` seconds when media time crosses a cue, never
+  right after a seek, and the pause handler ignores the hold so the UI stays "playing".
+- **Trip length / weekly goal / rest day:** sb-player.js `planStop()` = first of marks[1], marks[2] after
+  start + minutes*60 - 120, planned on play (not on resuming from a hold); doStop seeks back to the mark so the saved
+  position = the pep talk. Listening.streak_of = one forgiven miss per 7 days; goal_of/set_goal use table
+  `listener_prefs` in try/except (works before the Schema Mismatch is accepted; the browser keeps `sb.goal` meanwhile).
+- **Never lose your place:** Pages/Lesson mirrors every tick to `sb.pos.<course>.<code>` = [position, ms, unsent]
+  (newer than get_lesson's `updated` wins), keeps failed `listened` in `_unsent` (sent with `queued=True`, server cap
+  600 s), and on the player's `failed` event fetches get_lesson once and `swap()`s the new link in at the same second.
 - **A lesson or sentence changed** (in `sayback/content`): re-render there, then here `python tools/make_catalog.py`,
   `python tools/make_landing_lists.py`, and re-upload with `sayback/tools/upload_r2.py` (skips unchanged sizes).
 - **Prices / Stripe links / free lessons / test audio address:** Admin > Shop & setup (app_settings `shop`,

@@ -125,6 +125,32 @@ ES = {
     "The last two weeks. A day counts once you've listened for a minute.":
         "Las últimas dos semanas. Un día cuenta en cuanto escuchas un minuto.",
     "Unlock the rest of the course": "Desbloquea el resto del curso",
+    # trip length, thinking time, never lose your place (2026-11-20)
+    "How long is your trip?": "¿Cuánto dura tu trayecto?", "15 min": "15 min", "30 min": "30 min",
+    "Whole lesson": "Lección completa", "Thinking time": "Tiempo para pensar", "Normal": "Normal", "+2 s": "+2 s", "+4 s": "+4 s",
+    "Your turn: say it out loud": "Te toca: dilo en voz alta", "Part {n} next": "Sigue la parte {n}",
+    "Part {n} of 3 next": "Sigue la parte {n} de 3",
+    "Part {n} of 3 next. It opens with a pep talk.": "Sigue la parte {n} de 3. Empieza con unas palabras de ánimo.",
+    "Stops at the next pep talk, about 15 minutes in, so the trip ends on a clean break.":
+        "Se detiene en el siguiente ánimo, a unos 15 minutos, para que el trayecto termine en una pausa limpia.",
+    "Plays through one pep talk and stops at the next, about 30 minutes in.":
+        "Pasa un ánimo y se detiene en el siguiente, a unos 30 minutos.",
+    "Plays the whole 45 minutes.": "Suenan los 45 minutos completos.",
+    "After each question the audio waits {n} more seconds for you while the ring fills.":
+        "Después de cada pregunta, el audio te espera {n} segundos más mientras se llena el círculo.",
+    "Trip done, at a clean break. Part {n} of 3 is next and opens with a pep talk.":
+        "Trayecto terminado, en una pausa limpia. Sigue la parte {n} de 3 y empieza con unas palabras de ánimo.",
+    # weekly goal + rest day
+    "minutes today": "minutos hoy", "Weekly goal in minutes": "Meta semanal en minutos",
+    "{n} of {goal} stolen minutes this week": "{n} de {goal} minutos robados esta semana",
+    "Goal reached. Every minute from here is a bonus.": "Meta cumplida. Cada minuto de aquí en adelante es extra.",
+    "A fresh week. One trip gets the ring moving.": "Semana nueva. Un trayecto pone el círculo en marcha.",
+    "{n} minutes to go.": "Faltan {n} minutos.",
+    "Your goal is kept on this device for now.": "Por ahora tu meta se guarda en este dispositivo.",
+    "Rest day used: streak safe. Listen tomorrow to keep it going.":
+        "Día de descanso usado: tu racha está a salvo. Escucha mañana para seguir.",
+    "One rest day a week: miss a day and your streak waits for you.":
+        "Un día de descanso por semana: si faltas un día, tu racha te espera.",
     # profile
     "Save": "Guardar", "Saved": "Guardado", "Email me a reset link": "Envíame un enlace para cambiarla", "member since": "miembro desde",
     "Please tell us your name.": "Dinos tu nombre, por favor.", "Your courses": "Tus cursos",

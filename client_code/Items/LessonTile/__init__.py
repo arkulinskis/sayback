@@ -7,7 +7,7 @@ ICONS = {"done": "ic-check", "locked": "ic-lock", "started": "ic-play", "open": 
 
 
 class LessonTile(LessonTileTemplate):
-    """One lesson in the library grid. item = {code, n, level, title {en, es}, state, free, pct, course}.
+    """One lesson in the library grid. item = {code, n, level, title {en, es}, state, free, pct, part, course}.
     state: done / started (pct heard) / open / locked. The whole tile is a link to the lesson."""
 
     def __init__(self, **properties):
@@ -19,6 +19,8 @@ class LessonTile(LessonTileTemplate):
         self.title.text = i18n.pick(it["title"])
         if st == "done":
             self.status.text = i18n.t("Done")
+        elif st == "started" and it.get("part", 1) > 1:
+            self.status.text = i18n.t("Part {n} of 3 next").replace("{n}", str(it["part"]))
         elif st == "started":
             self.status.text = i18n.t("{pct}% heard").replace("{pct}", str(it["pct"]))
         elif st == "locked":

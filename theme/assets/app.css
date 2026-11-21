@@ -751,6 +751,64 @@ html.pl-car-open { overflow: hidden; }
 .pl-car-chap { color: #a9bcc6; }
 .pl-car-hint { text-align: center; color: #a9bcc6; margin: 0; }
 
+/* thinking time: a ring fills around the play button while the audio waits for you (2026-11-20) */
+.pl-playwrap, .pl-car-playwrap { position: relative; display: grid; place-items: center; }
+.pl-car-playwrap { justify-self: center; align-self: center; }
+.pl-ring { position: absolute; inset: -9px; width: calc(100% + 18px); height: calc(100% + 18px); pointer-events: none; opacity: 0;
+  transform: rotate(-90deg); transition: opacity var(--dur-fast) var(--ease-out); }
+.pl-ring circle { fill: none; stroke: #f2c27a; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; }
+.pl-car-playwrap .pl-ring circle { stroke-width: 2.5; }
+.is-thinking .pl-ring { opacity: 1; }
+.is-thinking .pl-ring circle { animation: pl-ring-fill var(--think, 2s) linear forwards; }
+@keyframes pl-ring-fill { to { stroke-dashoffset: 0; } }
+.is-thinking .pl-chapter, .is-thinking .pl-car-chap { color: #f2c27a; }
+@media (prefers-reduced-motion: reduce) { .is-thinking .pl-ring circle { animation: none; stroke-dashoffset: 0; } }
+/* trip length: where this trip stops */
+.pl-stop { position: absolute; top: -7px; width: 4px; height: 19px; margin-left: -2px; border-radius: 2px; background: #ffffff; box-shadow: 0 0 0 2px var(--c-road); }
+.pl-stop[hidden] { display: none; }
+.sb-opts { display: grid; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, .12); }
+.sb-opt { display: flex; align-items: center; justify-content: space-between; gap: 8px 14px; flex-wrap: wrap; }
+.sb-opt-label { color: #d5e0e6; font-weight: 700; font-size: .95rem; }
+.ui-seg.sb-seg-dark { background: rgba(255, 255, 255, .07); border-color: rgba(255, 255, 255, .18); max-width: 100%; }
+.ui-seg.sb-seg-dark button { color: #d5e0e6; min-height: 40px; padding: 8px 14px; transition: background-color var(--dur-fast) ease, color var(--dur-fast) ease; }
+.ui-seg.sb-seg-dark button.on { background: #ffffff; color: #14212b; box-shadow: none; }
+@media (hover: hover) and (pointer: fine) { .ui-seg.sb-seg-dark button:not(.on):hover { color: #ffffff; background: rgba(255, 255, 255, .1); } }
+.ui-seg.sb-seg-dark button:focus-visible { outline: 3px solid #ffffff; outline-offset: 2px; }
+.anvil-role-sb-opts-hint { color: #b9c8d0; font-size: .875rem; line-height: 1.45; }
+.anvil-role-sb-trip-note { margin-top: 12px; padding: 10px 14px; border-radius: 12px; background: rgba(242, 194, 122, .14); color: #ffe3b8;
+  text-align: center; font-weight: 700; animation: kit-in var(--dur-slow) var(--ease-out) both; }
+.sb-next-trip { margin-top: 6px; justify-content: flex-start; }
+
+/* weekly goal ring + rest-day streak (library) */
+.sb-goal { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center; }
+.sb-ring { position: relative; width: 104px; height: 104px; display: grid; place-items: center; }
+.sb-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.sb-ring circle { fill: none; stroke-width: 11; }
+.sb-ring-bg { stroke: var(--c-surface-2); }
+.sb-ring-fg { stroke: var(--c-accent); stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100;
+  transition: stroke-dashoffset var(--dur-hero) var(--ease-expo), stroke var(--dur-fast) ease; }
+.sb-ring-fg.full { stroke: var(--c-good); }
+.anvil-role-sb-ring-num { position: relative; font: 800 1.9rem/1 var(--font-display); color: var(--c-ink); font-variant-numeric: lining-nums tabular-nums; }
+.sb-goal-body { display: grid; gap: 4px; min-width: 0; }
+.anvil-role-sb-goal-line { font: 800 1.1rem/1.25 var(--font-display); color: var(--c-ink); text-wrap: balance; }
+.sb-goal-seg { margin-top: 6px; max-width: 100%; }
+.sb-goal-seg button { padding: 8px 10px; min-height: 36px; font-variant-numeric: tabular-nums; }
+.sb-goal .anvil-label, .sb-ring .anvil-label { padding: 0 !important; margin: 0 !important; }
+.anvil-role-sb-rest-note { font-size: .875rem; color: var(--c-muted); }
+.anvil-role-sb-rest-note.used { color: var(--c-ink); font-weight: 700; }
+.anvil-role-sb-rest-note.used::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--c-good); margin-right: 8px; vertical-align: 1px; }
+@media (max-width: 600px) {
+  .sb-goal { grid-template-columns: 84px minmax(0, 1fr); gap: 12px; }
+  .sb-ring { width: 84px; height: 84px; }
+  .anvil-role-sb-ring-num { font-size: 1.5rem; }
+  .sb-goal-seg { display: flex; width: 100%; }
+  .sb-goal-seg button { flex: 1; padding: 8px 4px; }
+  .sb-opt { align-items: flex-start; flex-direction: column; }
+  .ui-seg.sb-seg-dark { display: flex; width: 100%; }
+  .ui-seg.sb-seg-dark button { flex: 1; padding: 8px 6px; }
+}
+@media (prefers-reduced-motion: reduce) { .sb-ring-fg { transition: none; } }
+
 /* ===== buy + thanks ===== */
 .sb-buy .anvil-role-sb-plans-panel > div { margin: 0; max-width: none; }
 .sb-buy .anvil-role-msg-note { margin-bottom: 16px; }
