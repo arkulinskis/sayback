@@ -530,9 +530,10 @@ db_schema:
     server: full
     title: Waitlist
 metadata:
-  description: "45-minute hands-free audio lessons for the car: hear English, say it in Spanish, French or Italian. Lifetime access, works offline. Lesson 1 free."
-  logo_img: "asset:icon-512.png"
-  title: "Spoken Miles: learn Spanish, French or Italian in your car"
+  description: '45-minute hands-free audio lessons for the car: hear English, say it in Spanish, French or Italian. Lifetime
+    access, works offline. Lesson 1 free.'
+  logo_img: asset:icon-512.png
+  title: 'Spoken Miles: learn Spanish, French or Italian in your car'
 name: Spoken Miles
 native_deps:
   head_html: |
@@ -593,7 +594,7 @@ native_deps:
     <!-- Prepsto feedback panel: every "Submit feedback" link and button opens it (it is the only feedback channel). No floating button, no cookies, nothing loads until it is opened. Codes: APP_MAKER/prepsto-links.json -->
     <script src="https://prepsto.com/_/theme/widget.js" data-prepsto="__PREPSTO_CODE__" data-button="false" data-label="Submit feedback" async></script>
     <link rel="stylesheet" href="_/theme/icons.css?v=b535f6e813">
-    <link rel="stylesheet" href="_/theme/app.css?v=d46d2963a8">
+    <link rel="stylesheet" href="_/theme/app.css?v=2c4a7b9393">
     <script src="_/theme/sb-i18n.js?v=b2f1ede0cf"></script>
     <script src="_/theme/sb-hero-data.js?v=059e1bf756"></script>
     <script src="_/theme/sb-road.js?v=700fef81ef"></script>

@@ -1052,7 +1052,8 @@ anvil-dropzone { display: contents; }
 .sb-pick { display: grid; gap: 16px; margin: 24px 0 8px; }
 .sb-pick-row { display: grid; gap: 8px; }
 .sb-pick-label { font-weight: 700; color: var(--c-ink); }
-.sb-langs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 10px; }
+.sb-langs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 136px), 1fr)); gap: 10px; }
+.sb-pick .ui-seg { justify-self: start; }
 .sb-lang-card { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; align-items: center; padding: 14px 16px;
   min-height: 64px; border-radius: var(--radius); background: var(--c-surface); border: 1px solid var(--c-line); box-shadow: var(--shadow);
   color: var(--c-ink); text-decoration: none;
