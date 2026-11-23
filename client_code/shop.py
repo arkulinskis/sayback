@@ -1,15 +1,16 @@
-"""Buying, from any page: the landing pages' plan buttons, the Buy page, a locked lesson.
+"""Buying, from any page: the sales pages' plan buttons, the Buy page, the gift page, a locked lesson.
 
-buy(product): visitors sign up first and come back to #buy/<course>; members go straight to Stripe's checkout
-(a Payment Link set in Admin -> Shop), or, while no link is set yet, get the waitlist dialog.
+buy(product, gift=False): visitors sign up first and come back to #buy/<course> (or #gift); members go straight to
+Stripe's checkout (a Payment Link set in Admin -> Shop), or, while no link is set yet, get the waitlist dialog.
+A gift uses the same Payment Link; the webhook turns it into a gift code (server_code/Gifts.py).
 """
 from anvil import alert
 import anvil.server
 from anvil.js import window
 
-from . import i18n, router, state
+from . import courses, i18n, router, state
 
-COURSE_OF = {"es1": "en-es", "esall": "en-es", "esup": "en-es", "en1": "es-en", "enall": "es-en", "enup": "es-en"}
+COURSE_OF = {code: p["courses"][0] for code, p in courses.PRODUCTS.items()}
 
 
 def info(course):
@@ -33,18 +34,19 @@ def waitlist(course):
     alert(Waitlist(course=course), buttons=[], role="app-dialog")
 
 
-def buy(product):
+def buy(product, gift=False):
     course = COURSE_OF.get(product, "en-es")
     if not state.me():
-        router.remember_after(router.href("buy", course, product))
+        router.remember_after(router.href("gift", course) if gift else router.href("buy", course, product))
         state.toast(i18n.t("Make your free account first. It takes a few seconds."))
         router.go("auth", "signup")
         return
-    r = state.call("checkout", product)
+    r = state.call("checkout", product, bool(gift))
     if not r:
         return
     if r.get("waitlist"):
         waitlist(course)
         return
     state.store_set("sayback.pending", product)
+    state.store_set("sayback.pending_gift", bool(gift))
     window.location.href = r["url"]

@@ -116,7 +116,7 @@ class Auth(AuthTemplate):
             self._mode = "login"
             self._draw(r["message"], False)
         else:
-            state.toast(i18n.t("Welcome to Sayback!") if mode == "signup" else i18n.t("Welcome back!"), "ok")
+            state.toast(i18n.t("Welcome to Spoken Miles!") if mode == "signup" else i18n.t("Welcome back!"), "ok")
             router.after_sign_in()
 
     @handle("google_button", "click")
@@ -127,7 +127,7 @@ class Auth(AuthTemplate):
         if not r["ok"]:
             self._say(r["error"])
             return
-        state.toast(i18n.t("Welcome to Sayback!") if self._mode == "signup" else i18n.t("Welcome back!"), "ok")
+        state.toast(i18n.t("Welcome to Spoken Miles!") if self._mode == "signup" else i18n.t("Welcome back!"), "ok")
         router.after_sign_in()
 
     @handle("", "show")

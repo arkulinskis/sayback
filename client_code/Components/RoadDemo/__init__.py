@@ -3,6 +3,7 @@ import anvil.js
 from anvil.js import window
 
 from ._anvil_designer import RoadDemoTemplate
+from ... import courses
 
 LABELS = {
     "en": {"play": "Hear 90 seconds of lesson 1", "pause": "Pause", "again": "Hear it again", "listen": "You hear",
@@ -28,7 +29,7 @@ class RoadDemo(RoadDemoTemplate):
 
     @course.setter
     def course(self, value):
-        self._course = value if value in ("en-es", "es-en") else "en-es"
+        self._course = value if value in courses.COURSES else "en-es"
 
     @property
     def lang(self):
@@ -44,8 +45,16 @@ class RoadDemo(RoadDemoTemplate):
         if not window.get("SB") or not window.SB.get("road"):
             return  # the still frame in the template stays
         self._rd = window.SB.road(self.dom_nodes["mount"], {
-            "course": self._course, "labels": LABELS[self._lang],
+            "course": self._course, "labels": self._labels(),
             "onEnd": anvil.js.report_exceptions(lambda: self.raise_event("ended"))})
+
+    def _labels(self):
+        """The labels, with "say it in <the course's language>"."""
+        d = dict(LABELS[self._lang])
+        target = str(courses.COURSES[self._course]["target"])
+        name = str(courses.TARGET_NAMES[self._lang][target])
+        d["say"] = ("Tu turno: dilo en %s" if self._lang == "es" else "Your turn: say it in %s") % name
+        return d
 
     @handle("", "hide")
     def form_hide(self, **event_args):

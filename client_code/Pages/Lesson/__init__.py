@@ -4,7 +4,7 @@ import anvil.server
 from anvil.js import window
 
 from ._anvil_designer import LessonTemplate
-from ... import i18n, router, state
+from ... import courses, i18n, router, state
 from ..Library import today, fmt
 
 PLAYER_LABELS = ["Play", "Pause", "Back 10 seconds", "Forward 10 seconds", "Position in the lesson", "Intro", "Part {n} of 3",
@@ -60,13 +60,47 @@ class Lesson(LessonTemplate):
         self._retried = False
         self._link_at = now_ms()
         self._vis = None
-        d = anvil.server.call("get_lesson", self.course, self.code)
+        try:
+            d = anvil.server.call("get_lesson", self.course, self.code)
+        except anvil.server.AppOfflineError:
+            d = self._offline_lesson()      # no connection: a lesson saved on this phone still plays
+        if d.get("ok") and d.get("url") and not d.get("offline"):
+            local = self._saved_url()
+            if local:
+                d["url"], d["streamed"] = local, d["url"]   # saved on this phone: play it from there (no data)
         if not d.get("ok"):
             state.toast(i18n.t(d.get("error") or "That lesson doesn't exist."), "error")
             self.player_card.visible = self.locked_card.visible = self.noaudio_card.visible = self.done_card.visible = False
             return
         self.d = d
         self._fill(d)
+
+    # ---- saved on this phone (theme/assets/sb-offline.js, Pages/Downloads) ----------------------------------------
+    def _saved_url(self):
+        eng = window.SB.offline if window.get("SB") and window.SB.get("offline") else None
+        if eng is None or not eng.supported():
+            return ""
+        try:
+            return eng.url(self.course, self.code) or ""
+        except Exception:
+            return ""
+
+    def _offline_lesson(self):
+        """The lesson as saved by the Downloads page, shaped like get_lesson's answer (no links, no shop)."""
+        eng = window.SB.offline if window.get("SB") and window.SB.get("offline") else None
+        m = eng.meta(self.course, self.code) if eng is not None and eng.supported() else None
+        url = self._saved_url() if m else ""
+        if not m or not url:
+            return {"ok": False, "error": "You're offline, and this lesson isn't saved on this phone. Save lessons on the Offline page before your drive."}
+        def brief(x):
+            return {"code": x["code"], "title": {"en": x["code"], "es": x["code"]}, "locked": False} if x else None
+        return {"ok": True, "offline": True, "course": m["course"], "name": m["name"], "code": m["code"],
+                "level": m["level"], "n": m["n"], "level_name": dict(m["level_name"]), "title": dict(m["title"]),
+                "situation": dict(m["situation"]), "emotion": dict(m["emotion"]), "culture": m["culture"],
+                "marks": list(m["marks"]), "locked": "", "free": False, "pairs": [list(x) for x in m["pairs"]],
+                "pair_count": m["pair_count"], "url": url, "download": None, "transcript": None, "audio": True,
+                "position": 0, "done": False, "updated": 0, "cues": m["cues"] or "",
+                "prev": brief(m["prev"]), "next": brief(m["next"]), "shop": None}
 
     # ---- where you were -------------------------------------------------------------------------------------------
     def _pos_key(self):
@@ -97,7 +131,7 @@ class Lesson(LessonTemplate):
         self.situation.text = i18n.pick(d["situation"])
         self.emotion.text = i18n.pick(d["emotion"])
         self.culture.text = d["culture"]
-        state.set_attr(self.culture, "lang", "en" if d["course"] == "en-es" else "es")
+        state.set_attr(self.culture, "lang", courses.COURSES.get(d["course"], courses.COURSES["en-es"])["learner"])
         state.set_attr(self.back_link, "href", router.href("home", d["course"], d["level"]))
         state.set_attr(self.lib_link, "href", router.href("home", d["course"], d["level"]))
         state.set_attr(self.unlock_link, "href", router.href("buy", d["course"]))
@@ -107,7 +141,7 @@ class Lesson(LessonTemplate):
         self.locked_card.visible = bool(locked)
         self.noaudio_card.visible = not locked and not d["url"]
         self.done_card.visible = False
-        self.files_card.visible = playable
+        self.files_card.visible = playable and bool(d.get("download"))
         if locked:
             self.locked_title.text = i18n.t("Unlock Level 1 to hear this lesson") if locked == "level1" else \
                 i18n.t("This lesson is in Levels 2 to 5")
@@ -123,7 +157,7 @@ class Lesson(LessonTemplate):
             self._vis = anvil.js.report_exceptions(self._on_visible)
             window.document.addEventListener("visibilitychange", self._vis)
         self._done_button(d["done"])
-        target = "es" if d["course"] == "en-es" else "en"
+        target = courses.COURSES.get(d["course"], courses.COURSES["en-es"])["target"]
         self.lang_target = target
         self.sheet_note.text = (i18n.t("A taste: 3 of this lesson's 20 new phrases.") if locked else
                                 i18n.t("Read them after the lesson, not while driving. Quiz yourself hides the answers: say them out loud, then tap to check."))
@@ -243,6 +277,8 @@ class Lesson(LessonTemplate):
     def _on_visible(self, *args):
         if window.document.visibilityState != "visible" or not self.d or not self.player_card.visible:
             return
+        if self.d.get("offline") or str(self.d.get("url") or "").startswith("blob:"):
+            return                                   # playing from this phone: there's no link to expire
         if now_ms() - self._link_at > LINK_MAX_AGE and not self.player.is_playing():
             self._retried = False
             self._refresh_link(False)

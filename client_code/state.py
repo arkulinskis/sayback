@@ -20,6 +20,9 @@ from anvil.js import window
 _state = {"me": None}
 
 
+OFFLINE = {"on": False}   # True when the app opened without a connection (startup.py)
+
+
 def me():
     return _state["me"]
 

@@ -1,20 +1,27 @@
 <anvil-form layout="Sayback.Layouts.Shell">
   <anvil-block slot="content">
     <div class="page-landing sb-landing">
-      <!-- Persuade mode. Keep .lp-hero and the sign-up link inside it (tests and hero shots look for them).
-           The Spanish twin of this page is Pages/LandingEs: change both. -->
+      <!-- #learn/<spanish|french|italian>: the sales page for English speakers, one template for all three languages.
+           Words that change per language are <span data-v="key"> filled by __init__.py (VALUES). Ads link here.
+           Keep .lp-hero and the sign-up link inside it (tests and hero shots look for them).
+           The Spanish-speakers' page is Pages/LandingEs. -->
       <section class="lp-hero sb-hero">
         <div class="ui-wrap">
           <div class="sb-hero-copy">
-            <h1>Speak Spanish on the drive you're already taking.</h1>
-            <p class="lp-lead">45-minute audio lessons for the car, the dishes and the laundry. You hear it in English, you say it in Spanish, out loud. No screen, no homework.</p>
+            <nav class="sb-learn-switch" aria-label="Choose a language">
+              <a href="#learn/spanish" anvil:name="sw_es">Spanish</a>
+              <a href="#learn/french" anvil:name="sw_fr">French</a>
+              <a href="#learn/italian" anvil:name="sw_it">Italian</a>
+            </nav>
+            <h1>Speak <span data-v="lang">Spanish</span> on the drive you're already taking.</h1>
+            <p class="lp-lead">45-minute audio lessons made for the car. You hear it in English, you say it in <span data-v="lang">Spanish</span>, out loud. No screen, no tapping, no homework.</p>
             <div class="lp-cta" anvil:name="guest_cta">
               <a class="ui-btn primary lg" href="#auth/signup">Listen to lesson 1 free <i class="ic ic-arrow"></i></a>
               <a class="ui-btn lg" href="#offer" data-scroll>See the price</a>
             </div>
             <div class="lp-cta" anvil:name="member_cta">
-              <a class="ui-btn primary lg" href="#home">Open your library <i class="ic ic-arrow"></i></a>
-              <a class="ui-btn lg" href="#buy/en-es">See the courses</a>
+              <a class="ui-btn primary lg" href="#home" anvil:name="member_lib">Open your library <i class="ic ic-arrow"></i></a>
+              <a class="ui-btn lg" href="#buy/en-es" anvil:name="member_buy">See the courses</a>
             </div>
             <ul class="sb-proof">
               <li><b>150</b> lessons</li>
@@ -24,41 +31,56 @@
             <p class="sb-other-lang"><a href="#es" lang="es">¿Hablas español? Aprende inglés <i class="ic ic-arrow"></i></a></p>
           </div>
           <div class="sb-windshield">
-            <div class="sb-ws-head"><span class="sb-ws-dot"></span><span>Lesson 1 · Hello and first words</span></div>
+            <div class="sb-ws-head"><span class="sb-ws-dot"></span><span><span data-v="lang">Spanish</span> · Lesson 1 · Hello and first words</span></div>
             <anvil-component type="Sayback.Components.RoadDemo" name="road" prop:course="en-es" prop:lang="en"></anvil-component>
             <p class="sb-ws-note">Press play, then answer out loud in the pause. Yes, really. Out loud.</p>
           </div>
         </div>
       </section>
 
-      <section class="sb-band" id="minutes">
+      <section class="sb-band" id="miles">
         <div class="ui-wrap">
-          <h2>You don't need more time. You need the time you already lose.</h2>
-          <p class="sb-band-lead">Every app and every class asks you to <em>find</em> time: sit down, open a screen, focus. That's why most people quit by week three. Sayback asks for nothing new. It fills the minutes your hands are busy and your head is free.</p>
+          <h2>You don't need more time. You need the miles you already drive.</h2>
+          <p class="sb-band-lead">Every app and every class asks you to <em>find</em> time: sit down, open a screen, focus. That's why most people quit by week three. Spoken Miles asks for nothing new. It fills the time your hands are on the wheel and your head is free.</p>
           <ol class="sb-day">
-            <li><time>7:40</time><b>The commute</b><span>Your car becomes a classroom. Eyes on the road, voice on Spanish.</span></li>
-            <li><time>12:30</time><b>The walk</b><span>A dog walk is the perfect length for a lesson.</span></li>
-            <li><time>18:15</time><b>The dishes</b><span>Twenty minutes at the sink: forty phrases said out loud.</span></li>
-            <li><time>20:40</time><b>The laundry</b><span>Folding shirts while you order dinner in Madrid.</span></li>
+            <li><time>7:40</time><b>The commute</b><span>Your car becomes a classroom. Eyes on the road, voice on <span data-v="lang">Spanish</span>.</span></li>
+            <li><time>8:15</time><b>The school run</b><span>Ten minutes there, ten back. Forty phrases said out loud.</span></li>
+            <li><time>12:30</time><b>The errands</b><span>Groceries, the pharmacy, the post office: one lesson, three stops.</span></li>
+            <li><time>Sat</time><b>The road trip</b><span>Two hours on the highway, and you're ordering dinner in <span data-v="city">Madrid</span>.</span></li>
           </ol>
-          <p class="sb-math">45 minutes a day, five workdays a week = <b>3¾ hours of speaking practice</b>. Level 1 done in six weeks, without "finding time" once.</p>
+          <p class="sb-math">45 minutes a workday = <b>3¾ hours of speaking practice a week</b>. Level 1 done in six weeks, without "finding time" once.</p>
         </div>
       </section>
 
       <section class="lp-section" id="how">
         <div class="ui-wrap sb-why">
           <div class="sb-why-text">
-            <h2>Apps make you tap. Sayback makes you talk.</h2>
+            <h2>Apps make you tap. Spoken Miles makes you talk.</h2>
             <p>You can recognise a thousand words on a screen and still freeze when a real person asks you something. Recognising isn't speaking. <strong>The only way to learn to speak is to speak</strong>: pulling the phrase out of your own memory, in the pause, before you hear the answer.</p>
-            <p>That moment of effort is what locks it in. In the 1960s, the linguist Dr. Paul Pimsleur showed that a phrase recalled at growing intervals (seconds, then minutes, then days) moves into long-term memory. Sayback times every phrase that way. You don't schedule anything. The lessons do it for you.</p>
+            <p>That moment of effort is what locks it in. In the 1960s, the linguist Dr. Paul Pimsleur showed that a phrase recalled at growing intervals (seconds, then minutes, then days) moves into long-term memory. Spoken Miles times every phrase that way. You don't schedule anything. The lessons do it for you.</p>
             <p class="sb-question">Can you see why 45 minutes of speaking does more than 45 minutes of tapping?</p>
           </div>
           <ol class="sb-item" aria-label="One practice item">
             <li class="sb-item-p"><small>You hear</small><span>“Where is the station?”</span></li>
-            <li class="sb-item-say"><small>Your turn · 3 seconds and a beat</small><span>You say it in Spanish</span></li>
-            <li class="sb-item-a"><small>Then you hear</small><span lang="es">“¿Dónde está la estación?”</span></li>
+            <li class="sb-item-say"><small>Your turn · 3 seconds and a beat</small><span>You say it in <span data-v="lang">Spanish</span></span></li>
+            <li class="sb-item-a"><small>Then you hear</small><span anvil:name="sample_a" lang="es">“¿Dónde está la estación?”</span></li>
             <li class="sb-item-m"><small>Underneath</small><span>Soft, slow music</span></li>
           </ol>
+        </div>
+      </section>
+
+      <section class="lp-section sb-vs">
+        <div class="ui-wrap">
+          <h2>Great at the app. Stuck in the conversation?</h2>
+          <p class="sb-sec-lead">A 300-day streak and you still freeze when someone talks to you? It isn't you. Most apps train you to <em>recognise</em> words on a screen. Conversation needs <em>recall</em>: the phrase out of your own head and out of your mouth. That's the only thing Spoken Miles trains.</p>
+          <div class="sb-compare" role="table" aria-label="Tap-and-streak apps compared with Spoken Miles">
+            <div class="sb-cmp-row sb-cmp-head" role="row"><span role="columnheader"></span><span role="columnheader">Tap-and-streak apps</span><span role="columnheader">Spoken Miles</span></div>
+            <div class="sb-cmp-row" role="row"><span role="rowheader">What you do</span><span role="cell">Tap, match, type</span><span role="cell"><b>Say every phrase out loud</b></span></div>
+            <div class="sb-cmp-row" role="row"><span role="rowheader">Where your eyes are</span><span role="cell">On a screen</span><span role="cell"><b>On the road</b></span></div>
+            <div class="sb-cmp-row" role="row"><span role="rowheader">Phrases you speak</span><span role="cell">A few, if any</span><span role="cell"><b>250 to 320 a lesson</b></span></div>
+            <div class="sb-cmp-row" role="row"><span role="rowheader">What it trains</span><span role="cell">Recognising</span><span role="cell"><b>Recalling and speaking</b></span></div>
+            <div class="sb-cmp-row" role="row"><span role="rowheader">How you pay</span><span role="cell">Every month</span><span role="cell"><b>Once. Yours for life.</b></span></div>
+          </div>
         </div>
       </section>
 
@@ -74,16 +96,16 @@
               <span style="left:100%"><b>45:00</b>Wrap-up</span>
             </div>
           </div>
-          <p class="sb-inside-note">Each lesson opens with a real-life situation, a feeling to express and a culture moment, so you learn how people <em>live</em>, not just what they say. About 250 to 320 times a lesson, a phrase comes out of your own mouth.</p>
+          <p class="sb-inside-note">Each lesson opens with a real-life situation, a feeling to express and a culture moment, so you learn how people <em>live</em>, not just what they say. Short trip? Pick 15 or 30 minutes and the lesson stops at a natural break, then picks up there next time.</p>
         </div>
       </section>
 
       <section class="lp-section sb-beliefs">
         <div class="ui-wrap">
           <h2>If you've tried before, read this.</h2>
-          <div class="sb-belief"><blockquote>“Apps never worked for me.”</blockquote><p>They weren't built to make you speak. Streaks and quizzes teach recognition. Sayback is all production: every phrase comes out of <em>your</em> mouth, hundreds of times a lesson.</p></div>
-          <div class="sb-belief"><blockquote>“I'm just not a language person.”</blockquote><p>You learned English by hearing it and saying it back, long before you could read. Sayback uses that same route. No grammar tables, no spelling tests. If you can talk, you can do this.</p></div>
-          <div class="sb-belief"><blockquote>“I don't have time.”</blockquote><p>You don't need any new time. If you drive, clean, cook or walk, you already have the 45 minutes. Sayback just gives those minutes a second job.</p></div>
+          <div class="sb-belief"><blockquote>“Apps never worked for me.”</blockquote><p>They weren't built to make you speak. Streaks and quizzes teach recognition. Spoken Miles is all production: every phrase comes out of <em>your</em> mouth, hundreds of times a lesson.</p></div>
+          <div class="sb-belief"><blockquote>“I'm just not a language person.”</blockquote><p>You learned English by hearing it and saying it back, long before you could read. Spoken Miles uses that same route. No grammar tables, no spelling tests. If you can talk, you can do this.</p></div>
+          <div class="sb-belief"><blockquote>“I don't have time.”</blockquote><p>You don't need any new time. If you drive, you already have the 45 minutes. Spoken Miles just gives those miles a second job.</p></div>
         </div>
       </section>
 
@@ -135,10 +157,10 @@
         </div>
       </section>
 
-      <section class="lp-section sb-bridge">
+      <section class="lp-section sb-bridge" anvil:name="bridge">
         <div class="ui-wrap">
           <h2>Your neighbour is learning the same phrases. In English.</h2>
-          <p class="sb-sec-lead">Sayback is built in both directions. The phrases you practise in Spanish are the same ones Spanish speakers practise in English, with culture notes explaining each side to the other. Why tipping matters in the US. Why nobody brings the bill in Madrid. When you finally sit down together, you'll both be ready.</p>
+          <p class="sb-sec-lead">The Spanish course is built in both directions. The phrases you practise in Spanish are the same ones Spanish speakers practise in English, with culture notes explaining each side to the other. Why tipping matters in the US. Why nobody brings the bill in Madrid. When you finally sit down together, you'll both be ready.</p>
           <div class="sb-pair">
             <div><small>You learn</small><b lang="es">“¿Te ayudo?”</b><span>and why “mi casa es su casa” is meant sincerely.</span></div>
             <div><small>They learn</small><b>“Can I help you?”</b><span>and why Americans ask “Can I bring anything?”</span></div>
@@ -146,39 +168,65 @@
         </div>
       </section>
 
+      <section class="lp-section sb-offline-sec">
+        <div class="ui-wrap sb-offline-grid">
+          <div>
+            <h2>No signal? No problem.</h2>
+            <p class="sb-sec-lead">Save lessons to your phone and they play with no signal at all: tunnels, the countryside, a car park. Save one pack of five, a level, or the whole course. Short on space? Stream instead.</p>
+          </div>
+          <ul class="sb-ticks sb-offline-list">
+            <li><i class="ic ic-download"></i>A pack of 5 lessons: about 110 MB</li>
+            <li><i class="ic ic-download"></i>One level (30 lessons): about 650 MB</li>
+            <li><i class="ic ic-download"></i>The whole course: about 3.2 GB</li>
+            <li><i class="ic ic-headphones"></i>Keeps playing with the screen locked, with play and skip on the lock screen and the car's display</li>
+            <li><i class="ic ic-check"></i>MP3 files too, for any music app, CarPlay or a USB stick</li>
+          </ul>
+        </div>
+      </section>
+
       <section class="lp-section sb-offer" id="offer">
         <div class="ui-wrap">
-          <h2>Less than one lesson with a private tutor.</h2>
-          <p class="sb-sec-lead">A private tutor typically costs $25 to $40 an hour. Level 1 alone is 22½ hours of guided speaking, and it fits in your car.</p>
-          <div class="sb-plans">
+          <h2>Pay once. Speak for life.</h2>
+          <p class="sb-sec-lead">No subscription, nothing to cancel. A private tutor typically costs $25 to $40 an hour. Level 1 alone is 22½ hours of guided speaking, and it fits in your car.</p>
+          <div class="sb-plans sb-plans-3">
             <div class="ui-card sb-plan">
               <h3>Level 1 · First Steps</h3>
-              <div class="sb-price"><anvil-component type="Label" name="price_level1" prop:text="$39" prop:role='["sb-price-num"]'></anvil-component><span>one time, yours to keep</span></div>
+              <div class="sb-price"><anvil-component type="Label" name="price_level1" prop:text="$39" prop:role='["sb-price-num"]'></anvil-component><span>one time, yours for life</span></div>
               <ul class="sb-ticks">
                 <li><i class="ic ic-check"></i>30 lessons × 45 minutes (22½ hours)</li>
                 <li><i class="ic ic-check"></i>600 phrases in 30 real situations</li>
                 <li><i class="ic ic-check"></i>A culture moment in every lesson</li>
-                <li><i class="ic ic-check"></i>Phrase sheet and full transcript for each lesson</li>
-                <li><i class="ic ic-check"></i>Play in the app or download the MP3s</li>
+                <li><i class="ic ic-check"></i>Stream, save offline, or download the MP3s</li>
               </ul>
               <anvil-component type="Button" name="buy_level1" prop:text="Get Level 1" prop:role='["btn", "btn-block", "btn-lg"]'></anvil-component>
             </div>
             <div class="ui-card sb-plan sb-plan-best">
-              <h3>Complete course · Levels 1 to 5</h3>
-              <div class="sb-price"><anvil-component type="Label" name="price_complete" prop:text="$129" prop:role='["sb-price-num"]'></anvil-component><span>one time, all five levels</span></div>
+              <h3>Complete <span data-v="lang">Spanish</span> · Levels 1 to 5</h3>
+              <div class="sb-price"><anvil-component type="Label" name="price_complete" prop:text="$149" prop:role='["sb-price-num"]'></anvil-component><span>one time, lifetime access</span></div>
               <ul class="sb-ticks">
                 <li><i class="ic ic-check"></i>All 150 lessons × 45 minutes (112 hours)</li>
-                <li><i class="ic ic-check"></i>3,000 phrases, from “hola” to a friendly debate</li>
-                <li><i class="ic ic-check"></i>Everything in Level 1</li>
-                <li><i class="ic ic-check"></i>Mexico, Spain, Argentina and Colombia in Level 5</li>
+                <li><i class="ic ic-check"></i>3,000 phrases, from the first hello to a friendly debate</li>
+                <li><i class="ic ic-check"></i><span data-v="level5">Mexico, Spain, Argentina and Colombia in Level 5</span></li>
                 <li><i class="ic ic-check"></i>Less than buying the levels one by one</li>
               </ul>
               <anvil-component type="Button" name="buy_complete" prop:text="Get the complete course" prop:role='["btn", "btn-primary", "btn-block", "btn-lg"]'></anvil-component>
             </div>
+            <div class="ui-card sb-plan">
+              <h3>Every language · Spanish, French, Italian</h3>
+              <div class="sb-price"><anvil-component type="Label" name="price_bundle" prop:text="$249" prop:role='["sb-price-num"]'></anvil-component><span>one time, all three for life</span></div>
+              <ul class="sb-ticks">
+                <li><i class="ic ic-check"></i>450 lessons, 336 hours of speaking</li>
+                <li><i class="ic ic-check"></i>All five levels of each language</li>
+                <li><i class="ic ic-check"></i>Switch languages any time, progress kept for each</li>
+                <li><i class="ic ic-check"></i>Less than two complete courses</li>
+              </ul>
+              <anvil-component type="Button" name="buy_bundle" prop:text="Get every language" prop:role='["btn", "btn-block", "btn-lg"]'></anvil-component>
+            </div>
           </div>
+          <p class="sb-gift-line"><i class="ic ic-heart"></i> Buying for someone else? <a href="#gift/en-es" anvil:name="gift_link">Give it as a gift</a>: a card to print or send, opened with one tap.</p>
           <div class="sb-guarantee">
             <div class="sb-seal"><anvil-component type="Label" name="guarantee_days" prop:text="30" prop:role='["sb-seal-num"]'></anvil-component><span>days</span></div>
-            <div><h3>Speak or it's free.</h3><p>Do the first five lessons, out loud. If you can't greet someone, order a coffee and ask for directions in Spanish, write to us within the guarantee period for a full refund. No forms, no questions.</p></div>
+            <div><h3>Speak or it's free.</h3><p>Do the first five lessons, out loud. If you can't greet someone, order a coffee and ask for directions in <span data-v="lang">Spanish</span>, write to us within the guarantee period for a full refund. No forms, no questions.</p></div>
           </div>
         </div>
       </section>
@@ -187,13 +235,14 @@
         <div class="ui-wrap">
           <h2 class="sb-center">Questions</h2>
           <div class="lp-faq">
-            <details><summary>Is it safe to use while driving?</summary><p>Sayback is audio only and never asks you to look at anything. Speaking out loud is like talking to a passenger. Keep your attention on the road; if traffic gets busy, just listen, or pause. Car mode in the app gives you one huge play button and nothing else.</p></details>
-            <details><summary>Which Spanish does it teach?</summary><p>Clear, neutral Spanish understood everywhere, using “ustedes” rather than Spain-only “vosotros”. The culture notes cover Spain, Mexico and South America, and Level 5 adds regional flavour.</p></details>
+            <details><summary>How is this different from Duolingo?</summary><p>Duolingo is a fun way to build vocabulary and a daily habit, and lots of people love it. But most of the time you're reading and tapping, not speaking. Spoken Miles is all speaking: in every lesson, hundreds of phrases come out of your own mouth, timed so they move into long-term memory. Use both if you like. Spoken Miles is the one that gets you talking.</p></details>
+            <details><summary>Is it safe to use while driving?</summary><p>Spoken Miles is audio only and never asks you to look at anything. Speaking out loud is like talking to a passenger. Keep your attention on the road; if traffic gets busy, just listen, or pause. Car mode in the app gives you one huge play button and nothing else.</p></details>
+            <details><summary>Which <span data-v="lang">Spanish</span> does it teach?</summary><p data-v="variant">Clear, neutral Spanish understood everywhere, using “ustedes” rather than Spain-only “vosotros”. The culture notes cover Spain, Mexico and South America, and Level 5 adds regional flavour.</p></details>
+            <details><summary>Does it work without a signal, with the screen off?</summary><p>Yes. Save lessons to your phone (a pack of five, a level or the whole course) and they play with no signal. It keeps playing with the screen locked, and play, pause and skip work from the lock screen, your headphones and most car displays. Add Spoken Miles to your home screen and it opens like an app.</p></details>
             <details><summary>How long until I can have a conversation?</summary><p>By the end of Level 1 (about six weeks of workday commutes) you can handle greetings, cafés, shops, directions, hotels, the pharmacy, small talk and invitations. Real conversations grow through Levels 2 and 3.</p></details>
-            <details><summary>Who are the voices?</summary><p>Natural-sounding AI voices: a woman and a man for each language, so you hear how phrases change with who is speaking (“cansado”, “cansada”). That's also how we keep the price this low.</p></details>
-            <details><summary>Do I need to do a lesson every day?</summary><p>One a day works best, because sleep is when memory sets. Missed a day? Just carry on. Every lesson reviews earlier phrases for you.</p></details>
-            <details><summary>Can I repeat a lesson?</summary><p>Yes, and if a lesson felt hard, you should. A good rule: move on when you get about 80% of the answers out loud.</p></details>
-            <details><summary>How do I get the lessons?</summary><p>They unlock in your Sayback library the moment you pay. Play them in the app (it remembers where you stopped, and works from your lock screen and car), or download the MP3s and transcripts for any music app, CarPlay or a USB stick.</p></details>
+            <details><summary>Who are the voices?</summary><p data-v="voices">Natural-sounding AI voices: a woman and a man, so you hear how phrases change with who is speaking (“cansado”, “cansada”). That's also how we keep the price this low.</p></details>
+            <details><summary>Is it really mine for life?</summary><p>Yes. You pay once. The lessons stay in your library for as long as Spoken Miles exists, and the MP3s you download are yours to keep forever, on any device.</p></details>
+            <details><summary>Can I give it as a gift?</summary><p>Yes. Buy it as a gift, add a message, then print the card or send the link. They open it with a free account and it's theirs for life. Perfect for a dad who has "always wanted to learn".</p></details>
             <details><summary>Can I try it first?</summary><p>Yes. Make a free account and the whole of lesson 1 is yours: all 45 minutes.</p></details>
           </div>
         </div>
@@ -202,10 +251,10 @@
       <section class="lp-section">
         <div class="ui-wrap">
           <div class="lp-band sb-final">
-            <div><h2>Tomorrow's drive can be your first Spanish lesson.</h2><p>Or it can be another 45 minutes of the same radio. You choose.</p></div>
+            <div><h2>Tomorrow's drive can be your first <span data-v="lang">Spanish</span> lesson.</h2><p>Or it can be another 45 minutes of the same radio. You choose.</p></div>
             <a class="ui-btn lg sb-final-btn" href="#auth/signup" anvil:name="band_link">Listen to lesson 1 free</a>
           </div>
-          <p class="sb-credit">Inspired by the published spaced-recall research of Dr. Paul Pimsleur. Not affiliated with Pimsleur® or Simon &amp; Schuster.</p>
+          <p class="sb-credit">Inspired by the published spaced-recall research of Dr. Paul Pimsleur. Not affiliated with Pimsleur® or Simon &amp; Schuster, or with Duolingo®, a trademark of Duolingo, Inc.</p>
         </div>
       </section>
     </div>

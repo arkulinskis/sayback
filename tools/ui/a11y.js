@@ -9,8 +9,8 @@
    Resolves to {ok, log}. Keep log lines ASCII (the Windows console). */
 (async function () {
   /*AXE*/
-  const PUBLIC = ['#landing', '#es', '#auth', '#auth/signup', '#buy/en-es'];
-  const MEMBER = ['#home', '#home/en-es/2', '#lesson/en-es/L1-01', '#lesson/en-es/L1-02', '#buy/es-en', '#thanks/es1', '#profile'];
+  const PUBLIC = ['#landing', '#learn/french', '#learn/italian', '#gift', '#redeem', '#es', '#auth', '#auth/signup', '#buy/en-es'];
+  const MEMBER = ['#home', '#downloads', '#gift/en-it', '#home/en-fr', '#home/en-es/2', '#lesson/en-es/L1-01', '#lesson/en-es/L1-02', '#buy/es-en', '#thanks/es1', '#profile'];
   const log = [], bad = [];
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   async function until(fn, what, ms) {

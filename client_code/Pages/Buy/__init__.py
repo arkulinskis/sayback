@@ -1,7 +1,7 @@
 from anvil import *
 
 from ._anvil_designer import BuyTemplate
-from ... import i18n, shop, state
+from ... import courses, i18n, router, shop, state
 
 
 class Buy(BuyTemplate):
@@ -12,18 +12,19 @@ class Buy(BuyTemplate):
     def __init__(self, args=(), **properties):
         super().__init__(**properties)
         default = "es-en" if i18n.lang() == "es" else "en-es"
-        self.course = args[0] if args and args[0] in ("en-es", "es-en") else default
+        self.course = args[0] if args and args[0] in courses.COURSES else default
         picked = args[1] if len(args) > 1 else ""
         s: dict = shop.info(self.course) or {}
         products: list = s.get("products") or []
-        self.heading.text = s.get("name") or "Sayback"
+        self.heading.text = s.get("name") or "Spoken Miles"
         state.heading(self.heading, 1)
-        self.sub.text = i18n.t("Pay once. Keep every lesson. Listen anywhere.")
-        self.sw_es.classes["on"] = self.course == "en-es"
-        self.sw_en.classes["on"] = self.course == "es-en"
+        self.sub.text = i18n.t("Pay once. Lifetime access. Listen anywhere, even with no signal.")
+        for code, el in (("en-es", self.sw_es), ("en-fr", self.sw_fr), ("en-it", self.sw_it), ("es-en", self.sw_en)):
+            el.classes["on"] = code == self.course
+        state.set_attr(self.gift_link, "href", router.href("gift", self.course))
         self.offers.items = [dict(p, currency=s.get("currency") or "$", course=self.course,
                                   best=p["kind"] in ("complete", "upgrade") and not picked, picked=p["product"] == picked)
-                             for p in products]
+                             for p in products]   # Level 1 + complete (or the upgrade) + every language (English speakers)
         self.days.text = str(s.get("guarantee_days") or 30)
         closed = bool(products) and not any(p["open"] for p in products if not p["owned"])
         if closed:

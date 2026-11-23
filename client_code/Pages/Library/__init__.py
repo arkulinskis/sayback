@@ -36,6 +36,9 @@ class Library(LibraryTemplate):
 
     def __init__(self, args=(), **properties):
         super().__init__(**properties)
+        if state.OFFLINE["on"]:
+            router.go("downloads")          # no connection: the saved lessons are on the Offline page
+            return
         course = args[0] if args else state.store_get("sayback.course")
         level = int(args[1]) if len(args) > 1 and str(args[1]).isdigit() else None
         d = state.call("library", course, level, today(), "es-en" if i18n.lang() == "es" else "en-es")
@@ -54,8 +57,8 @@ class Library(LibraryTemplate):
         greet = "Good morning" if hour < 12 else ("Good afternoon" if hour < 18 else "Good evening")
         self.hello.text = (i18n.t(greet) + (", " + first if first else "")).strip()
         self.course_line.text = "%s · %s" % (d["name"], i18n.t("{n} of 150 lessons done").replace("{n}", str(d["done_total"])))
-        self.sw_es.classes["on"] = d["course"] == "en-es"
-        self.sw_en.classes["on"] = d["course"] == "es-en"
+        for code, el in (("en-es", self.sw_es), ("en-fr", self.sw_fr), ("en-it", self.sw_it), ("es-en", self.sw_en)):
+            el.classes["on"] = code == d["course"]
         if not d["audio"] and d["is_admin"]:
             self.audio_warn.text = ("Lesson audio isn't connected yet, so lessons can't play. Admin > Shop & setup "
                                     "shows the two steps (upload to Cloudflare R2, then the r2_url App Secret).")

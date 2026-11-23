@@ -1,6 +1,6 @@
-"""Buying Sayback: prices, Stripe Payment Links, the Stripe webhook that unlocks lessons, refunds, the waitlist.
+"""Buying Spoken Miles: prices, Stripe Payment Links, the Stripe webhook that unlocks lessons, refunds, the waitlist.
 
-Sayback never touches card details. For each product the admin pastes a Stripe Payment Link (Admin -> Shop).
+Spoken Miles never touches card details. For each product the admin pastes a Stripe Payment Link (Admin -> Shop).
 Checkout opens that link with client_reference_id = "<user id>-<product>" and the person's email filled in.
 Stripe then calls <app>/_/api/stripe (event checkout.session.completed), signed with the webhook secret
 (App Secret stripe_webhook_secret); the purchase row unlocks the levels. A refund in Stripe (charge.refunded)
@@ -19,20 +19,17 @@ from anvil.tables import app_tables
 
 from . import common as C
 from . import Catalog
+from . import courses as K
+from . import Gifts
 
-PRODUCTS: dict = {
-    "es1": {"course": "en-es", "kind": "level1", "levels": [1]},
-    "esall": {"course": "en-es", "kind": "complete", "levels": [1, 2, 3, 4, 5]},
-    "esup": {"course": "en-es", "kind": "upgrade", "levels": [2, 3, 4, 5]},
-    "en1": {"course": "es-en", "kind": "level1", "levels": [1]},
-    "enall": {"course": "es-en", "kind": "complete", "levels": [1, 2, 3, 4, 5]},
-    "enup": {"course": "es-en", "kind": "upgrade", "levels": [2, 3, 4, 5]},
-}
-DEFAULTS: dict = {"currency": "$", "currency_code": "USD", "prices": {"level1": 39, "complete": 129, "upgrade": 90},
+PRODUCTS: dict = K.PRODUCTS          # client_code/courses.py: <short>1 / <short>all / <short>up per course + "trio"
+GIFT_KINDS = ("level1", "complete", "bundle")   # what can be bought as a gift (an upgrade only makes sense for yourself)
+DEFAULTS: dict = {"currency": "$", "currency_code": "USD",
+                  "prices": {"level1": 39, "complete": 149, "upgrade": 110, "bundle": 249},
             "links": {}, "guarantee_days": 30}
 TOLERANCE = 300     # seconds, as Stripe recommends
 EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[a-z]{2,}$", re.I)
-CONSENT = "Email me once when Sayback goes on sale. Nothing else, and I can ask to be removed any time."
+CONSENT = "Email me once when Spoken Miles goes on sale. Nothing else, and I can ask to be removed any time."
 
 
 def settings():
@@ -56,7 +53,7 @@ def products_for(course, user=None):
     owned = Catalog.owned_levels(user, course) if user is not None else set()
     out = []
     for code, p in PRODUCTS.items():
-        if p["course"] != course:
+        if p["courses"] != [course]:
             continue
         have = set(p["levels"]) <= owned
         everything = {1, 2, 3, 4, 5} <= owned
@@ -66,6 +63,33 @@ def products_for(course, user=None):
             continue
         out.append({"product": code, "kind": p["kind"], "price": s["prices"].get(p["kind"]), "owned": have,
                     "open": bool(s["links"].get(code))})
+    b = bundle_offer(course, user, s)
+    if b:
+        out.append(b)
+    return out
+
+
+def bundle_offer(course, user=None, s=None):
+    """Every language for English speakers (Spanish + French + Italian, lifetime), shown on those three courses."""
+    p = PRODUCTS["trio"]
+    if course not in p["courses"]:
+        return None
+    s = s or settings()
+    have = user is not None and all(set(p["levels"]) <= Catalog.owned_levels(user, c) for c in p["courses"])
+    return {"product": "trio", "kind": "bundle", "price": s["prices"].get("bundle"), "owned": have,
+            "open": bool(s["links"].get("trio"))}
+
+
+def gift_offers(course):
+    """What can be given for one course: Level 1, the complete course and (English speakers) every language."""
+    s = settings()
+    out = []
+    for kind in GIFT_KINDS:
+        if kind == "bundle" and course not in PRODUCTS["trio"]["courses"]:
+            continue
+        code = K.product_for(course, kind)
+        out.append({"product": code, "kind": kind, "price": s["prices"].get(kind), "owned": False,
+                    "open": bool(s["links"].get(code)), "gift": True})
     return out
 
 
@@ -74,7 +98,7 @@ def shop_public(course, user=None):
     return {"course": course, "name": Catalog.course_name(course), "currency": s["currency"],
             "currency_code": s["currency_code"], "guarantee_days": s["guarantee_days"],
             "products": products_for(course, user), "owned": sorted(Catalog.owned_levels(user, course)),
-            "signed_in": user is not None}
+            "gifts": gift_offers(course), "signed_in": user is not None}
 
 
 @anvil.server.callable
@@ -94,31 +118,45 @@ def user_from_ref(ref):
     return C.row_by_id(app_tables.users, "[%s,%s]" % m.groups()) if m else None
 
 
+def owns(user, product):
+    p = PRODUCTS[product]
+    return all(set(p["levels"]) <= Catalog.owned_levels(user, c) for c in p["courses"])
+
+
 @anvil.server.callable(require_user=True)
-def checkout(product):
-    """The Stripe address for one product, or {waitlist: True} while the shop isn't open yet."""
+def checkout(product, gift=False):
+    """The Stripe address for one product, or {waitlist: True} while the shop isn't open yet.
+    gift=True: the same Payment Link, but the webhook makes a gift code instead of unlocking the buyer's library
+    (client_reference_id "<user>-g<product>")."""
     me = C.require_user()
     p = PRODUCTS.get(product)
     if p is None:
         return C.fail("That isn't something we sell.")
-    if set(p["levels"]) <= Catalog.owned_levels(me, p["course"]):
+    if gift and p["kind"] not in GIFT_KINDS:
+        return C.fail("That one can't be given as a gift.")
+    if not gift and owns(me, product):
         return C.fail("You already own this. It's in your library.")
     link = settings()["links"].get(product) or ""
     if not link.startswith("https://"):
-        return C.ok(waitlist=True, course=p["course"])
+        return C.ok(waitlist=True, course=p["courses"][0])
     sep = "&" if "?" in link else "?"
-    url = "%s%sclient_reference_id=%s-%s&prefilled_email=%s" % (
-        link, sep, user_ref(me), product, urllib.parse.quote(me["email"] or "", safe=""))
+    url = "%s%sclient_reference_id=%s-%s%s&prefilled_email=%s" % (
+        link, sep, user_ref(me), "g" if gift else "", product, urllib.parse.quote(me["email"] or "", safe=""))
     return C.ok(url=url)
 
 
 # ------------------------------------------------------------------------------------------------ purchases
 def grant(user, email, product, source, amount=None, currency="", session="", intent="", note=""):
+    """One purchase row per course the product unlocks (the bundle = three rows; the amount sits on the first)."""
     p = PRODUCTS[product]
-    return app_tables.purchases.add_row(
-        user=user, email=(email or (user["email"] if user else "") or "").lower(), product=product, course=p["course"],
-        levels=list(p["levels"]), amount=amount, currency=(currency or "").upper(), source=source, session=session or None,
-        payment_intent=intent or None, note=note or None, refunded=False, created=C.now(), is_demo=False)
+    rows = []
+    for i, course in enumerate(p["courses"]):
+        rows.append(app_tables.purchases.add_row(
+            user=user, email=(email or (user["email"] if user else "") or "").lower(), product=product, course=course,
+            levels=list(p["levels"]), amount=amount if i == 0 else None, currency=(currency or "").upper(),
+            source=source, session=session or None, payment_intent=intent or None, note=note or None,
+            refunded=False, created=C.now(), is_demo=False))
+    return rows[0]
 
 
 def claim_for(user):
@@ -131,6 +169,15 @@ def claim_for(user):
         p["user"] = user
         n += 1
     return n
+
+
+def product_name(product, course=None):
+    p = PRODUCTS.get(product) or {}
+    if p.get("kind") == "bundle":
+        return "Every language (Spanish, French, Italian)"
+    c = course or (p.get("courses") or ["en-es"])[0]
+    part = {"level1": "Level 1", "complete": "complete course", "upgrade": "Levels 2 to 5"}.get(p.get("kind"), "")
+    return "%s, %s" % (Catalog.course_name(c), part)
 
 
 def purchase_dict(p, with_email=False):
@@ -158,7 +205,7 @@ def has_product(product):
     p = PRODUCTS.get(product)
     if p is None:
         return {"owned": False}
-    return {"owned": set(p["levels"]) <= Catalog.owned_levels(me, p["course"]), "course": p["course"]}
+    return {"owned": owns(me, product), "course": p["courses"][0]}
 
 
 # ------------------------------------------------------------------------------------------------ Stripe webhook
@@ -211,17 +258,23 @@ def handle_event(event):
         session = C.text(obj.get("id"), 120)
         if not session:
             return "no session"
-        if app_tables.purchases.get(session=session) is not None:
+        if len(app_tables.purchases.search(session=session)) or len(app_tables.gifts.search(session=session)):
             return "duplicate"
         ref = C.text(obj.get("client_reference_id"), 120)
         uref, _, product = ref.rpartition("-")
+        is_gift = product.startswith("g") and product[1:] in PRODUCTS
+        if is_gift:
+            product = product[1:]
         if product not in PRODUCTS:
             return "unknown product"
         email = C.text(((obj.get("customer_details") or {}).get("email")) or obj.get("customer_email"), 200)
         user = user_from_ref(uref) or (app_tables.users.get(email=email.lower()) if email else None)
         amount = obj.get("amount_total") if isinstance(obj.get("amount_total"), int) else None
-        grant(user, email, product, "stripe", amount=amount, currency=C.text(obj.get("currency"), 8), session=session,
-              intent=C.text(obj.get("payment_intent"), 120))
+        currency, intent = C.text(obj.get("currency"), 8), C.text(obj.get("payment_intent"), 120)
+        if is_gift:
+            Gifts.create(user, email, product, amount=amount, currency=currency, session=session, intent=intent)
+            return "gift"
+        grant(user, email, product, "stripe", amount=amount, currency=currency, session=session, intent=intent)
         return "granted"
     if kind == "charge.refunded":
         intent = C.text(obj.get("payment_intent"), 120)
@@ -230,6 +283,9 @@ def handle_event(event):
         n = 0
         for p in app_tables.purchases.search(payment_intent=intent):
             p["refunded"] = True
+            n += 1
+        for g in app_tables.gifts.search(payment_intent=intent):   # a refunded gift can't be redeemed any more
+            g["refunded"] = True
             n += 1
         return "refunded %d" % n
     return "ignored"
@@ -281,7 +337,7 @@ def admin_shop():
     origin = anvil.server.get_app_origin() or ""
     api = origin.rstrip("/") + "/_/api"
     s = settings()
-    return {"settings": s, "products": [{"product": k, "course": v["course"], "course_name": Catalog.course_name(v["course"]),
+    return {"settings": s, "products": [{"product": k, "course": v["courses"][0], "course_name": product_name(k),
                                          "kind": v["kind"], "link": s["links"].get(k, ""),
                                          "success_url": "%s/#thanks/%s" % (origin.rstrip("/"), k)}
                                         for k, v in PRODUCTS.items()],
@@ -387,7 +443,7 @@ def admin_waitlist_remove(entry_id):
 
 
 @anvil.server.callable(require_user=True)
-def admin_audio_test(course="en-es"):
+def admin_audio_test(course="en-es"):  # noqa: course = any of courses.ORDER
     """A playable link to lesson 1, so the admin can check the storage setup."""
     C.require_admin()
     from . import Audio

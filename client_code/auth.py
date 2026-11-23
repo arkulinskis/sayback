@@ -34,7 +34,10 @@ def _signed_in(name=""):
     if name:
         anvil.server.call("update_profile", name)
     state.set_me(anvil.server.call("get_me"))
+    state.store_set("sm.me", state.me())
     legal.refresh_soon()  # records the sign-up tick box, or reminds people to review new terms
+    from . import ads
+    ads.send()            # where this person first came from (an ad page), once
     return {"ok": True}
 
 
@@ -90,3 +93,4 @@ def sign_out():
     anvil.users.logout()
     legal.signed_out()
     state.set_me(None)
+    state.store_set("sm.me", None)

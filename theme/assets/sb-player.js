@@ -1,4 +1,4 @@
-/* Sayback lesson player: one <audio>, big controls, a scrubber with the lesson's chapter marks, lock-screen and car
+/* Spoken Miles lesson player: one <audio>, big controls, a scrubber with the lesson's chapter marks, lock-screen and car
    controls (Media Session), a full-screen car mode, and progress reports for the server.
    Wrapped by client_code/Components/Player. Python passes plain values and callbacks:
      SB.player(el, {src, start, title, album, marks: [firstPhrase, pep1, pep2, outro], labels: {...},
@@ -123,7 +123,7 @@
       if (!('mediaSession' in navigator)) return;
       try {
         navigator.mediaSession.metadata = new MediaMetadata({
-          title: (prefix ? prefix + ' · ' : '') + (o.title || 'Sayback'), artist: 'Sayback', album: o.album || '',
+          title: (prefix ? prefix + ' · ' : '') + (o.title || 'Spoken Miles'), artist: 'Spoken Miles', album: o.album || '',
           artwork: [{ src: '_/theme/icon-512.png', sizes: '512x512', type: 'image/png' }]
         });
       } catch (e) {}
@@ -201,7 +201,9 @@
     function checkCue() {
       var t = audio.currentTime || 0, prev = checkT;
       checkT = t;
-      if (!playing || holding || !thinkSec || !cues.length || audio.paused || audio.seeking) return;
+      // Screen locked / app in the background: phones won't restart audio from a timer, so no extra hold there
+      // (the recorded thinking gap still plays). Holds come back as soon as the screen is on.
+      if (!playing || holding || !thinkSec || !cues.length || audio.paused || audio.seeking || document.hidden) return;
       if (prev === null || t <= prev || t - prev > 1.5 || Date.now() - seekAt < 700) return;
       var lo = 0, hi = cues.length;       // first cue after prev
       while (lo < hi) { var mid = (lo + hi) >> 1; if (cues[mid] <= prev) lo = mid + 1; else hi = mid; }
@@ -335,6 +337,7 @@
       },
       destroy: function () {
         if (dead) return;
+        if (SB._player === api) SB._player = null;   // tests never drive a closed player
         if (playing) report(false);
         clearHold();
         if (poll) { clearInterval(poll); poll = null; }

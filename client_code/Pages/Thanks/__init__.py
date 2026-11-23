@@ -11,12 +11,15 @@ TRIES, EVERY = 36, 2500     # ~90 seconds of checking
 
 class Thanks(ThanksTemplate):
     """#thanks/<product>: where Stripe sends people after paying (the Payment Link's success address). It checks every
-    2.5 s until the webhook has unlocked the purchase, then offers the first new lesson."""
+    2.5 s until the webhook has unlocked the purchase, then offers the first new lesson. A gift (the buyer pressed
+    "Give ..."; shop.buy stored sayback.pending_gift) waits for the gift code instead and opens its card."""
 
     def __init__(self, args=(), **properties):
         super().__init__(**properties)
         self.product = args[0] if args else (state.store_get("sayback.pending") or "")
         self.course = shop.COURSE_OF.get(self.product, "en-es")
+        self.gift = bool(state.store_get("sayback.pending_gift"))
+        self.gift_code = ""
         self.tries, self.timer = 0, None
         self.heading.text = i18n.t("Unlocking your lessons")
         self.text.text = i18n.t("Stripe has your payment. This usually takes a few seconds.")
@@ -28,7 +31,12 @@ class Thanks(ThanksTemplate):
     def _check(self):
         self.timer = None
         try:
-            r = anvil.server.call_s("has_product", self.product)
+            if self.gift:
+                g = (anvil.server.call_s("latest_gift", self.product) or {}).get("gift")
+                r = {"owned": bool(g)}
+                self.gift_code = g["code"] if g else ""
+            else:
+                r = anvil.server.call_s("has_product", self.product)
         except Exception:
             r = {"owned": False}
         if r.get("owned"):
@@ -44,10 +52,18 @@ class Thanks(ThanksTemplate):
 
     def _done(self):
         state.store_set("sayback.pending", "")
+        state.store_set("sayback.pending_gift", False)
         self.waiting_art.visible = False
         self.done_art.visible = True
-        self.heading.text = i18n.t("You're in. Welcome to Sayback.")
-        upgrade = self.product.endswith("up") or self.product.endswith("all")
+        if self.gift:
+            self.heading.text = i18n.t("Your gift is ready")
+            self.text.text = i18n.t("Add their name and a message, then print the card or send them the link.")
+            self.start_button.text = i18n.t("Make the gift card")
+            self.start_button.visible = True
+            state.set_attr(self.lib_link, "href", router.href("gift"))
+            return
+        self.heading.text = i18n.t("You're in. Welcome to Spoken Miles.")
+        upgrade = self.product.endswith("up") or self.product.endswith("all") or self.product == "trio"
         self.text.text = (i18n.t("Every level is unlocked. Your next lesson is waiting in the library.") if upgrade else
                           i18n.t("All 30 lessons of Level 1 are yours. Tomorrow's drive is lesson 2."))
         self.start_button.text = i18n.t("Play my next lesson")
@@ -56,6 +72,9 @@ class Thanks(ThanksTemplate):
 
     @handle("start_button", "click")
     def start_button_click(self, **event_args):
+        if self.gift and self.gift_code:
+            router.go("gift", "card", self.gift_code)
+            return
         router.go("home", self.course)
 
     def leave(self):

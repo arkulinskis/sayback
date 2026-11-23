@@ -115,6 +115,94 @@ db_schema:
     indexes: []
     server: full
     title: Feedback
+  gifts:
+    client: none
+    columns:
+    - admin_ui:
+        order: 0
+        width: 200
+      name: code
+      type: string
+    - admin_ui:
+        order: 1
+        width: 200
+      name: product
+      type: string
+    - admin_ui:
+        order: 2
+        width: 200
+      name: buyer
+      target: users
+      type: link_single
+    - admin_ui:
+        order: 3
+        width: 200
+      name: buyer_email
+      type: string
+    - admin_ui:
+        order: 4
+        width: 200
+      name: to_name
+      type: string
+    - admin_ui:
+        order: 5
+        width: 200
+      name: message
+      type: string
+    - admin_ui:
+        order: 6
+        width: 200
+      name: amount
+      type: number
+    - admin_ui:
+        order: 7
+        width: 200
+      name: currency
+      type: string
+    - admin_ui:
+        order: 8
+        width: 200
+      name: session
+      type: string
+    - admin_ui:
+        order: 9
+        width: 200
+      name: payment_intent
+      type: string
+    - admin_ui:
+        order: 10
+        width: 200
+      name: source
+      type: string
+    - admin_ui:
+        order: 11
+        width: 200
+      name: created
+      type: datetime
+    - admin_ui:
+        order: 12
+        width: 200
+      name: redeemed_by
+      target: users
+      type: link_single
+    - admin_ui:
+        order: 13
+        width: 200
+      name: redeemed_at
+      type: datetime
+    - admin_ui:
+        order: 14
+        width: 200
+      name: refunded
+      type: bool
+    - admin_ui:
+        order: 15
+        width: 200
+      name: is_demo
+      type: bool
+    indexes: []
+    server: full
+    title: Gifts
   listener_prefs:
     client: none
     columns:
@@ -391,6 +479,11 @@ db_schema:
       client_hidden: true
       name: remembered_logins
       type: simpleObject
+    - admin_ui:
+        order: 15
+        width: 200
+      name: ad_source
+      type: simpleObject
     indexes: []
     server: full
     title: Users
@@ -437,14 +530,14 @@ db_schema:
     server: full
     title: Waitlist
 metadata:
-  description: 45-minute hands-free audio lessons for the car and the kitchen. Hear it in English, say it in Spanish, out
-    loud. 150 lessons. Lesson 1 is free.
+  description: '45-minute hands-free audio lessons for the car: hear English, say it in Spanish, French or Italian. Lifetime
+    access, works offline. Lesson 1 free.'
   logo_img: asset:icon-512.png
   title: 'Sayback: speak Spanish on the drive you already take'
-name: Sayback
+name: Spoken Miles
 native_deps:
   head_html: |
-    <script src="_/theme/legal-kit.js?v=215bc03db1"></script>
+    <script src="_/theme/legal-kit.js?v=d487851dc4"></script>
     <!-- seo:start (APP_MAKER/seo: edit seo/apps/sayback.json and run seo.py, not here) -->
     <link rel="canonical" href="https://sayback.anvil.app/">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -482,8 +575,8 @@ native_deps:
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
-    <link id="ui-favicon" rel="icon" type="image/svg+xml" href="_/theme/icon.svg?v=a97e448796">
-    <link rel="apple-touch-icon" href="_/theme/icon-180.png?v=7da627485c">
+    <link id="ui-favicon" rel="icon" type="image/svg+xml" href="_/theme/icon.svg?v=19df1750b8">
+    <link rel="apple-touch-icon" href="_/theme/icon-180.png?v=d26d5b7108">
     <script>
     /* Keep our tab icon: Anvil adds its own <link rel="icon">, so drop any other icon link. */
     (function () {
@@ -501,11 +594,12 @@ native_deps:
     <!-- Prepsto feedback panel: every "Submit feedback" link and button opens it (it is the only feedback channel). No floating button, no cookies, nothing loads until it is opened. Codes: APP_MAKER/prepsto-links.json -->
     <script src="https://prepsto.com/_/theme/widget.js" data-prepsto="__PREPSTO_CODE__" data-button="false" data-label="Submit feedback" async></script>
     <link rel="stylesheet" href="_/theme/icons.css?v=b535f6e813">
-    <link rel="stylesheet" href="_/theme/app.css?v=94318a64f1">
-    <script src="_/theme/sb-i18n.js?v=7c5b8643a6"></script>
-    <script src="_/theme/sb-hero-data.js?v=3a2e4a6369"></script>
-    <script src="_/theme/sb-road.js?v=d98749d5f7"></script>
-    <script src="_/theme/sb-player.js?v=96da6fe737"></script>
+    <link rel="stylesheet" href="_/theme/app.css?v=d46d2963a8">
+    <script src="_/theme/sb-i18n.js?v=b2f1ede0cf"></script>
+    <script src="_/theme/sb-hero-data.js?v=059e1bf756"></script>
+    <script src="_/theme/sb-road.js?v=700fef81ef"></script>
+    <script src="_/theme/sb-player.js?v=1668d51475"></script>
+    <script src="_/theme/sb-offline.js?v=e3cf01b8cd"></script>
     <script src="_/theme/app-kit.js?v=d466acb25c"></script>
 package_name: Sayback
 runtime_options:

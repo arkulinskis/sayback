@@ -19,6 +19,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 PROJECT = HERE.parents[1]
 _tmp = pathlib.Path(tempfile.mkdtemp())
 shutil.copytree(PROJECT / "server_code", _tmp / "app")
+shutil.copy(PROJECT / "client_code" / "courses.py", _tmp / "app" / "courses.py")  # shared client+server module
 (_tmp / "app" / "__init__.py").write_text("")
 os.environ["ANVIL_APP_YAML"] = str(PROJECT / "anvil.yaml")  # the mock's tables follow the app's own schema
 sys.path[:0] = [str(HERE / "mock"), str(_tmp)]
@@ -190,7 +191,10 @@ bad(call("set_done", "en-es", "L3-01", True))
 
 # shop: closed -> waitlist, then Payment Links
 info = ok(call("shop_info", "en-es"))
-assert [p["kind"] for p in info["products"]] == ["level1", "complete"] and not any(p["open"] for p in info["products"])
+assert [p["kind"] for p in info["products"]] == ["level1", "complete", "bundle"] and not any(p["open"] for p in info["products"])
+assert [g["kind"] for g in info["gifts"]] == ["level1", "complete", "bundle"]
+assert [p["kind"] for p in ok(call("shop_info", "es-en"))["products"]] == ["level1", "complete"], "no bundle for Spanish speakers"
+assert [p["product"] for p in ok(call("shop_info", "en-fr"))["products"]] == ["fr1", "frall", "trio"]
 bad(call("shop_info", "zz"))
 assert ok(call("checkout", "es1"))["waitlist"] is True
 bad(call("checkout", "nope"))
@@ -234,7 +238,7 @@ assert Cat.owned_levels(carla, "en-es") == {1}
 assert call("has_product", "es1")["owned"] and not call("has_product", "esall")["owned"]
 lib = call("library", "en-es", 1, now.date().isoformat())
 assert lib["lessons"][5]["state"] == "open" and lib["lessons"][0]["state"] != "locked"
-assert [p["kind"] for p in lib["shop"]["products"]] == ["level1", "upgrade"], "Level 1 owners see the upgrade"
+assert [p["kind"] for p in lib["shop"]["products"]] == ["level1", "upgrade", "bundle"], "Level 1 owners see the upgrade"
 bad(call("checkout", "es1"), "already owned")
 assert len(call("my_purchases")["purchases"]) == 1
 assert Shop.handle_event({"type": "checkout.session.completed", "data": {"object": {"id": "cs_2", "payment_status": "unpaid",
@@ -286,6 +290,91 @@ ok(call("demo_load"))
 ok(call("demo_load"))
 assert len(T.users.search(is_demo=True)) == len(M["DemoData"].DEMO_USERS), "reloading replaces the demo instead of doubling it"
 
+# ---------------------------------------------------------------------------------- Spoken Miles: 4 courses, bundle, gifts, offline, ads
+assert Cat.COURSES == ("en-es", "en-fr", "en-it", "es-en"), Cat.COURSES
+assert len(Cat.lessons("en-fr")) == 150 and len(Cat.lessons("en-it")) == 150
+assert all(len(x["pairs"]) >= 17 for x in Cat.lessons("en-fr") + Cat.lessons("en-it")), "about 20 phrases a lesson"
+assert Cat.lesson("en-fr", "L1-01")["pairs"][0][1].startswith("Bonjour"), Cat.lesson("en-fr", "L1-01")["pairs"][0]
+eva = person("eva@example.com", "Eva")
+as_user(eva)
+lib = call("library", "en-it", 1, now.date().isoformat())
+assert lib["course"] == "en-it" and [c["course"] for c in lib["courses"]] == list(Cat.COURSES)
+assert ok(call("get_lesson", "en-it", "L1-01"))["locked"] == "" and ok(call("get_lesson", "en-it", "L1-05"))["locked"] == "level1"
+# the bundle: one payment -> Spanish, French and Italian, all five levels
+as_user(admin)
+ok(call("admin_save_shop", {"links": {"trio": "https://buy.stripe.com/test_trio", "itall": "https://buy.stripe.com/test_itall"}}))
+as_user(eva)
+url = ok(call("checkout", "trio"))["url"]
+eref = Shop.user_ref(eva)
+assert "client_reference_id=%s-trio" % eref in url
+assert Shop.handle_event({"type": "checkout.session.completed", "data": {"object": {
+    "id": "cs_trio", "client_reference_id": eref + "-trio", "payment_status": "paid", "amount_total": 24900,
+    "currency": "usd", "payment_intent": "pi_trio", "customer_details": {"email": "eva@example.com"}}}}) == "granted"
+assert all(Cat.owned_levels(eva, c) == {1, 2, 3, 4, 5} for c in ("en-es", "en-fr", "en-it")) and not Cat.owned_levels(eva, "es-en")
+assert call("has_product", "trio")["owned"] and len(T.purchases.search(session="cs_trio")) == 3
+assert [r["amount"] for r in T.purchases.search(session="cs_trio")].count(24900) == 1, "the amount is counted once"
+assert Shop.handle_event({"type": "checkout.session.completed", "data": {"object": {
+    "id": "cs_trio", "client_reference_id": eref + "-trio", "payment_status": "paid"}}}) == "duplicate"
+bad(call("checkout", "trio"), "already owned")
+# a gift: the buyer pays, gets a code, personalises it; someone else redeems it; a refund closes it
+gurl = ok(call("checkout", "itall", True))["url"]
+assert "client_reference_id=%s-gitall" % eref in gurl, "owners can still buy it as a gift"
+bad(call("checkout", "itup", True), "upgrades aren't gifts")
+assert Shop.handle_event({"type": "checkout.session.completed", "data": {"object": {
+    "id": "cs_gift", "client_reference_id": eref + "-gitall", "payment_status": "paid", "amount_total": 14900,
+    "currency": "usd", "payment_intent": "pi_gift", "customer_details": {"email": "eva@example.com"}}}}) == "gift"
+g = call("latest_gift", "itall")["gift"]
+assert g and g["kind"] == "complete" and len(g["code"]) == 12 and not g["redeemed"]
+assert ok(call("set_gift_note", g["code"], "Dad", "For all those miles to work."))["gift"]["to_name"] == "Dad"
+assert len(call("my_gifts")["gifts"]) == 1
+dad = person("dad@example.com", "Dad")
+as_user(dad)
+bad(call("set_gift_note", g["code"], "x", "y"), "only the buyer edits the card")
+bad(call("gift_card", g["code"]))
+pub = ok(call("gift_public", g["nice"].lower()))["gift"]
+assert pub["to_name"] == "Dad" and pub["from_name"] == "Eva" and "buyer_email" not in pub
+bad(call("gift_public", "NOPE-NOPE-NOPE"))
+r = ok(call("redeem_gift", g["code"]))
+assert r["course"] == "en-it" and Cat.owned_levels(dad, "en-it") == {1, 2, 3, 4, 5}
+assert ok(call("redeem_gift", g["code"]))["already"] is True
+as_user(eva)
+assert Cat.owned_levels(eva, "en-it") == {1, 2, 3, 4, 5}
+as_user(person("thief@example.com", "Thief"))
+bad(call("redeem_gift", g["code"]), "a gift opens once")
+assert Shop.handle_event({"type": "charge.refunded", "data": {"object": {"payment_intent": "pi_gift", "refunded": True}}}) == "refunded 2"
+assert Cat.owned_levels(dad, "en-it") == set(), "refunding a gift locks it again"
+as_user(admin)
+ag = call("admin_gifts")
+assert ag["total"] == 1 and ag["gifts"][0]["redeemed_email"] == "dad@example.com"
+fg = ok(call("admin_make_gift", "frall", "Podcast giveaway"))["gift"]
+as_user(dad)
+assert ok(call("redeem_gift", fg["code"]))["course"] == "en-fr" and Cat.owned_levels(dad, "en-fr") == {1, 2, 3, 4, 5}
+# offline + downloads
+as_user(eva)
+di = call("downloads_info", "en-fr")
+assert di["course"] == "en-fr" and len(di["levels"]) == 5 and all(lv["open"] for lv in di["levels"]) and di["levels"][0]["mb"] > 100
+op = ok(call("offline_pack", "en-fr", ["L1-01", "L1-02", "L9-99"]))
+assert [x["code"] for x in op["items"]] == ["L1-01", "L1-02"] and op["items"][0]["meta"]["pairs"] and op["items"][0]["url"].startswith("https://")
+assert "response-content-disposition" in ok(call("offline_pack", "en-fr", ["L1-01"], True))["items"][0]["url"]
+as_user(ana)
+assert [x["code"] for x in ok(call("offline_pack", "en-fr", ["L1-01", "L2-01"]))["items"]] == ["L1-01"], "locked lessons are left out"
+bad(call("offline_pack", "zz", ["L1-01"]))
+# ads: first touch kept on the account, counted per source
+as_user(eva)
+assert ok(call("note_ad", {"source": "meta", "campaign": "dad-gift", "page": "#gift", "bogus": "x"}))["saved"] is True
+assert ok(call("note_ad", {"source": "google"}))["saved"] is False, "first touch wins"
+assert eva["ad_source"] == {"source": "meta", "campaign": "dad-gift", "page": "#gift"}
+as_user(eva)
+for fn, args in [("admin_customers", ()), ("admin_ads", ()), ("admin_gifts", ()), ("admin_make_gift", ("frall",))]:
+    assert denied(fn, *args), fn
+as_user(admin)
+cu = call("admin_customers", "eva@")
+assert cu["customers"][0]["email"] == "eva@example.com" and cu["customers"][0]["source"] == "meta" and "eva@example.com" in cu["csv"]
+ads = call("admin_ads")
+meta_row = [r for r in ads["rows"] if r["source"] == "meta"][0]
+assert meta_row["signups"] == 1 and meta_row["buyers"] == 1 and meta_row["revenue_cents"] >= 24900 and meta_row["conversion"] == 100.0
+assert any(p["page"] == "#learn/french" for p in ads["pages"])
+
 # ---------------------------------------------------------------------------------- Privacy & Terms
 if "legal_server" in M:
     as_user(ana)
@@ -301,7 +390,8 @@ assert "email" in r["tables"]["users"] and "product" in r["tables"]["purchases"]
 
 # ---------------------------------------------------------------------------------- every callable is covered by a permission check
 # A callable that changes data without require_user / a C.require_* check is a security hole. List the public ones here.
-PUBLIC = {"log_client_error", "session_ping", "get_me", "submit_feedback", "legal_state", "legal_accept", "shop_info", "join_waitlist"}
+PUBLIC = {"log_client_error", "session_ping", "get_me", "submit_feedback", "legal_state", "legal_accept", "shop_info", "join_waitlist",
+          "gift_public"}
 for name, (f, need) in sorted(anvil.server.CALLABLES.items()):
     if name in PUBLIC:
         continue

@@ -14,7 +14,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 ES = {
     # waitlist
-    "Sayback opens for sale very soon": "Sayback sale a la venta muy pronto",
+    "Spoken Miles opens for sale very soon": "Spoken Miles sale a la venta muy pronto",
     "Lesson 1 is already yours. Leave your email and we'll write once, the day the full course is ready, with an early-listener price.":
         "La lección 1 ya es tuya. Déjanos tu correo y te escribiremos una sola vez, el día que el curso completo esté listo, con un precio para los primeros.",
     "Your email": "Tu correo",
@@ -56,14 +56,14 @@ ES = {
     "That page is for admins only.": "Esa página es solo para administradores.",
     # sign in
     "Continue with Google": "Continuar con Google", "At least 8 characters": "Al menos 8 caracteres", "Show": "Ver", "Hide": "Ocultar",
-    "Welcome to Sayback!": "¡Bienvenido a Sayback!", "Welcome back!": "¡Qué bueno verte de nuevo!", "Welcome back": "Hola de nuevo",
+    "Welcome to Spoken Miles!": "¡Bienvenido a Spoken Miles!", "Welcome back!": "¡Qué bueno verte de nuevo!", "Welcome back": "Hola de nuevo",
     "Sign in to pick up where you stopped.": "Entra para seguir donde te quedaste.",
     "Create your free account": "Crea tu cuenta gratis",
     "Lesson 1 is yours, all 45 minutes. It takes a few seconds.": "La lección 1 es tuya, los 45 minutos. Tarda unos segundos.",
     "Create account": "Crear cuenta", "Reset your password": "Cambia tu contraseña",
     "We'll email you a link to choose a new password.": "Te enviaremos un enlace para elegir una contraseña nueva.",
     "Send the link": "Enviar el enlace", "Your name": "Tu nombre", "Email": "Correo", "Password": "Contraseña", "or": "o",
-    "Forgot your password?": "¿Olvidaste tu contraseña?", "Back to sign in": "Volver a entrar", "About Sayback": "Qué es Sayback",
+    "Forgot your password?": "¿Olvidaste tu contraseña?", "Back to sign in": "Volver a entrar", "About Spoken Miles": "Qué es Spoken Miles",
     "Sign in or create an account": "Entra o crea una cuenta",
     "Make your free account first. It takes a few seconds.": "Primero crea tu cuenta gratis. Tarda unos segundos.",
     # buy
@@ -166,7 +166,7 @@ ES = {
     "Almost there": "Casi listo",
     "Your payment went through, but the unlock is taking longer than usual. It will appear in your library shortly. If it hasn't within an hour, write to arkvital@outlook.com and we'll sort it out the same day.":
         "Tu pago se hizo, pero la apertura está tardando más de lo normal. Aparecerá en tu biblioteca en breve. Si no aparece en una hora, escribe a arkvital@outlook.com y lo resolvemos el mismo día.",
-    "You're in. Welcome to Sayback.": "Ya estás dentro. Bienvenido a Sayback.",
+    "You're in. Welcome to Spoken Miles.": "Ya estás dentro. Bienvenido a Spoken Miles.",
     "Every level is unlocked. Your next lesson is waiting in the library.": "Todos los niveles están abiertos. Tu próxima lección te espera en la biblioteca.",
     "All 30 lessons of Level 1 are yours. Tomorrow's drive is lesson 2.": "Las 30 lecciones del nivel 1 son tuyas. El camino de mañana es la lección 2.",
     "Play my next lesson": "Escuchar mi próxima lección",
@@ -192,6 +192,70 @@ ES = {
     "Please enter a valid email address.": "Escribe un correo válido.",
     "Please choose a password of at least 8 characters.": "Elige una contraseña de al menos 8 caracteres.",
     "Please enter your password.": "Escribe tu contraseña.",
+    # Spoken Miles (2026-11-23): courses, downloads, gifts
+    "Offline": "Sin conexión", "Level": "Nivel", "{n} lessons · {size}": "{n} lecciones · {size}", "{n} saved": "{n} guardadas",
+    "Save level": "Guardar nivel", "Remove": "Quitar", "MP3 files": "Archivos MP3", "Lessons {range}": "Lecciones {range}",
+    "saved": "guardadas", "Cancel": "Cancelar", "Unlock": "Desbloquear",
+    "Remove this level's saved lessons from this phone? You can save them again any time.":
+        "¿Quitar de este teléfono las lecciones guardadas de este nivel? Puedes volver a guardarlas cuando quieras.",
+    "one time, lifetime access": "un solo pago, acceso de por vida",
+    "Every language · Spanish, French, Italian": "Todos los idiomas · español, francés, italiano",
+    "Get every language": "Quiero todos los idiomas",
+    "Stream, save offline, or download the MP3s": "Escúchalas en línea, guárdalas sin conexión o descarga los MP3",
+    "Spanish, French and Italian: all five levels of each": "Español, francés e italiano: los cinco niveles de cada uno",
+    "450 lessons, 336 hours of speaking": "450 lecciones, 336 horas hablando",
+    "Switch languages any time, progress kept for each": "Cambia de idioma cuando quieras; se guarda tu avance en cada uno",
+    "Less than two complete courses": "Menos que dos cursos completos",
+    "Every language": "Todos los idiomas", "Play {title}": "Reproducir {title}",
+    "Remove from this phone": "Quitar de este teléfono",
+    "Pay once. Lifetime access. Listen anywhere, even with no signal.":
+        "Pagas una vez. Acceso de por vida. Escucha donde sea, incluso sin señal.",
+    "Spanish": "Español", "French": "Francés", "Italian": "Italiano", "English": "Inglés",
+    "Buying for someone else?": "¿Es para otra persona?", "Give it as a gift": "Regálalo",
+    "One payment, lifetime access. No subscription, nothing to cancel.":
+        "Un solo pago, acceso de por vida. Sin suscripción, nada que cancelar.",
+    "Lessons unlock the moment you pay: stream them, save them on your phone for drives with no signal, or download the MP3s.":
+        "Las lecciones se abren en cuanto pagas: escúchalas en línea, guárdalas en tu teléfono para los viajes sin señal o descarga los MP3.",
+    "This browser can't keep lessons offline. Stream them, or download the MP3 files.":
+        "Este navegador no puede guardar lecciones sin conexión. Escúchalas en línea o descarga los archivos MP3.",
+    "You're offline. Your saved lessons still play.": "Estás sin conexión. Tus lecciones guardadas se siguen escuchando.",
+    "Lesson audio isn't connected yet, so nothing can be saved.": "El audio de las lecciones aún no está conectado, así que no se puede guardar nada.",
+    "{n} lessons saved ({size})": "{n} lecciones guardadas ({size})",
+    "About {free} free for Spoken Miles on this device.": "Unos {free} libres para Spoken Miles en este dispositivo.",
+    "Every lesson you own is already saved.": "Todas tus lecciones ya están guardadas.",
+    "Save {n} lessons ({size}) on this phone? Use Wi-Fi if you can.":
+        "¿Guardar {n} lecciones ({size}) en este teléfono? Usa wifi si puedes.",
+    "Save them": "Guardarlas", "Saving…": "Guardando…", "Saved {done} of {total} ({size})": "Guardadas {done} de {total} ({size})",
+    "{n} lessons didn't save. Check your connection and try again.": "{n} lecciones no se guardaron. Revisa tu conexión y vuelve a intentarlo.",
+    "Removed from this phone.": "Se quitó de este teléfono.",
+    "Downloading {n} MP3 files. Your browser may ask to allow several downloads.":
+        "Descargando {n} archivos MP3. Tu navegador puede pedirte permiso para varias descargas.",
+    "On this phone": "En este teléfono", "Put it on your home screen": "Ponlo en tu pantalla de inicio",
+    "Opens like an app, full screen, and keeps playing with the screen locked. Play, pause and skip work from the lock screen, your headphones and most car displays.":
+        "Se abre como una app, a pantalla completa, y sigue sonando con la pantalla bloqueada. Reproducir, pausar y saltar funcionan desde la pantalla de bloqueo, tus audífonos y la mayoría de las pantallas del carro.",
+    'On iPhone: tap Share, then "Add to Home Screen".': 'En iPhone: toca Compartir y luego "Agregar a inicio".',
+    'In your browser\'s menu, choose "Install app" or "Add to Home screen".':
+        'En el menú de tu navegador, elige "Instalar app" o "Agregar a la pantalla principal".',
+    "Saved lessons": "Lecciones guardadas", "Save by level or by pack of 5": "Guarda por nivel o en paquetes de 5",
+    "A saved lesson plays from your phone, with no signal and no data. Stream anything you haven't saved.":
+        "Una lección guardada suena desde tu teléfono, sin señal y sin datos. Lo que no hayas guardado, escúchalo en línea.",
+    "You're offline. Connect to open your gift.": "Estás sin conexión. Conéctate para abrir tu regalo.",
+    "We can't find that gift code. Check the letters on the card.": "No encontramos ese código. Revisa las letras de la tarjeta.",
+    "For {name}": "Para {name}", "For you": "Para ti", "From {name}": "De {name}",
+    "This gift was refunded, so it can't be opened any more.": "Este regalo se reembolsó, así que ya no se puede abrir.",
+    "This gift has already been opened. If that was you, it's in your library.":
+        "Este regalo ya se abrió. Si fuiste tú, está en tu biblioteca.",
+    "Type the code from your card.": "Escribe el código de tu tarjeta.",
+    "Your gift is open. Enjoy the ride!": "Tu regalo está abierto. ¡Buen viaje!",
+    "A language for the road": "Un idioma para el camino", "The code on your card": "El código de tu tarjeta",
+    "Make my free account to open it": "Crear mi cuenta gratis para abrirlo", "Already have an account?": "¿Ya tienes cuenta?",
+    "45-minute audio lessons you answer out loud. Made for the car.": "Lecciones de audio de 45 minutos que respondes en voz alta. Hechas para el carro.",
+    "Stream them, or save them to your phone for drives with no signal.": "Escúchalas en línea o guárdalas en tu teléfono para los viajes sin señal.",
+    "Yours for life. No subscription, nothing to pay.": "Tuyo de por vida. Sin suscripción, nada que pagar.",
+    "Your gift is ready": "Tu regalo está listo",
+    "Add their name and a message, then print the card or send them the link.":
+        "Agrega su nombre y un mensaje, luego imprime la tarjeta o envíale el enlace.",
+    "Make the gift card": "Hacer la tarjeta de regalo",
 }
 
 

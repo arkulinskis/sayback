@@ -14,6 +14,7 @@ from anvil.tables import app_tables
 
 from . import common as C
 from . import Audio, Catalog, DemoData, Shop
+from . import courses as K
 
 LESSON_SECONDS = 2700
 DONE_AT = 0.93          # 93% heard = done (the outro and the fade-out don't have to be sat through)
@@ -156,8 +157,8 @@ def library(course=None, level=None, today="", fallback=None):
               "locked": not Catalog.can_play(me, course, nxt["code"])}
     return {"course": course, "name": Catalog.course_name(course), "level": level, "levels": levels, "lessons": tiles,
             "next": nd, "stats": stats(me, course, today), "owned": sorted(owned), "is_admin": C.is_admin(me),
-            "other": {"en-es": "es-en", "es-en": "en-es"}[course],
-            "other_owned": bool(Catalog.owned_levels(me, {"en-es": "es-en", "es-en": "en-es"}[course])),
+            "courses": [{"course": c, "lang": K.COURSES[c]["lang"], "learner": K.COURSES[c]["learner"],
+                         "owned": bool(Catalog.owned_levels(me, c))} for c in Catalog.COURSES],
             "done_total": len([1 for r in prog.values() if r["done"]]),
             "shop": Shop.shop_public(course, me), "audio": Audio.status() != "none"}
 
@@ -276,3 +277,59 @@ def overview():
     return {"listeners_week": len({r["user"].get_id() for r in rows if r["user"] is not None}),
             "minutes_week": int(sum((r["seconds"] or 0) for r in rows) // 60),
             "lessons_done": len(app_tables.progress.search(done=True))}
+
+
+# ------------------------------------------------------------------------------------------------ offline + downloads
+@anvil.server.callable(require_user=True)
+def downloads_info(course=None):
+    """The Downloads page: the course's five levels, each lesson with its size and whether it may be saved."""
+    me = C.require_user()
+    course = _course_for(me, course, "en-es")
+    levels = []
+    for lv in Catalog.LEVELS:
+        items = []
+        for ls in Catalog.lessons(course):
+            if ls["level"] != lv:
+                continue
+            items.append({"code": ls["code"], "n": ls["n"], "title": ls["title"], "mb": ls.get("mb") or 21.6,
+                          "open": Catalog.can_play(me, course, ls["code"])})
+        levels.append({"level": lv, "name": {"en": Catalog.level_name(lv, "en"), "es": Catalog.level_name(lv, "es")},
+                       "lessons": items, "mb": round(sum(x["mb"] for x in items)),
+                       "open": all(x["open"] for x in items)})
+    return {"course": course, "name": Catalog.course_name(course), "levels": levels, "audio": Audio.status() != "none",
+            "courses": [{"course": c, "lang": K.COURSES[c]["lang"], "owned": bool(Catalog.owned_levels(me, c))}
+                        for c in Catalog.COURSES]}
+
+
+def offline_meta(me, course, ls):
+    """What Pages/Lesson needs to show a saved lesson with no connection (no links, no shop)."""
+    prev, nxt = Catalog.neighbours(course, ls["code"])
+    return {"course": course, "name": Catalog.course_name(course), "code": ls["code"], "level": ls["level"], "n": ls["n"],
+            "level_name": {"en": Catalog.level_name(ls["level"], "en"), "es": Catalog.level_name(ls["level"], "es")},
+            "title": ls["title"], "situation": ls["situation"], "emotion": ls["emotion"], "culture": ls["culture"],
+            "marks": ls["marks"], "pairs": ls["pairs"], "pair_count": len(ls["pairs"]), "cues": lesson_cues(course, ls["code"]),
+            "prev": {"code": prev} if prev else None, "next": {"code": nxt} if nxt else None}
+
+
+@anvil.server.callable(require_user=True)
+def offline_pack(course, codes, files=False):
+    """Signed links (6 hours) for lessons the person may hear: to save in the browser (with the lesson's details for
+    offline play), or with files=True as MP3 downloads. Locked lessons are left out. At most one level per call."""
+    me = C.require_user()
+    if not Catalog.course_ok(course) or not isinstance(codes, list):
+        return C.fail("Pick lessons to save.")
+    if C.rate_limited("offline_pack", 40, 3600):
+        return C.fail("That's a lot of downloads at once. Please try again in a while.")
+    out = []
+    for code in codes[:30]:
+        ls = Catalog.lesson(course, str(code))
+        if ls is None or not Catalog.can_play(me, course, ls["code"]):
+            continue
+        url = Audio.url_for(ls["file"], ls["download"]) if files else Audio.url_for(ls["file"])
+        if not url:
+            return C.fail("Lesson audio isn't connected yet.")
+        item = {"course": course, "code": ls["code"], "url": url, "mb": ls.get("mb") or 21.6}
+        if not files:
+            item["meta"] = offline_meta(me, course, ls)
+        out.append(item)
+    return C.ok(items=out)

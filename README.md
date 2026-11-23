@@ -1,83 +1,90 @@
-# Sayback
+# Spoken Miles
 
-The shop and listening app for **Sayback**, Pimsleur-style audio courses for stolen minutes (the commute, the dishes,
-the laundry): **Sayback Spanish** (English speakers learn Spanish) and **Sayback Inglés** (Spanish speakers learn
-English), 5 levels × 30 lessons × 45 minutes each. Two sales pages (English and Spanish) with a live lesson demo, a free
-lesson 1 with an account, Stripe checkout, and a member library that plays every lesson with saved progress, car mode
-and lock-screen controls. Built on [Anvil](https://anvil.works) as native Anvil Forms.
+The shop and listening app for **Spoken Miles** (formerly Sayback, renamed 2026-11-23): Pimsleur-style audio language
+courses made for the car. You hear a phrase in English, say it out loud in the new language in the pause, then hear the
+answer. 45 minutes a lesson, 5 levels × 30 lessons per language:
 
-- **App repo:** github.com/arkulinskis/sayback (branch `master`). Anvil pulls `master`.
-- **Live:** https://sayback.anvil.app
+| Course | Who it's for | Ad page |
+|---|---|---|
+| **Spoken Miles Spanish** (`en-es`) | English speakers learning Spanish | `#learn/spanish` |
+| **Spoken Miles French** (`en-fr`) | English speakers learning French | `#learn/french` |
+| **Spoken Miles Italian** (`en-it`) | English speakers learning Italian | `#learn/italian` |
+| **Spoken Miles Inglés** (`es-en`) | Spanish speakers learning English (page in Spanish) | `#es` |
+
+Pay once, lifetime access. Stream, save offline on the phone (a pack of 5, a level, the whole course) or download MP3s.
+Gifts with a printable card. Built on [Anvil](https://anvil.works) as native Anvil Forms.
+
+- **App repo:** github.com/arkulinskis/sayback (branch `master`; the folder and key stay `sayback`). Anvil pulls `master`.
+- **Live:** https://sayback.anvil.app · **Domain planned:** https://spokenmiles.com
 - **The course itself** (sentences, scripts, audio): `Documents/CLAUDE/sayback` and `Documents/CLAUDE/sayback-audio`.
+- **Costs and pricing:** `Documents/CLAUDE/sayback/PRICING.md` (kept out of this public repo).
 
 ## What it does
 
-**Sales pages (Persuade)**
-- `#landing` (English, Sayback Spanish) and `#es` (Spanish, Sayback Inglés), each written whole in its language.
-- Hero: "the windshield", a road demo. 90 seconds of the real lesson 1 play from the media site while the prompt, the
-  thinking pause (with a countdown ring) and the answer drive past under a playhead. Still frame without audio.
-- The Stolen-Minutes promise (a day timeline), why it works (the Pimsleur method), the 45-minute lesson timeline, the
-  three false beliefs, all 30 Level 1 lessons, the five levels, "two cultures, one table", the offer with live prices,
-  the "Speak or it's free" guarantee, FAQ (driving safety, AI voices), final call.
-- Every buy button: visitors make a free account first, then land on `#buy/<course>/<product>` with their plan marked.
+**Front door and ad pages (Persuade)**
+- `#landing`: "I speak English / Español" + "I want to learn Spanish / French / Italian" (or English) -> the course page.
+  Below: speaking vs tapping (a comparison table and a fair Duolingo FAQ), the car day, the gift band, FAQ.
+- `#learn/<spanish|french|italian>`: one template for the three languages (words that change are `<span data-v>`,
+  filled from `VALUES` in Pages/Landing). The live road demo (90 s of lesson 1), the car promise, the method, speaking vs
+  tapping, the three beliefs, the 30 Level 1 lessons, offline, the offer (Level 1, complete, every language), gift link,
+  "Speak or it's free" guarantee, FAQ.
+- `#es`: the page for Spanish speakers (English course), written whole in Spanish.
+- `#gift[/<course>]`: "Give Dad a language for the road": pick the language, give Level 1 / the complete course / every
+  language; "Your gifts" for givers.
+- **Ad tracking** (client_code/ads.py): UTM tags (before or after the hash), gclid/fbclid and the landing page are kept
+  first-touch for 60 days in the browser (no cookies, no scripts) and saved on the account at sign-up (`users.ad_source`).
 
 **Buying**
-- Stripe Payment Links (Admin > Shop & setup), opened with `client_reference_id=<user>-<product>` and the email filled in.
-- Products per course: Level 1, the complete course (Levels 1 to 5), and the upgrade (Levels 2 to 5, only offered to
-  Level 1 owners).
-- The Stripe webhook (`/_/api/stripe`, signed) unlocks lessons the moment people pay. `charge.refunded` locks them again
-  (the guarantee).
-- `#thanks/<product>` waits for the unlock and then offers the next lesson.
-- Before any link is set, the buy buttons collect **waitlist** emails (one-message consent, CSV in Admin).
-- Admins can give a course to any email. A gift for an email without an account joins that account when it signs up.
+- Stripe Payment Links (Admin > Shop & setup), 13 in all: Level 1 / complete / Levels 2-5 for each of the 4 courses, plus
+  `trio` = Spanish + French + Italian complete. Codes and courses live in `client_code/courses.py` (shared with the server).
+- Opened with `client_reference_id=<user>-<product>` (a gift: `<user>-g<product>`) and the email filled in.
+- The Stripe webhook (`/_/api/stripe`, signed) unlocks lessons the moment people pay (the bundle = 3 purchase rows, the
+  amount on the first), or makes a **gift code** for a gift. `charge.refunded` locks them again (also an opened gift).
+- `#thanks/<product>` waits for the unlock (or the gift) and offers the next lesson (or the gift card).
+- Before any link is set, buy buttons collect **waitlist** emails. Admins can give any product to any email.
 
-**Library and lessons (Operate)**
-- `#home[/course[/level]]`:
-  - greeting and "Up next" (play, resume at mm:ss, car mode, "Part 2 of 3 next", **How long is your trip?** 15 min / 30 min / Whole lesson)
-  - **weekly goal ring**: "42 of 90 stolen minutes this week", goals 45/90/150/225 (saved per account, table `listener_prefs`)
-  - day streak with **one rest day per 7 days** ("Rest day used: streak safe"), minutes today, lessons done, a 14-day chart
-  - five level chips and the 30 lessons of the chosen level (done, % heard or "Part 2 of 3 next", free, locked)
-  - offers for what isn't owned yet
-- `#lesson/<course>/<code>[/play|/car]`:
-  - **player**: ±10 s, a scrubber with chapter marks (intro, the two pep talks, wrap-up), speed 0.85/1/1.15, lock-screen/car controls (Media Session), full-screen car mode with one giant button (keeps the screen awake)
-  - **trip length** (15 min / 30 min / Whole lesson, remembered): stops at the pep talk that fits, so the next trip opens with that pep talk; the scrubber shows the stop
-  - **thinking time** (Normal / +2 s / +4 s, remembered): after each recall prompt the audio waits while a ring fills around the play button, in car mode and on the lock screen too (cues from the lesson plans, `server_code/cues_data.py`)
-  - **never lose your place**: an expired 6-hour audio link is fetched again and resumes at the same second; a tab back after 5 h refreshes it first; saves that fail (tunnels) are kept and sent later; the position is mirrored in the browser and the newer one wins
-  - **progress**: saved every ~20 s of listening and on pause; done at 93%
-  - **lesson content**: situation and feeling, the 20 new phrases (with "quiz yourself", tap to reveal), the culture moment, MP3 and transcript downloads, mark as done, previous/next
-  - **locked lessons**: the first 3 phrases and the offer
-- Lesson 1 of each course is free with an account (Admin can raise it to 5).
-- The member pages, the frame, sign-in and profile are in **English or Spanish** (EN/ES switch in the header; the
-  first visit follows the browser's language).
+**Gifts**
+- `#gift/card/<code>`: the giver adds a name and a message, prints the card (print CSS shows only the card) or copies the link.
+- `#redeem/<code>` (or `#redeem` + type the code): the card, then a free account and "Open my gift" -> their library.
+  Codes are 12 letters/digits, open once, never expire. Admin can make free codes (giveaways). Table `gifts`.
 
-**Admin** (`#admin/...`, English):
-- **Overview**: revenue, buyers, waitlist, accounts, listeners and minutes this week, plus a setup checklist (audio, Stripe links, webhook secret).
-- **Sales**: purchases, mark refunded / unlock again, give a course.
-- **Waitlist**: CSV download.
-- **Shop & setup**:
-  - prices, currency, guarantee days and free lessons
-  - six Payment Link boxes, each with its success address to paste in Stripe
-  - the webhook address and secret status
-  - lesson audio status, a public test address, and a "try lesson 1" button
-- **Feedback**, **Users**, **Demo data** (five made-up listeners with purchases and listening days, plus waitlist emails).
+**Library, lessons, offline (Operate)**
+- `#home[/course[/level]]`: Up next (play, resume, car mode, trip length), weekly goal ring, streak with a rest day,
+  14-day chart, levels and lessons, offers. Switch: Spanish · French · Italian · English.
+- `#lesson/<course>/<code>[/play|/car]`: the player (±10 s, chapter marks, speed, lock-screen/car controls, car mode,
+  trip length, thinking time, never-lose-your-place), phrase sheet with quiz mode, culture moment, MP3 + transcript.
+  A lesson saved on the phone plays from there (blob URL, no data); with no connection it opens from what was saved.
+- **Background play:** HTML audio + Media Session keep playing with the screen locked; the extra thinking-time hold is
+  skipped while the page is hidden (phones won't restart audio from a timer), the recorded pause still plays.
+- `#downloads[/course]` (menu: Offline): space used/free, "Save every lesson I own", per level six packs of 5 (tap to save,
+  tap a saved one to remove), Save level / Remove / MP3 files, saved lessons with Play, "Put it on your home screen"
+  (install prompt, iPhone steps). Engine `theme/assets/sb-offline.js` (Cache Storage). When the app opens offline,
+  start-up uses the last account and the Library sends people here.
+
+**Admin** (`#admin/...`, English): Overview (revenue, setup checklist), Sales, **Customers** (every account: what they own,
+how, spent, gifts, minutes, ad source; CSV), **Ads** (sign-ups/buyers/conversion/revenue per source·campaign·page, and an
+ad link builder), **Gifts** (all gifts, make a free code), Waitlist, Shop & setup (prices incl. the bundle, 13 Payment
+Links, webhook, audio), Feedback, Users, Demo data.
 
 ## Setting it up in Anvil (once)
 
 1. Anvil editor: **Create app → Clone from GitHub**, paste `https://github.com/arkulinskis/sayback`.
 2. Check the **Users** service (email + password, Continue with Google, sign-up on) and the **App Secrets** service.
-3. Accept the **Schema Mismatch** alert with **"The schema of the source code is correct"**.
-4. Run it, sign up with your admin email (App Secret `admin_emails`) first (that account becomes admin), then **Publish**.
+3. Accept the **Schema Mismatch** alert with **"The schema of the source code is correct"** (new: table `gifts`, column
+   `users.ad_source`).
+4. Rename the app to **Spoken Miles** (Settings > General; also what "Add to home screen" shows), then **Publish**.
 
 ## Before selling (Admin > Shop & setup shows the same checklist)
 
-1. **Lesson audio.**
-   - Cloudflare: R2 > Create bucket (private, e.g. `sayback-audio`), then R2 > Manage API tokens (Object Read & Write).
-   - Upload: in `Documents/CLAUDE/sayback` run `python tools/upload_r2.py "r2://KEY:SECRET@ACCOUNT_ID/BUCKET"` (600 files, about 6.1 GB, resumable).
-   - In the Anvil editor, add the App Secret `r2_url` with that same text.
-2. **Stripe.**
-   - Make one product and Payment Link per course and level (6). Set each link's "after payment" redirect to the address shown under its box, and paste the link into its box.
-   - Add a webhook to `<app>/_/api/stripe` with the events `checkout.session.completed`, `checkout.session.async_payment_succeeded` and `charge.refunded`.
-   - Put its signing secret in the App Secret `stripe_webhook_secret`.
+1. **Lesson audio** (4 courses, 600 lessons, about 12.9 GB).
+   - Cloudflare: R2 > Create bucket (private, e.g. `spokenmiles-audio`), then R2 > Manage API tokens (Object Read & Write).
+   - Upload: in `Documents/CLAUDE/sayback` run `python tools/upload_r2.py "r2://KEY:SECRET@ACCOUNT_ID/BUCKET"` (resumable).
+   - **CORS rule for "save offline"** (bucket > Settings > CORS policy):
+     `[{"AllowedOrigins": ["https://spokenmiles.com", "https://sayback.anvil.app"], "AllowedMethods": ["GET", "HEAD"], "AllowedHeaders": ["*"], "MaxAgeSeconds": 86400}]`
+   - In the Anvil editor, add the App Secret `r2_url` with that same `r2://...` text.
+2. **Stripe**: 13 products + Payment Links (table in PRICING.md), each link's "after payment" redirect = the address under
+   its box; webhook to `<app>/_/api/stripe` with `checkout.session.completed`, `checkout.session.async_payment_succeeded`
+   and `charge.refunded`; its signing secret in the App Secret `stripe_webhook_secret`. Gifts need nothing extra.
 3. Keep the prices on the page (Admin) and in Stripe the same.
 
 <!-- libraries:start -->
@@ -92,7 +99,7 @@ What this project uses besides its own code. Generated by `APP_MAKER/tools/libra
 | [Stripe Payment Links](https://stripe.com/payments/payment-links) | Outside web service | A ready-made Stripe checkout page for one product or price, shared as a link. |
 | [Google Fonts](https://fonts.google.com) | Loaded from a CDN | Atkinson Hyperlegible, Bricolage Grotesque |
 
-**Built into the browser:** Media Session API (lesson title on the lock screen and car display; play, pause, 10 s skips, next lesson), Screen Wake Lock, localStorage.
+**Built into the browser:** Media Session API (lesson title on the lock screen and car display; play, pause, 10 s skips, next lesson), Screen Wake Lock, localStorage, Clipboard, File downloads (Blob), Storage API, Install prompt (Add to Home Screen), Cache Storage.
 
 **Anvil platform:** Anvil, Anvil Data Tables, Anvil Email, Anvil JS bridge (anvil.js), Anvil Secrets, Anvil Users, Anvil Google service, Anvil HTTP, Anvil timezones (anvil.tz), Anvil Media.
 
@@ -119,13 +126,17 @@ git push origin master                   # deploy
 
 ```
 client_code/    startup.py, router.py, state.py, i18n.py, shop.py, auth.py, legal.py
-                Layouts/Shell; Pages/ Landing, LandingEs, Auth, Library (#home), Lesson, Buy, Thanks, Profile, Admin
+                courses.py (the courses + products, shared with the server), ads.py (first-touch ad tags)
+                Layouts/Shell; Pages/ Choose (#landing), Landing (#learn/<lang>), LandingEs (#es), Gift, Redeem, Downloads,
+                Auth, Library (#home), Lesson, Buy, Thanks, Profile, Admin
                 Components/ RoadDemo (hero engine), Player (lesson player); Dialogs/Waitlist
-                Items/ LessonTile, LevelChip, DayBar, PairRow, ProductCard, PurchaseRow, SaleRow, WaitRow, NavLink, ...
+                Items/ LessonTile, LevelChip, DayBar, PairRow, ProductCard, PurchaseRow, SaleRow, WaitRow, NavLink, GiftRow,
+                PackRow, SavedRow, LinkRow, CustomerRow, AdRow, GiftAdminRow, ...
 server_code/    Catalog.py (courses, access), Listening.py (library, lesson, progress, stats), Shop.py (prices, Stripe,
-                webhook, waitlist, admin shop), Audio.py (R2 signed links), lessons_data.py + cues_data.py (generated), DemoData.py,
+                webhook, waitlist, admin shop), Gifts.py (gift codes, redeem), Customers.py (ad source, Admin customers + ads),
+                Audio.py (R2 signed links), lessons_data.py + cues_data.py (generated), DemoData.py,
                 Accounts.py, Admin.py, Feedback.py, SchemaCheck.py, legal_server.py, common.py
-theme/assets/   app.css, sb-road.js (hero), sb-player.js (player + car mode), sb-i18n.js (Spanish), sb-hero-data.js
+theme/assets/   app.css, sb-road.js (hero), sb-player.js (player + car mode), sb-offline.js (saved lessons, install), sb-i18n.js (Spanish), sb-hero-data.js
                 (generated), app-kit.js, theme.css (spinner), icons
 tools/          make_catalog.py, make_landing_lists.py, make_hero.py, i18n_keys.py, i18n_es.py, check.py, ui_test.py + ui/,
                 testing/ (server tests, audio_server.py = local stand-in for R2)

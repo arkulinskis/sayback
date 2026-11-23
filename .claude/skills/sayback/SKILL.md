@@ -1,12 +1,14 @@
 ---
 name: sayback
-description: Context, workflow and recipes for Sayback (folder sayback-app), the user's Anvil app built as native Anvil Forms (Python + HTML templates, a layout, custom components, RepeatingPanels). The shop + listening app for the Sayback audio courses (Spanish for English speakers, English for Spanish speakers): two sales pages with a live lesson demo, Stripe checkout, a waitlist, and a member library that plays the 300 lessons with progress, car mode and EN/ES. Load this before any feature request, bug fix, restyle, content change or deploy for this app.
+description: Context, workflow and recipes for Spoken Miles (formerly Sayback; folder sayback-app, key sayback), the user's Anvil app built as native Anvil Forms (Python + HTML templates, a layout, custom components, RepeatingPanels). The shop + listening app for the Spoken Miles car audio courses (Spanish, French and Italian for English speakers, English for Spanish speakers): a language chooser, ad landing pages per language, Stripe checkout (lifetime, bundle, gifts), offline saving, and a member library that plays the 600 lessons with progress, car mode and EN/ES. Load this before any feature request, bug fix, restyle, content change or deploy for this app.
 ---
 
-# Sayback: working on the app
+# Spoken Miles (formerly Sayback): working on the app
 
-**What it is:** the store and player for Sayback (the course is in `Documents/CLAUDE/sayback`, the audio in
-`Documents/CLAUDE/sayback-audio`: 2 courses × 5 levels × 30 lessons × 45 min). Visitors: sales page (`#landing` EN,
+**What it is:** the store and player for Spoken Miles (renamed from Sayback 2026-11-23; domain spokenmiles.com planned;
+the course is in `Documents/CLAUDE/sayback`, the audio in `Documents/CLAUDE/sayback-audio`: 4 courses (en-es, en-fr, en-it,
+es-en) × 5 levels × 30 lessons × 45 min). Pages: `#landing` chooser, `#learn/<spanish|french|italian>` ad pages, `#es`,
+`#gift`, `#gift/card/<code>`, `#redeem/<code>`, `#downloads` (Offline). Costs/pricing: `Documents/CLAUDE/sayback/PRICING.md`. Visitors: sales page (`#landing` EN,
 `#es` ES) -> free account -> lesson 1 free -> buy (Stripe Payment Link) -> library. Members: `#home` library,
 `#lesson/<course>/<code>` player + phrase sheet, `#buy`, `#thanks`, `#profile`. Admin: sales, waitlist, Shop & setup.
 
@@ -19,8 +21,11 @@ description: Context, workflow and recipes for Sayback (folder sayback-app), the
   (github.com/anvil-works/anvil-agent-references; see APP_MAKER/ANVIL_NOTES.md, "Native Anvil Forms").
 - **README.md** lists every feature. Keep it up to date.
 
-**What the user wants:** "build the sales page for the product we created" + "we are trying to get all the learners to
-buy this", people listen in stolen moments (car, cleaning), specific sales focus (Expert Secrets: the Stolen-Minutes
+**What the user wants (2026-11-23):** "a proper project like the others" selling Spanish, Italian and French **in the car**
+("let's focus on the car"); works in the background; lifetime purchase; download everything, or by level, or by lesson
+pack, or stream; sell as a **gift** ("to their dad who wants to learn"); ads land on the right page; the main point:
+this method actually gets you speaking, unlike Duolingo (say it fairly: no disparaging claims). Earlier: "build the
+sales page for the product we created" + "we are trying to get all the learners to buy this", people listen in stolen moments (car, cleaning), specific sales focus (Expert Secrets: the Stolen-Minutes
 Method, big domino = speaking out loud in time you already lose, three false beliefs, stack, guarantee; no fake
 testimonials or scarcity). Design "Morning commute": bg #eef2f4, ink #14212b, brand tail-light orange #b53b18 (bright
 #e4572e = `--c-signal`, decoration only), road teal #196b7b, asphalt `--c-road`; Bricolage Grotesque + Atkinson
@@ -194,3 +199,35 @@ Sign-up keeps the tick box (`legal.consent_field()` in Pages/Auth). Feedback = P
 - Client and server modules share ONE Python package: a server module can't have the same name as a client
   package or module (server `Items.py` + client `Items/` = "Cannot resolve imported module"). The template's example
   server module is `ExampleItems.py` for that reason.
+
+## Spoken Miles recipes (2026-11-23)
+
+- **Courses and products live in `client_code/courses.py`** (imported by client AND server; the server test harness copies
+  it into its temp package). ORDER, COURSES (slug, short, learner, target, lang, name, sample), FOR_LEARNER, PRODUCTS
+  (`<short>1/all/up` per course + `trio`), product_for(course, kind). Catalog.COURSES = the ones lessons_data has.
+- **A new language** (e.g. German for English speakers): in `Documents/CLAUDE/sayback` add a side file per level with
+  `tools/merge_langs.py` (format in its docstring; `--check` then `--merge`), a COURSES line in `tools/sayback.py`
+  (+ VOICES/LANG_CODE), `python tools/sayback.py all en-de`; here: courses.py entry, VALUES in Pages/Landing, switch links
+  (Landing, Library, Buy, Downloads, Gift), `tools/make_catalog.py`, `tools/make_hero.py` (+ firebase media deploy),
+  upload_r2.py course list, i18n, PRICING.md, Stripe links.
+- **French has one Kokoro voice (ff_siwis, a woman):** the generator uses `how_full_one_voice` narration for it, and the
+  translators SKIP masculine twins / prefer neutral wording. Italian has a woman and a man.
+- **Ad pages:** `#learn/<slug>` (one template, `<span data-v="key">` filled from VALUES), `#gift`, `#es`, `#landing`.
+  UTM before the hash (`/?utm_source=meta#gift`) or after it (`#learn/french?utm_source=...`) both work (ads.py).
+  Admin > Ads builds links and counts sign-ups/buyers/revenue per source·campaign·page.
+- **Gifts:** `Shop.checkout(product, gift=True)` -> ref `<user>-g<product>` -> webhook -> `Gifts.create`. Redeem =
+  `Shop.grant(..., "gift", intent=gift's payment_intent)` so a refund locks it. Admin free codes: `admin_make_gift`.
+- **Offline:** `theme/assets/sb-offline.js` (Cache Storage `sm-lessons-v1`, keys `/__sm_offline__/<course>/<code>.mp3|.json`),
+  server `Listening.downloads_info` / `offline_pack` (signed links + offline_meta, max 30 per call). Saving needs the R2
+  bucket CORS rule (README). Lesson page: saved -> blob URL; AppOfflineError -> `_offline_lesson()`. Startup caches the
+  account in `sm.me`; offline, Library redirects to `#downloads`.
+
+## Spoken Miles gotchas
+
+- `window.SB._player` must be cleared on destroy (it is now): a stale player made tests read the previous page's player.
+- Anvil's validator: annotate mixed dicts (`COURSES: dict`, `r: dict = {}`), no iterating a JS NodeList (use
+  `window.Array["from"](...)`), RepeatingPanel rows via `getattr(row, "item")`.
+- The thinking-time hold is skipped while `document.hidden` (background audio can't be restarted from a timer on phones).
+- `upload_r2.py` skips files whose size didn't change: every re-rendered lesson is exactly 45:00 at 64 kbps (same size),
+  so after re-rendering, upload with a fresh bucket or delete the old objects first.
+- The Spanish/English lessons were re-rendered 2026-11-23 so the spoken intro says "Spoken Miles".

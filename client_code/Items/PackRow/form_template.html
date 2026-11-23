@@ -1,0 +1,22 @@
+<div class="ui-card sb-pack">
+  <div class="sb-pack-head">
+    <div class="grow">
+      <anvil-component type="Label" name="title" prop:role='["sb-row-title"]'></anvil-component>
+      <anvil-component type="Label" name="meta" prop:role='["fine-print"]'></anvil-component>
+    </div>
+    <a class="ui-btn sm" href="#buy" anvil:name="buy_link"><i class="ic ic-lock"></i><span data-t>Unlock</span></a>
+  </div>
+  <div class="sb-chips" anvil:name="chips_part">
+    <button type="button" class="sb-chip" anvil:name="p1" data-pack="1" anvil:on-dom:click="self.pack_click"></button>
+    <button type="button" class="sb-chip" anvil:name="p2" data-pack="2" anvil:on-dom:click="self.pack_click"></button>
+    <button type="button" class="sb-chip" anvil:name="p3" data-pack="3" anvil:on-dom:click="self.pack_click"></button>
+    <button type="button" class="sb-chip" anvil:name="p4" data-pack="4" anvil:on-dom:click="self.pack_click"></button>
+    <button type="button" class="sb-chip" anvil:name="p5" data-pack="5" anvil:on-dom:click="self.pack_click"></button>
+    <button type="button" class="sb-chip" anvil:name="p6" data-pack="6" anvil:on-dom:click="self.pack_click"></button>
+  </div>
+  <div class="ui-row sb-pack-actions" anvil:name="actions_part">
+    <anvil-component type="Button" name="save_button" prop:role='["btn", "btn-sm", "ic-download"]'></anvil-component>
+    <anvil-component type="Button" name="remove_button" prop:role='["btn", "btn-sm", "btn-ghost", "ic-trash"]'></anvil-component>
+    <anvil-component type="Button" name="files_button" prop:role='["btn", "btn-sm", "btn-ghost", "ic-music"]'></anvil-component>
+  </div>
+</div>

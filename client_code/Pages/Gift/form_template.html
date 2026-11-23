@@ -1,0 +1,100 @@
+<anvil-form layout="Sayback.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="page-landing sb-landing sb-gift">
+      <!-- #gift[/<course>]: the gift sales page (ads: "give Dad a language for the road") and the giver's gifts.
+           #gift/card/<code>: one gift card to personalise, print or send. Gifts: server_code/Gifts.py. -->
+      <div anvil:name="sell_part">
+        <section class="lp-hero sb-hero sb-gift-hero">
+          <div class="ui-wrap">
+            <div class="sb-hero-copy">
+              <h1>Give Dad a language for the road.</h1>
+              <p class="lp-lead">He's "always wanted to learn Italian". Now his commute teaches him: 45-minute audio lessons he answers out loud, eyes on the road. Lifetime access, a card to print or send, and he opens it with one tap.</p>
+              <ul class="sb-proof">
+                <li><b>Lifetime</b> access</li>
+                <li><b>150</b> lessons per language</li>
+                <li><b>No</b> subscription</li>
+              </ul>
+            </div>
+            <div class="sb-giftcard sb-giftcard-demo" aria-label="Example gift card" role="img">
+              <div class="sb-gc-top"><img src="_/theme/icon.svg" alt="" width="28" height="28"><span>Spoken Miles</span></div>
+              <p class="sb-gc-to">For Dad</p>
+              <p class="sb-gc-title">A language for the road</p>
+              <p class="sb-gc-what">Italian · the complete course, yours for life</p>
+              <p class="sb-gc-msg">“For all those miles to work. Ciao, Papà!”</p>
+              <div class="sb-gc-road" aria-hidden="true"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="lp-section sb-gift-pick" id="pick">
+          <div class="ui-wrap">
+            <h2>Pick their language.</h2>
+            <nav class="ui-seg sb-switch sb-gift-switch" aria-label="Language">
+              <a href="#gift/en-es" anvil:name="g_es">Spanish</a>
+              <a href="#gift/en-fr" anvil:name="g_fr">French</a>
+              <a href="#gift/en-it" anvil:name="g_it">Italian</a>
+              <a href="#gift/es-en" anvil:name="g_en">English (for Spanish speakers)</a>
+            </nav>
+            <anvil-component type="Label" name="closed_note" prop:role='["msg-note"]' prop:visible="false"></anvil-component>
+            <anvil-component type="RepeatingPanel" name="offers" prop:item_template="Sayback.Items.ProductCard" prop:role='["sb-plans-panel"]'></anvil-component>
+            <ol class="sb-gift-steps">
+              <li><b>1</b><span><strong>Pay once.</strong> Secure checkout by Stripe. You make a free account so you can manage the gift.</span></li>
+              <li><b>2</b><span><strong>Make it theirs.</strong> Add their name and a short message.</span></li>
+              <li><b>3</b><span><strong>Print it or send it.</strong> A card for the glovebox, or a link by text or email.</span></li>
+              <li><b>4</b><span><strong>They open it.</strong> A free account, one tap, and every lesson is theirs for life.</span></li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="lp-section" anvil:name="mine_part">
+          <div class="ui-wrap">
+            <h2>Your gifts</h2>
+            <anvil-component type="RepeatingPanel" name="mine" prop:item_template="Sayback.Items.GiftRow" prop:role='["sb-gift-list"]'></anvil-component>
+          </div>
+        </section>
+
+        <section class="lp-section" id="faq">
+          <div class="ui-wrap">
+            <h2 class="sb-center">Gift questions</h2>
+            <div class="lp-faq">
+              <details><summary>Does he need to be good with apps?</summary><p>No. He opens the link (or types the code from the card), makes an account with his email, and presses play. In the car there's one big button. Lessons can also be downloaded as plain MP3s for a USB stick or CarPlay.</p></details>
+              <details><summary>What if they already have a lesson or two?</summary><p>No problem. The gift adds to whatever is in their library, and their progress carries on.</p></details>
+              <details><summary>Can they get a refund or swap the language?</summary><p>Before it's opened, write to us and we'll swap the language or refund you. After it's opened, the usual "Speak or it's free" guarantee applies for 30 days.</p></details>
+              <details><summary>Does the gift expire?</summary><p>No. Give it now for a birthday months away; it waits until they open it.</p></details>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="ui-wrap ui-narrow sb-gift-cardpage" anvil:name="card_part">
+        <a class="ui-btn ghost sm sb-back" href="#gift"><i class="ic ic-back"></i><span>All your gifts</span></a>
+        <anvil-component type="Label" name="card_heading" prop:text="Your gift card" prop:role='["page-title"]'></anvil-component>
+        <div class="sb-giftcard" anvil:name="card">
+          <div class="sb-gc-top"><img src="_/theme/icon.svg" alt="" width="28" height="28"><span>Spoken Miles</span></div>
+          <anvil-component type="Label" name="gc_to" prop:role='["sb-gc-to"]'></anvil-component>
+          <p class="sb-gc-title">A language for the road</p>
+          <anvil-component type="Label" name="gc_what" prop:role='["sb-gc-what"]'></anvil-component>
+          <anvil-component type="Label" name="gc_msg" prop:role='["sb-gc-msg"]'></anvil-component>
+          <div class="sb-gc-open">
+            <span>Open it at</span>
+            <anvil-component type="Label" name="gc_link" prop:role='["sb-gc-link"]'></anvil-component>
+            <span>or type the code</span>
+            <anvil-component type="Label" name="gc_code" prop:role='["sb-gc-code"]'></anvil-component>
+          </div>
+          <div class="sb-gc-road" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+        <anvil-component type="Label" name="card_state" prop:role='["msg-note"]' prop:visible="false"></anvil-component>
+        <div class="ui-card sb-gc-edit" anvil:name="edit_part">
+          <label class="ui-field"><span>Who is it for?</span><anvil-component type="TextBox" name="to_box" prop:placeholder="Dad"></anvil-component></label>
+          <label class="ui-field"><span>Your message (optional, up to 280 characters)</span><anvil-component type="TextArea" name="msg_box" prop:placeholder="For all those miles to work."></anvil-component></label>
+          <div class="ui-row">
+            <anvil-component type="Button" name="save_button" prop:text="Save the card" prop:role='["btn", "btn-primary", "ic-check"]'></anvil-component>
+            <anvil-component type="Button" name="print_button" prop:text="Print" prop:role='["btn", "ic-print"]'></anvil-component>
+            <anvil-component type="Button" name="copy_button" prop:text="Copy the link" prop:role='["btn", "ic-copy"]'></anvil-component>
+          </div>
+          <p class="sb-fine">The link and the code work once. Keep the card somewhere safe until you hand it over.</p>
+        </div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

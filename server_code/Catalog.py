@@ -1,7 +1,7 @@
-"""The two courses, their 150 lessons each, and who may hear what.
+"""The courses, their 150 lessons each, and who may hear what.
 
-Courses: en-es = Sayback Spanish (English speakers learn Spanish), es-en = Sayback Inglés (Spanish speakers learn
-English). Lesson codes: L<level>-<nn>, e.g. L1-01. The data comes from lessons_data.py (tools/make_catalog.py).
+Courses (client_code/courses.py): en-es / en-fr / en-it = Spoken Miles Spanish / French / Italian (English speakers),
+es-en = Spoken Miles Inglés (Spanish speakers learn English). Lesson codes: L<level>-<nn>, e.g. L1-01. The data comes from lessons_data.py (tools/make_catalog.py).
 
 Access: the first FREE lessons of Level 1 are free for anyone with an account (default: lesson 1); a level is open
 when a purchase that isn't refunded covers it; admins hear everything.
@@ -10,8 +10,10 @@ from anvil.tables import app_tables
 
 from . import common as C
 from . import lessons_data
+from . import courses as K
 
-COURSES = ("en-es", "es-en")
+_ALL = lessons_data.DATA["courses"]
+COURSES = tuple(c for c in K.ORDER if c in _ALL)     # only courses whose lessons are built
 LEVELS = (1, 2, 3, 4, 5)
 _DATA = lessons_data.DATA
 _INDEX = {c: {ls["code"]: ls for ls in _DATA["courses"][c]["lessons"]} for c in COURSES}

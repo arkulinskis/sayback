@@ -37,8 +37,20 @@
 
   try {
     window.SB.setLang('en');
-    // ---- landing: the road demo plays 90 s of the real lesson 1
-    await page('#landing', () => $('.lp-hero') && $('.rd-play'), 'landing');
+    // ---- the front door: which language do you speak, which do you want to learn
+    await page('#landing', () => $('.lp-hero') && $('.sb-pick'), 'chooser');
+    ok($$('.sb-lang-card').filter((a) => a.offsetParent).length === 3, 'chooser: Spanish, French, Italian for English speakers');
+    $('[data-speak="es"]').click(); await sleep(150);
+    ok($$('.sb-lang-card').filter((a) => a.offsetParent).map((a) => a.getAttribute('href')).join() === '#es', 'chooser: Español -> English course');
+    $('[data-speak="en"]').click(); await sleep(150);
+    ok($('.sb-compare') && /Duolingo/.test($('#faq').textContent) && $('a[href="#gift"]'), 'chooser: speaking vs tapping, Duolingo FAQ, gift band');
+    // ---- an ad page: French
+    await page('#learn/french', () => $('.lp-hero h1') && /French/.test($('.lp-hero h1').textContent), 'French page');
+    ok(/Où est la gare/.test($('.sb-item-a').textContent) && $('.sb-item-a [lang="fr"], .sb-item-a[lang="fr"]'), 'French page: the sample answer is French');
+    ok(!$('.sb-bridge') || !$('.sb-bridge').offsetParent, 'French page: no Spanish two-way section');
+    ok($('.sb-learn-switch a.on') && /French/.test($('.sb-learn-switch a.on').textContent), 'French page: language switch marks French');
+    // ---- the Spanish page: the road demo plays 90 s of the real lesson 1
+    await page('#learn/spanish', () => $('.lp-hero') && $('.rd-play'), 'landing');
     ok($('.lp-hero a[href="#auth/signup"]'), 'landing: hero with a sign-up link');
     ok($('.ui-header .ui-btn.primary'), 'landing: Listen free in the header');
     ok($$('.sb-lessons li').length === 30, 'landing: the 30 Level 1 lessons are listed');
@@ -85,6 +97,30 @@
     ok($$('.sb-tile.st-locked').length === 29 && $('.sb-tile.st-open'), 'library: lesson 1 open, the other 29 locked');
     ok($$('.sb-day-bar').length === 14, 'library: 14-day chart');
     ok($('.sb-lib-offer .sb-plan'), 'library: offers for the locked lessons');
+    // ---- offline page: five levels, packs of five, locked levels offer the courses
+    await page('#downloads/en-es', () => $$('.sb-pack').length === 5, 'offline page');
+    ok($$('.sb-pack .sb-chip').length >= 0 && /On this phone/.test($('.sb-dl').textContent), 'offline: storage card');
+    ok($$('.sb-pack a[href="#buy/en-es"]').filter((a) => a.offsetParent).length === 5, 'offline: unowned levels show Unlock');
+    const chip = $$('.sb-chip').filter((c) => c.offsetParent)[0];
+    ok(chip && $$('.sb-chip').filter((c) => c.offsetParent).length === 1, 'offline: the free lesson can be saved (one pack chip)');
+    chip.click();
+    await until(() => $$('.sb-saved-row').length === 1 && /✓/.test($$('.sb-chip').filter((c) => c.offsetParent)[0].textContent), 'free lesson saved on the phone', 60000);
+    ok(/L1-01/.test($('.sb-saved-row').textContent), 'offline: lesson 1 saved, listed under Saved lessons');
+    { const u = await window.SB.offline.url('en-es', 'L1-01'); const b = await (await fetch(u)).blob();
+      ok(b.size > 1000000 && b.type === 'audio/mpeg', 'offline: the whole MP3 is stored (' + b.size + ' bytes)'); }
+    await page('#lesson/en-es/L1-01', () => window.SB._player, 'saved lesson');
+    await until(() => /^blob:/.test(window.SB._player.state().src || ''), 'the saved lesson plays from the phone', 15000);
+    ok(true, 'offline: a saved lesson plays from this phone (blob:), not the network');
+    await page('#downloads/en-es', () => $$('.sb-saved-row').length === 1, 'offline page again');
+    $('.sb-saved-row .anvil-role-ic-trash button').click();
+    await until(() => !$$('.sb-saved-row').length, 'removed', 15000);
+    ok(!(await window.SB.offline.has('en-es', 'L1-01')), 'offline: removing a saved lesson frees it from the phone');
+    // ---- gifts: three offers to give; a wrong code says so kindly
+    await page('#gift/en-fr', () => $$('.sb-gift .sb-plan').length === 3, 'gift page');
+    ok(/Give the complete course/.test($('.sb-gift').textContent) && /Give every language/.test($('.sb-gift').textContent), 'gift: Give buttons');
+    await page('#redeem/NOPENOPENOPE', () => $('.sb-redeem .anvil-role-msg-note'), 'redeem page');
+    ok(/can't find/.test($('.sb-redeem').textContent), 'redeem: unknown code explained');
+    await page('#home', () => $('.sb-next') && $$('.sb-tile').length === 30, 'library again');
     await click('.sb-next .anvil-role-btn-primary button');
     await until(() => /^#lesson\/en-es\/L1-01\/play/.test(location.hash) && window.UI_READY && window.SB._player, 'lesson page');
     const P = window.SB._player;

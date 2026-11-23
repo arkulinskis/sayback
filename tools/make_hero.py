@@ -1,6 +1,7 @@
 """Make the landing hero's audio clips and their timing data.
 
-    python tools/make_hero.py
+    python tools/make_hero.py               (every course)
+    python tools/make_hero.py en-fr en-it   (only these; the others' clips are kept)
 
 For each course it cuts ~90 s of real practice from lesson L1-01 (starting at the first phrase, after the intro),
 fades it in and out, and writes:
@@ -10,6 +11,7 @@ parts = [start, end, kind, text] with kind p (prompt), a (answer), say (your tur
 A new file name (-v2 ...) is needed whenever a clip changes: the media site caches files for a year.
 """
 import json
+import sys
 import pathlib
 import subprocess
 
@@ -53,7 +55,11 @@ def main():
     MEDIA.mkdir(parents=True, exist_ok=True)
     ff = imageio_ffmpeg.get_ffmpeg_exe()
     data = {}
-    for course in ("en-es", "es-en"):
+    if OUT.exists():   # keep the other courses' clips: python tools/make_hero.py en-fr en-it remakes only those
+        old = OUT.read_text(encoding="utf-8").split("window.SB_HERO = ", 1)[-1].strip().rstrip(";")
+        data = json.loads(old) if old.startswith("{") else {}
+    courses = [a for a in sys.argv[1:] if not a.startswith("-")] or ["en-es", "en-fr", "en-it", "es-en"]
+    for course in courses:
         plan = json.loads((SAYBACK / "plans" / course / "L1-01.json").read_text(encoding="utf-8"))
         first = next(e for e in plan["events"] if e["kind"] != "narr")
         start = first["t"] - 0.8
@@ -64,8 +70,8 @@ def main():
         subprocess.run([ff, "-y", "-v", "error", "-ss", "%.2f" % start, "-t", "%.2f" % length, "-i", str(src),
                         "-af", "afade=t=in:d=0.6,afade=t=out:st=%.2f:d=2" % (length - 2.0),
                         "-ac", "1", "-b:a", "64k", "-id3v2_version", "3",
-                        "-metadata", "title=%s, lesson 1 (preview)" % plan["title"].get("en", "Sayback"),
-                        "-metadata", "artist=Sayback", str(MEDIA / name)], check=True)
+                        "-metadata", "title=%s, lesson 1 (preview)" % plan["title"].get("en", "Spoken Miles"),
+                        "-metadata", "artist=Spoken Miles", str(MEDIA / name)], check=True)
         data[course] = {"src": BASE + name, "length": length, "parts": parts}
         print("%s: %s (%.0f s, %d parts, %d KB)" % (course, name, length, len(parts), (MEDIA / name).stat().st_size // 1024))
     OUT.write_bytes(("/* Made by tools/make_hero.py: timings of the landing hero's lesson clips. Don't edit by hand. */\n"

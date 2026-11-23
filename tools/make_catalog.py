@@ -1,4 +1,4 @@
-"""Build server_code/lessons_data.py from the Sayback course sources (Documents/CLAUDE/sayback).
+"""Build server_code/lessons_data.py from the Spoken Miles course sources (Documents/CLAUDE/sayback).
 
     python tools/make_catalog.py
 
@@ -31,11 +31,18 @@ LEVELS = {
 
 
 def nice_name(course, code):
-    """'Sayback Spanish L1-01 Hello and first words.mp3' from the rendered file's own name."""
+    """'Spoken Miles Spanish L1-01 Hello and first words.mp3' from the rendered file's own name."""
     level = code.split("-")[0]
     hits = sorted((AUDIO / course / level).glob(code + " *.mp3"))
     tail = hits[0].stem[len(code) + 1:] if hits else ""
     return ("%s %s %s" % (SB.COURSES[course]["name"], code, tail)).strip() + ".mp3"
+
+
+def size_mb(course, code):
+    """The rendered MP3's size in MB (for the Downloads page's space estimates); 21.6 = a 45-minute 64 kbps track."""
+    level = code.split("-")[0]
+    hits = sorted((AUDIO / course / level).glob(code + " *.mp3")) or sorted((AUDIO / course / level).glob(code + ".mp3"))
+    return round(hits[0].stat().st_size / 1e6, 1) if hits else 21.6
 
 
 def marks(course, code):
@@ -104,12 +111,13 @@ def main():
                 "file": "%s/L%d/%s.mp3" % (course, ls["level"], code),
                 "download": nice_name(course, code),
                 "marks": marks(course, code),
+                "mb": size_mb(course, code),
                 "pairs": pairs,
             })
         data["courses"][course] = {"name": meta["name"], "learner": learner, "target": target, "lessons": lessons}
         print("%s: %d lessons, %d sentences" % (course, len(lessons), sum(len(x["pairs"]) for x in lessons)))
     body = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
-    OUT.write_bytes(('"""Made by tools/make_catalog.py from the Sayback course files. Don\'t edit by hand."""\n'
+    OUT.write_bytes(('"""Made by tools/make_catalog.py from the Spoken Miles course files. Don\'t edit by hand."""\n'
                      "import json\n\nDATA = json.loads(%r)\n" % body).encode("utf-8"))
     print("wrote", OUT, "(%d KB)" % (OUT.stat().st_size // 1024))
 

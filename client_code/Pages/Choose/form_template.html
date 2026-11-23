@@ -1,0 +1,114 @@
+<anvil-form layout="Sayback.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="page-landing sb-landing sb-choose">
+      <!-- #landing: the front door. Asks which language you speak and which you want to learn, then sends you to that
+           course's sales page (#learn/spanish, #learn/french, #learn/italian, or #es for Spanish speakers).
+           Ads skip this page and link straight to those pages. Keep .lp-hero and the sign-up link inside it. -->
+      <section class="lp-hero sb-hero">
+        <div class="ui-wrap">
+          <div class="sb-hero-copy">
+            <h1>Learn a language on the drive you already take.</h1>
+            <p class="lp-lead">45-minute audio lessons made for the car. You hear a phrase, you say it out loud, you hear the answer. No screen, no tapping, no homework. Just talking.</p>
+            <div class="sb-pick">
+              <div class="sb-pick-row">
+                <span class="sb-pick-label" id="pick-speak">I speak</span>
+                <div class="ui-seg" role="group" aria-labelledby="pick-speak">
+                  <button type="button" anvil:name="speak_en" data-speak="en" anvil:on-dom:click="self.speak_click" class="on">English</button>
+                  <button type="button" anvil:name="speak_es" data-speak="es" anvil:on-dom:click="self.speak_click" lang="es">Español</button>
+                </div>
+              </div>
+              <div class="sb-pick-row">
+                <span class="sb-pick-label" anvil:name="learn_label">I want to learn</span>
+                <div class="sb-langs" anvil:name="learn_en">
+                  <a class="sb-lang-card" href="#learn/spanish"><b>Spanish</b><span lang="es">¿Dónde está la estación?</span><i class="ic ic-arrow"></i></a>
+                  <a class="sb-lang-card" href="#learn/french"><b>French</b><span lang="fr">Où est la gare ?</span><i class="ic ic-arrow"></i></a>
+                  <a class="sb-lang-card" href="#learn/italian"><b>Italian</b><span lang="it">Dov'è la stazione?</span><i class="ic ic-arrow"></i></a>
+                </div>
+                <div class="sb-langs" anvil:name="learn_es">
+                  <a class="sb-lang-card" href="#es" lang="es"><b>Inglés</b><span lang="en">Where is the station?</span><i class="ic ic-arrow"></i></a>
+                  <p class="sb-pick-note" lang="es">Francés e italiano para hispanohablantes: pronto.</p>
+                </div>
+              </div>
+            </div>
+            <ul class="sb-proof">
+              <li><b>150</b> lessons per language</li>
+              <li><b>112</b> hours of speaking</li>
+              <li><b>Lifetime</b> access, pay once</li>
+            </ul>
+          </div>
+          <div class="sb-windshield">
+            <div class="sb-ws-head"><span class="sb-ws-dot"></span><span>Spanish · Lesson 1 · Hello and first words</span></div>
+            <anvil-component type="Sayback.Components.RoadDemo" name="road" prop:course="en-es" prop:lang="en"></anvil-component>
+            <p class="sb-ws-note">Press play, then answer out loud in the pause. Yes, really. Out loud.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="lp-section sb-vs" id="why">
+        <div class="ui-wrap">
+          <h2>Great at the app. Stuck in the conversation?</h2>
+          <p class="sb-sec-lead">If you have a 300-day streak and still freeze when someone actually talks to you, it isn't you. Most language apps train you to <em>recognise</em> words on a screen: tap the right picture, match the pairs, type the missing word. Conversation needs something else: pulling the phrase out of your own head and saying it out loud, before the moment passes. That's the only thing Spoken Miles does.</p>
+          <div class="sb-compare" role="table" aria-label="Tap-and-streak apps compared with Spoken Miles">
+            <div class="sb-cmp-row sb-cmp-head" role="row"><span role="columnheader"></span><span role="columnheader">Tap-and-streak apps</span><span role="columnheader">Spoken Miles</span></div>
+            <div class="sb-cmp-row" role="row"><span role="rowheader">What you do</span><span role="cell">Tap, match, type</span><span role="cell"><b>Say every phrase out loud</b></span></div>
+            <div class="sb-cmp-row" role="row"><span role="rowheader">Where your eyes are</span><span role="cell">On a screen</span><span role="cell"><b>On the road</b></span></div>
+            <div class="sb-cmp-row" role="row"><span role="rowheader">Phrases you speak</span><span role="cell">A few, if any</span><span role="cell"><b>250 to 320 a lesson</b></span></div>
+            <div class="sb-cmp-row" role="row"><span role="rowheader">What it trains</span><span role="cell">Recognising</span><span role="cell"><b>Recalling and speaking</b></span></div>
+            <div class="sb-cmp-row" role="row"><span role="rowheader">How you pay</span><span role="cell">Every month</span><span role="cell"><b>Once. Yours for life.</b></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sb-band" id="miles">
+        <div class="ui-wrap">
+          <h2>You already drive the miles. Make them speak.</h2>
+          <p class="sb-band-lead">The average commute is long enough for a lesson each way. Spoken Miles fills the time your hands are on the wheel and your head is free, with a language you'll actually use.</p>
+          <ol class="sb-day">
+            <li><time>7:40</time><b>The commute</b><span>Your car becomes a classroom. Eyes on the road, voice on the language.</span></li>
+            <li><time>8:15</time><b>The school run</b><span>Ten minutes there, ten back. Forty phrases said out loud.</span></li>
+            <li><time>12:30</time><b>The errands</b><span>Groceries, the pharmacy, the post office: one lesson, three stops.</span></li>
+            <li><time>Sat</time><b>The road trip</b><span>Two hours on the highway: three lessons and a stronger accent.</span></li>
+          </ol>
+          <p class="sb-math">45 minutes a workday = <b>3¾ hours of speaking a week</b>. Level 1 done in six weeks, without "finding time" once.</p>
+        </div>
+      </section>
+
+      <section class="lp-section sb-gift-band-sec">
+        <div class="ui-wrap">
+          <div class="sb-gift-band">
+            <div class="sb-gift-art" aria-hidden="true"><i class="ic ic-car"></i></div>
+            <div>
+              <h2>Know someone who's always "going to learn Italian"?</h2>
+              <p>Give them a language for the road. Dad's commute, Mum's road trips, a friend moving abroad: a gift card they open with one tap, and lifetime access to every lesson.</p>
+            </div>
+            <a class="ui-btn primary lg" href="#gift">Give it as a gift <i class="ic ic-arrow"></i></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="lp-section" id="faq">
+        <div class="ui-wrap">
+          <h2 class="sb-center">Questions</h2>
+          <div class="lp-faq">
+            <details><summary>How is this different from Duolingo?</summary><p>Duolingo is a fun way to build vocabulary and a daily habit, and lots of people love it. But most of the time you're reading and tapping, not speaking. Spoken Miles is all speaking: in every lesson, hundreds of phrases come out of your own mouth, timed so they move into long-term memory. Use both if you like. Spoken Miles is the one that gets you talking.</p></details>
+            <details><summary>Is it safe to use while driving?</summary><p>It's audio only and never asks you to look at anything. Speaking out loud is like talking to a passenger. Keep your attention on the road; if traffic gets busy, just listen, or pause. Car mode gives you one huge play button and nothing else.</p></details>
+            <details><summary>Does it work without a signal?</summary><p>Yes. Save a lesson, a pack of five, a level or the whole course to your phone, and it plays with no signal at all: tunnels, the countryside, a car park. Or stream it if your phone is short on space.</p></details>
+            <details><summary>Do I pay every month?</summary><p>No. You pay once and every lesson you bought is yours for life, with no subscription and nothing to cancel.</p></details>
+            <details><summary>Can I give it as a present?</summary><p>Yes. Buy it as a gift, add a message, then print the card or send the link. They open it with a free account and it's theirs for life.</p></details>
+            <details><summary>Can I try it first?</summary><p>Yes. Make a free account and the whole of lesson 1 is yours, all 45 minutes, in any language.</p></details>
+          </div>
+        </div>
+      </section>
+
+      <section class="lp-section">
+        <div class="ui-wrap">
+          <div class="lp-band sb-final">
+            <div><h2>Tomorrow's drive can be your first lesson.</h2><p>Or it can be another 45 minutes of the same radio. You choose.</p></div>
+            <a class="ui-btn lg sb-final-btn" href="#auth/signup" anvil:name="band_link">Listen to lesson 1 free</a>
+          </div>
+          <p class="sb-credit">Inspired by the published spaced-recall research of Dr. Paul Pimsleur. Not affiliated with Pimsleur® or Simon &amp; Schuster, or with Duolingo®, a trademark of Duolingo, Inc.</p>
+        </div>
+      </section>
+    </div>
+  </anvil-block>
+</anvil-form>

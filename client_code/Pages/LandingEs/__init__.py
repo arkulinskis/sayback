@@ -8,7 +8,7 @@ COURSE = "es-en"
 
 
 class LandingEs(LandingEsTemplate):
-    """#es: la página de ventas para hispanohablantes (Sayback Inglés). The Spanish twin of Pages/Landing: same
+    """#es: la página de ventas para hispanohablantes (Spoken Miles Inglés). The Spanish twin of Pages/Landing: same
     sections, written in Spanish (not translated on the fly), course es-en, products en1 / enall."""
 
     def __init__(self, args=(), **properties):

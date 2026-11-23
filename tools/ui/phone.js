@@ -26,7 +26,7 @@
   }
   try {
     window.SB.setLang('en');
-    for (const h of ['#landing', '#es', '#auth', '#auth/signup', '#buy/en-es']) await check(h);  // public pages
+    for (const h of ['#landing', '#learn/french', '#learn/italian', '#gift', '#es', '#auth', '#auth/signup', '#buy/en-es']) await check(h);  // public pages
     // sign up so the member pages can be checked too
     window.SB.setLang('en');  // #es switched the app to Spanish; sign up in English
     location.hash = '#auth/signup';
@@ -36,7 +36,7 @@
     const tick = $('.au-card input[type=checkbox]'); if (tick && !tick.checked) tick.click();
     $$('.anvil-role-btn-block button').find((b) => /Create account/.test(b.textContent)).click();
     await until(() => location.hash === '#home' && window.UI_READY, 'signed in', 30000);
-    for (const h of ['#home', '#home/en-es/2', '#lesson/en-es/L1-01', '#lesson/en-es/L1-02', '#buy/es-en', '#thanks/es1', '#profile']) await check(h);
+    for (const h of ['#home', '#home/en-es/2', '#lesson/en-es/L1-01', '#lesson/en-es/L1-02', '#buy/es-en', '#thanks/es1', '#profile', '#downloads', '#gift/en-it', '#redeem', '#lesson/en-fr/L1-01']) await check(h);
     window.SB.setLang('es');
     for (const h of ['#home', '#lesson/es-en/L1-01']) await check(h + '/');  // Spanish runs longer: check it fits too
     window.SB.setLang('en');

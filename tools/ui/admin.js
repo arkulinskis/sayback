@@ -46,13 +46,14 @@
     btn(document, 'Save').click();
     await until(() => /Test mode/.test($('.ad-shop').textContent), 'audio status says test mode');
     ok(/\/_\/api\/stripe/.test($('.anvil-role-ad-code').textContent), 'shop: shows the Stripe webhook address');
-    ok(/#thanks\/es1/.test($('.ad-links').textContent), 'shop: shows each Payment Link\'s success address');
+    ok(/#thanks\/es1/.test($('.anvil-role-ad-links').textContent) && /#thanks\/trio/.test($('.anvil-role-ad-links').textContent)
+       && $$('.ad-link-row').length === 13, 'shop: 13 Payment Link boxes, each with its success address');
     ok(/Test mode/.test($('.ad-shop').textContent), 'shop: a test audio address can be saved');
 
     // ---- overview + setup checklist
     await page('#admin/overview', () => $$('.ad-stat').length >= 3 && $('.ad-check li.bad, .ad-check li.good'));
     ok(/\d/.test($('.ad-stat').textContent), 'overview: the numbers');
-    ok(/0 of 6 set/.test($('.ad-setup').textContent) && $('.ad-check li.bad'), 'overview: setup checklist (no Stripe links yet)');
+    ok(/0 of 13 set/.test($('.ad-setup').textContent) && $('.ad-check li.bad'), 'overview: setup checklist (no Stripe links yet)');
 
     // ---- an admin plays a Level 3 lesson (everything is open to admins)
     await page('#lesson/en-es/L3-05', () => $('.pl-play') && window.SB._player);
@@ -106,11 +107,28 @@
       box.click(); await sleep(2500); box.click(); await sleep(2500);
       ok(box.checked === was, 'users: Active switch saved twice (back as it was)');
     }
-    type($('.anvil-role-ad-search-box'), 'nobody-matches-this'); $('.anvil-role-ic-search button').click();
+    const vis = (sel) => $$(sel).find((el) => el.offsetParent);   // the Users tab's box (Customers has one too)
+    type(vis('.anvil-role-ad-search-box input, input.anvil-role-ad-search-box') || vis('.anvil-role-ad-search-box'), 'nobody-matches-this');
+    vis('.anvil-role-ic-search button').click();
     await until(() => $$('.ad-user-row').length === 0, 'search narrows');
     ok(/0 people/.test(document.body.textContent), 'users: search');
     await page('#admin/demo', () => $('.ad-demo'));
     ok(/Status:/.test($('.ad-demo').textContent), 'demo: status line');
+
+    // ---- Spoken Miles: customers, ads, gifts
+    const shown = (sel) => $$(sel).filter((el) => el.offsetParent);
+    await page('#admin/customers', () => shown('.ad-cust').length >= 3);
+    ok(/account/.test(shown('.anvil-role-ad-line')[0].textContent) && /demo@example\.com/.test(shown('.ad-cust').map((r) => r.textContent).join(' ')),
+       'customers: every account listed (' + shown('.ad-cust').length + ')');
+    await page('#admin/ads', () => shown('.ad-ads-head').length && shown('.ad-ads-row').length >= 1);
+    type(shown('.ad-form-grid input')[0], 'meta');
+    shown('.anvil-role-ic-link button')[0].click();
+    await until(() => /utm_source=meta/.test((shown('.anvil-role-ad-code')[0] || {}).textContent || ''), 'ad link built');
+    ok(/\?utm_source=meta&utm_medium=paid#/.test(shown('.anvil-role-ad-code')[0].textContent), 'ads: the link builder puts the tags before the page');
+    await page('#admin/gifts', () => shown('.ad-grant select').length);
+    shown('.ad-grant .anvil-role-ic-plus button')[0].click();
+    await until(() => /Code [A-Z0-9]{4}-/.test(document.body.textContent) && shown('.ad-cust').length >= 1, 'gift code made');
+    ok(/#redeem\//.test(document.body.textContent), 'gifts: a free code with its redeem link, listed');
     log.push('PASSED');
     return { ok: true, log };
   } catch (e) {

@@ -3,13 +3,21 @@ import anvil.media
 from anvil.js import window
 
 from ._anvil_designer import AdminTemplate
-from ... import state
+from ... import courses, state
 
-TABS = ["overview", "sales", "waitlist", "shop", "feedback", "users", "demo"]
-PRODUCTS = ["es1", "esall", "esup", "en1", "enall", "enup"]
-PRODUCT_NAMES = [("Sayback Spanish · Level 1", "es1"), ("Sayback Spanish · Levels 1-5", "esall"),
-                 ("Sayback Spanish · Levels 2-5", "esup"), ("Sayback Inglés · Level 1", "en1"),
-                 ("Sayback Inglés · Levels 1-5", "enall"), ("Sayback Inglés · Levels 2-5", "enup")]
+TABS = ["overview", "sales", "customers", "ads", "gifts", "waitlist", "shop", "feedback", "users", "demo"]
+KIND_NAMES = {"level1": "Level 1", "complete": "Levels 1-5", "upgrade": "Levels 2-5"}
+
+
+def product_names(kinds=("level1", "complete", "upgrade")):
+    out = []
+    for c in courses.ORDER:
+        for kind in kinds:
+            if kind in KIND_NAMES:
+                out.append(("%s · %s" % (courses.COURSES[c]["name"], KIND_NAMES[kind]), courses.product_for(c, kind)))
+    if "bundle" in kinds:
+        out.append(("Every language (Spanish + French + Italian, Levels 1-5)", "trio"))
+    return out
 
 
 class Admin(AdminTemplate):
@@ -22,9 +30,11 @@ class Admin(AdminTemplate):
         self.tab = args[0] if args and args[0] in TABS else "overview"
         self._filter = "new"
         parts = {"overview": self.overview_part, "sales": self.sales_part, "waitlist": self.waitlist_part,
-                 "shop": self.shop_part, "feedback": self.feedback_part, "users": self.users_part, "demo": self.demo_part}
+                 "shop": self.shop_part, "feedback": self.feedback_part, "users": self.users_part, "demo": self.demo_part,
+                 "customers": self.customers_part, "ads": self.ads_part, "gifts": self.gifts_part}
         tabs = {"overview": self.tab_overview, "sales": self.tab_sales, "waitlist": self.tab_waitlist, "shop": self.tab_shop,
-                "feedback": self.tab_feedback, "users": self.tab_users, "demo": self.tab_demo}
+                "feedback": self.tab_feedback, "users": self.tab_users, "demo": self.tab_demo,
+                "customers": self.tab_customers, "ads": self.tab_ads, "gifts": self.tab_gifts}
         for name in TABS:
             parts[name].visible = name == self.tab
             tabs[name].classes["on"] = name == self.tab
@@ -49,8 +59,9 @@ class Admin(AdminTemplate):
                     {"r2": "Lesson audio: private R2 bucket connected.",
                      "public": "Lesson audio: a public test address is set. Switch to the private R2 bucket before selling.",
                      "none": "Lesson audio: not connected yet, so lessons can't play."}[audio])
-        self._check(self.chk_links, self.chk_links_text, links == 6,
-                    "Stripe Payment Links: %d of 6 set. %s" % (links, "Buy buttons go to Stripe." if links else
+        total = len(s["products"])
+        self._check(self.chk_links, self.chk_links_text, links == total,
+                    "Stripe Payment Links: %d of %d set. %s" % (links, total, "Buy buttons go to Stripe." if links else
                                                               "Until then, buy buttons collect waitlist emails."))
         self._check(self.chk_webhook, self.chk_webhook_text, s["status"]["stripe_webhook_secret"],
                     "Stripe webhook secret: %s" % ("set. Payments unlock lessons by themselves." if s["status"]["stripe_webhook_secret"]
@@ -69,7 +80,7 @@ class Admin(AdminTemplate):
         money = ", ".join("%s %s" % (r["currency"] or "", "{:,.2f}".format(r["cents"] / 100.0)) for r in d["revenue"]) or "nothing yet"
         self.sales_line.text = "%s · %s · revenue %s · %d refunded" % (
             state.plural(d["total"], "purchase"), state.plural(d["buyers"], "buyer"), money, d["refunded"])
-        self.grant_product.items = PRODUCT_NAMES
+        self.grant_product.items = product_names(("level1", "complete", "upgrade", "bundle"))
         state.set_control_attr(self.grant_product, "aria-label", "What to give")
 
     @handle("grant_button", "click")
@@ -94,7 +105,7 @@ class Admin(AdminTemplate):
 
     @handle("csv_button", "click")
     def csv_button_click(self, **event_args):
-        anvil.media.download(BlobMedia("text/csv", self._csv.encode("utf-8"), name="sayback-waitlist.csv"))
+        anvil.media.download(BlobMedia("text/csv", self._csv.encode("utf-8"), name="spokenmiles-waitlist.csv"))
 
     # ---- shop & setup
     def _shop(self):
@@ -103,11 +114,10 @@ class Admin(AdminTemplate):
         self.price_level1.text = st["prices"]["level1"]
         self.price_complete.text = st["prices"]["complete"]
         self.price_upgrade.text = st["prices"]["upgrade"]
+        self.price_bundle.text = st["prices"].get("bundle", "")
         self.currency.text, self.currency_code.text = st["currency"], st["currency_code"]
         self.guarantee_days.text, self.free_lessons.text = st["guarantee_days"], s["free_lessons"]
-        for p in s["products"]:
-            getattr(self, "link_" + p["product"]).text = p["link"]
-            getattr(self, "ok_" + p["product"]).text = "After payment, redirect to: " + p["success_url"]
+        self.links_panel.items = s["products"]
         self.webhook_url.text = s["webhook_url"]
         self.webhook_status.text = ("Signing secret: set." if s["status"]["stripe_webhook_secret"]
                                     else "Signing secret: not set yet (App Secrets > stripe_webhook_secret).")
@@ -121,9 +131,12 @@ class Admin(AdminTemplate):
 
     @handle("shop_save_button", "click")
     def shop_save_button_click(self, **event_args):
+        links = {}
+        for row in self.links_panel.get_components():
+            links[getattr(row, "item")["product"]] = (getattr(row, "link_box").text or "").strip()
         data = {"prices": {"level1": self.price_level1.text, "complete": self.price_complete.text,
-                           "upgrade": self.price_upgrade.text},
-                "links": {p: (getattr(self, "link_" + p).text or "").strip() for p in PRODUCTS},
+                           "upgrade": self.price_upgrade.text, "bundle": self.price_bundle.text},
+                "links": links,
                 "currency": self.currency.text, "currency_code": self.currency_code.text,
                 "guarantee_days": self.guarantee_days.text, "free_lessons": self.free_lessons.text,
                 "audio_base": (self.audio_base.text or "").strip()}
@@ -133,11 +146,80 @@ class Admin(AdminTemplate):
 
     @handle("audio_test_button", "click")
     def audio_test_button_click(self, **event_args):
-        r = state.call("admin_audio_test", "en-es")
+        r = state.call("admin_audio_test", "en-fr")
         if r and r["url"]:
             window.open(r["url"], "_blank", "noopener")
         elif r:
             state.toast("Audio isn't connected yet: set the r2_url App Secret or a test address, then Save.", "error")
+
+    # ---- customers
+    def _customers(self):
+        d = state.call("admin_customers", self.cust_search.text or "")
+        self._cust_csv = d["csv"]
+        self.cust_panel.items = d["customers"]
+        self.cust_line.text = "%s · %d with a course or a gift" % (state.plural(d["total"], "account"), d["paying"])
+        state.set_control_attr(self.cust_search, "aria-label", "Search customers")
+
+    @handle("cust_search", "pressed_enter")
+    def cust_search_pressed_enter(self, **event_args):
+        self._customers()
+
+    @handle("cust_search_button", "click")
+    def cust_search_button_click(self, **event_args):
+        self._customers()
+
+    @handle("cust_csv_button", "click")
+    def cust_csv_button_click(self, **event_args):
+        anvil.media.download(BlobMedia("text/csv", self._cust_csv.encode("utf-8"), name="spokenmiles-customers.csv"))
+
+    # ---- ads
+    def _ads(self):
+        d = state.call("admin_ads")
+        self._origin = d["origin"]
+        self.ad_page.items = [(p["label"], p["page"]) for p in d["pages"]]
+        state.set_control_attr(self.ad_page, "aria-label", "Page")
+        self.ads_panel.items = d["rows"]
+        self.ad_link.text = ""
+
+    def _ad_url(self):
+        tags = [("utm_source", self.ad_source.text), ("utm_medium", "paid" if self.ad_source.text else ""),
+                ("utm_campaign", self.ad_campaign.text), ("utm_content", self.ad_content.text)]
+        q = "&".join("%s=%s" % (k, window.encodeURIComponent((v or "").strip().lower().replace(" ", "-")))
+                     for k, v in tags if (v or "").strip())
+        page = self.ad_page.selected_value or "#landing"
+        return "%s/%s%s" % (self._origin, ("?" + q) if q else "", page)
+
+    @handle("ad_build_button", "click")
+    def ad_build_button_click(self, **event_args):
+        if not (self.ad_source.text or "").strip():
+            state.toast("Add a source (where the ad runs), e.g. meta or google.", "error")
+            return
+        self.ad_link.text = self._ad_url()
+
+    @handle("ad_copy_button", "click")
+    def ad_copy_button_click(self, **event_args):
+        if not self.ad_link.text:
+            self.ad_build_button_click()
+        if self.ad_link.text:
+            window.navigator.clipboard.writeText(self.ad_link.text)
+            state.toast("Link copied", "ok")
+
+    # ---- gifts
+    def _gifts(self):
+        d = state.call("admin_gifts")
+        self.gifts_panel.items = d["gifts"]
+        self.gifts_line.text = "%s · %d not opened yet" % (state.plural(d["total"], "gift"), d["open"])
+        self.gift_product.items = product_names(("level1", "complete", "bundle"))
+        state.set_control_attr(self.gift_product, "aria-label", "What the gift unlocks")
+
+    @handle("gift_make_button", "click")
+    def gift_make_button_click(self, **event_args):
+        r = state.call("admin_make_gift", self.gift_product.selected_value, self.gift_note.text or "")
+        if r:
+            self.gift_made.text = "Code %s · link %s/#redeem/%s" % (r["gift"]["nice"], str(window.location.origin), r["gift"]["code"])
+            self.gift_made.visible = True
+            self.gift_note.text = ""
+            self._gifts()
 
     # ---- feedback
     def _feedback(self):

@@ -18,7 +18,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         pass
 
     def _file(self):
-        m = re.fullmatch(r"/(en-es|es-en)/L([1-5])/(L[1-5]-\d\d)\.(mp3|txt)", self.path.split("?")[0])
+        m = re.fullmatch(r"/(en-es|es-en|en-fr|en-it)/L([1-5])/(L[1-5]-\d\d)\.(mp3|txt)", self.path.split("?")[0])
         if not m:
             return None, None
         course, level, code, ext = m.groups()

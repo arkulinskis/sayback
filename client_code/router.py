@@ -15,8 +15,12 @@ from anvil.js import window
 from . import i18n, state
 
 PAGES = {
-    "landing": (None, "Speak Spanish in your stolen minutes", "Habla español en tus minutos robados"),
-    "es": (None, "Habla inglés en tus minutos robados", "Habla inglés en tus minutos robados"),
+    "landing": (None, "Learn a language on the drive you already take", "Aprende un idioma en el camino que ya haces"),
+    "learn": (None, "Speak a new language on your drive", "Habla un idioma nuevo mientras manejas"),
+    "es": (None, "Habla inglés mientras manejas", "Habla inglés mientras manejas"),
+    "gift": (None, "Give a language for the road", "Regala un idioma para el camino"),
+    "redeem": (None, "Open your gift", "Abre tu regalo"),
+    "downloads": ("user", "Offline and downloads", "Sin conexión y descargas"),
     "auth": ("guest", "Sign in", "Entrar"),
     "home": ("user", "Your library", "Tu biblioteca"),
     "lesson": ("user", "Lesson", "Lección"),
@@ -25,16 +29,28 @@ PAGES = {
     "profile": ("user", "Your account", "Tu cuenta"),
     "admin": ("admin", "Admin", "Admin"),
 }
-NAV = [("home", "Library", "headphones"), ("buy", "Courses", "cart")]
-APP_NAME = "Sayback"
+NAV = [("home", "Library", "headphones"), ("downloads", "Offline", "download"), ("buy", "Courses", "cart")]
+APP_NAME = "Spoken Miles"
 _r: dict = {"after": "", "listening": False, "page": None, "form": None}
 
 
 def _form(name):
     """The page's Form class (imported when first needed, so start-up stays quick)."""
     if name == "landing":
+        from .Pages.Choose import Choose
+        return Choose
+    if name == "learn":
         from .Pages.Landing import Landing
         return Landing
+    if name == "gift":
+        from .Pages.Gift import Gift
+        return Gift
+    if name == "redeem":
+        from .Pages.Redeem import Redeem
+        return Redeem
+    if name == "downloads":
+        from .Pages.Downloads import Downloads
+        return Downloads
     if name == "es":
         from .Pages.LandingEs import LandingEs
         return LandingEs
@@ -97,7 +113,7 @@ def show():
         name, args = "home", []
     if name == "es":
         i18n.set_lang("es")
-    elif name == "landing":
+    elif name in ("landing", "learn", "gift"):
         i18n.set_lang("en")
     old = _r["form"]
     if old is not None and hasattr(old, "leave"):

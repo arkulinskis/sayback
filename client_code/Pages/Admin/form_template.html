@@ -5,6 +5,9 @@
       <nav class="ui-tabs">
         <a href="#admin/overview" anvil:name="tab_overview"><i class="ic ic-grid"></i>Overview</a>
         <a href="#admin/sales" anvil:name="tab_sales"><i class="ic ic-cart"></i>Sales</a>
+        <a href="#admin/customers" anvil:name="tab_customers"><i class="ic ic-users"></i>Customers</a>
+        <a href="#admin/ads" anvil:name="tab_ads"><i class="ic ic-link"></i>Ads</a>
+        <a href="#admin/gifts" anvil:name="tab_gifts"><i class="ic ic-heart"></i>Gifts</a>
         <a href="#admin/waitlist" anvil:name="tab_waitlist"><i class="ic ic-mail"></i>Waitlist</a>
         <a href="#admin/shop" anvil:name="tab_shop"><i class="ic ic-sliders"></i>Shop &amp; setup</a>
         <a href="#admin/feedback" anvil:name="tab_feedback"><i class="ic ic-inbox"></i>Feedback</a>
@@ -67,6 +70,7 @@
             <label class="ui-field"><span>Level 1</span><anvil-component type="TextBox" name="price_level1" prop:type="number"></anvil-component></label>
             <label class="ui-field"><span>Complete course</span><anvil-component type="TextBox" name="price_complete" prop:type="number"></anvil-component></label>
             <label class="ui-field"><span>Upgrade (Levels 2 to 5, for Level 1 owners)</span><anvil-component type="TextBox" name="price_upgrade" prop:type="number"></anvil-component></label>
+            <label class="ui-field"><span>Every language (Spanish + French + Italian, complete)</span><anvil-component type="TextBox" name="price_bundle" prop:type="number"></anvil-component></label>
             <label class="ui-field"><span>Currency sign</span><anvil-component type="TextBox" name="currency"></anvil-component></label>
             <label class="ui-field"><span>Currency code</span><anvil-component type="TextBox" name="currency_code"></anvil-component></label>
             <label class="ui-field"><span>Guarantee (days)</span><anvil-component type="TextBox" name="guarantee_days" prop:type="number"></anvil-component></label>
@@ -82,14 +86,8 @@
             <li>In each link's settings, "After payment" &gt; "Don't show confirmation page" &gt; redirect to the address under its box.</li>
             <li>Paste the link (https://buy.stripe.com/...) in its box and press Save.</li>
           </ol>
-          <div class="ad-links">
-            <label class="ui-field"><span>Sayback Spanish · Level 1</span><anvil-component type="TextBox" name="link_es1" prop:placeholder="https://buy.stripe.com/..."></anvil-component><anvil-component type="Label" name="ok_es1" prop:role='["fine-print", "ad-success"]'></anvil-component></label>
-            <label class="ui-field"><span>Sayback Spanish · Complete</span><anvil-component type="TextBox" name="link_esall" prop:placeholder="https://buy.stripe.com/..."></anvil-component><anvil-component type="Label" name="ok_esall" prop:role='["fine-print", "ad-success"]'></anvil-component></label>
-            <label class="ui-field"><span>Sayback Spanish · Upgrade</span><anvil-component type="TextBox" name="link_esup" prop:placeholder="https://buy.stripe.com/..."></anvil-component><anvil-component type="Label" name="ok_esup" prop:role='["fine-print", "ad-success"]'></anvil-component></label>
-            <label class="ui-field"><span>Sayback Inglés · Level 1</span><anvil-component type="TextBox" name="link_en1" prop:placeholder="https://buy.stripe.com/..."></anvil-component><anvil-component type="Label" name="ok_en1" prop:role='["fine-print", "ad-success"]'></anvil-component></label>
-            <label class="ui-field"><span>Sayback Inglés · Complete</span><anvil-component type="TextBox" name="link_enall" prop:placeholder="https://buy.stripe.com/..."></anvil-component><anvil-component type="Label" name="ok_enall" prop:role='["fine-print", "ad-success"]'></anvil-component></label>
-            <label class="ui-field"><span>Sayback Inglés · Upgrade</span><anvil-component type="TextBox" name="link_enup" prop:placeholder="https://buy.stripe.com/..."></anvil-component><anvil-component type="Label" name="ok_enup" prop:role='["fine-print", "ad-success"]'></anvil-component></label>
-          </div>
+          <anvil-component type="RepeatingPanel" name="links_panel" prop:item_template="Sayback.Items.LinkRow" prop:role='["ad-links"]'></anvil-component>
+          <p class="muted small">Gifts use the same links: the app marks a gift purchase itself, so there's nothing extra to set up in Stripe. 13 links in all; any left empty collect waitlist emails instead.</p>
         </div>
 
         <div class="ui-card ui-stack">
@@ -102,7 +100,7 @@
         <div class="ui-card ui-stack">
           <h3>Lesson audio</h3>
           <anvil-component type="Label" name="audio_status"></anvil-component>
-          <p class="muted small">The 300 lessons live in a private Cloudflare R2 bucket. Upload them with <code>python tools/upload_r2.py</code> in the sayback folder, then add the App Secret <code>r2_url</code> = <code>r2://ACCESS_KEY_ID:SECRET@ACCOUNT_ID/BUCKET</code>. For a quick test only, a public address can stand in (anyone with a link could download):</p>
+          <p class="muted small">The 600 lessons (4 courses) live in a private Cloudflare R2 bucket. For "save offline" the bucket also needs a CORS rule allowing GET from this app's address (README, "Before selling"). Upload them with <code>python tools/upload_r2.py</code> in the sayback folder, then add the App Secret <code>r2_url</code> = <code>r2://ACCESS_KEY_ID:SECRET@ACCOUNT_ID/BUCKET</code>. For a quick test only, a public address can stand in (anyone with a link could download):</p>
           <label class="ui-field"><span>Public test address (optional)</span><anvil-component type="TextBox" name="audio_base" prop:placeholder="https://pub-....r2.dev"></anvil-component></label>
           <div class="ui-row">
             <anvil-component type="Button" name="audio_test_button" prop:text="Try lesson 1" prop:role='["btn", "ic-play"]'></anvil-component>
@@ -111,6 +109,53 @@
         <div class="ui-row end">
           <anvil-component type="Button" name="shop_save_button" prop:text="Save" prop:role='["btn", "btn-primary", "btn-lg"]'></anvil-component>
         </div>
+      </div>
+
+      <div anvil:name="customers_part">
+        <div class="ui-row ad-search">
+          <anvil-component type="TextBox" name="cust_search" prop:placeholder="Search email, name, language, ad source" prop:role='["ad-search-box"]'></anvil-component>
+          <anvil-component type="Button" name="cust_search_button" prop:text="Search" prop:role='["btn", "ic-search"]'></anvil-component>
+          <span class="ui-spacer"></span>
+          <anvil-component type="Button" name="cust_csv_button" prop:text="Download CSV" prop:role='["btn", "ic-download"]'></anvil-component>
+        </div>
+        <anvil-component type="Label" name="cust_line" prop:role='["fine-print", "ad-line"]'></anvil-component>
+        <anvil-component type="RepeatingPanel" name="cust_panel" prop:item_template="Sayback.Items.CustomerRow" prop:role='["ad-list"]'></anvil-component>
+      </div>
+
+      <div anvil:name="ads_part">
+        <div class="ui-card ui-stack">
+          <h3>Ad link builder</h3>
+          <p class="muted small">Point each ad at the page that matches it, with tags so this tab can count what it brings in. The app keeps the first ad a person came from for 60 days, and saves it on their account when they sign up.</p>
+          <div class="ad-form-grid">
+            <label class="ui-field"><span>Page</span><anvil-component type="DropDown" name="ad_page"></anvil-component></label>
+            <label class="ui-field"><span>Source (utm_source)</span><anvil-component type="TextBox" name="ad_source" prop:placeholder="meta, google, tiktok, newsletter"></anvil-component></label>
+            <label class="ui-field"><span>Campaign (utm_campaign)</span><anvil-component type="TextBox" name="ad_campaign" prop:placeholder="dad-gift-december"></anvil-component></label>
+            <label class="ui-field"><span>Ad or audience (utm_content, optional)</span><anvil-component type="TextBox" name="ad_content" prop:placeholder="commuters-video-1"></anvil-component></label>
+          </div>
+          <anvil-component type="Label" name="ad_link" prop:role='["ad-code"]'></anvil-component>
+          <div class="ui-row">
+            <anvil-component type="Button" name="ad_build_button" prop:text="Build the link" prop:role='["btn", "btn-primary", "ic-link"]'></anvil-component>
+            <anvil-component type="Button" name="ad_copy_button" prop:text="Copy" prop:role='["btn", "ic-copy"]'></anvil-component>
+          </div>
+        </div>
+        <h3 class="ad-h">What each source brings in</h3>
+        <div class="ad-table ad-ads-head"><b>Source · campaign · page</b><b>Sign-ups</b><b>Buyers</b><b>Conversion</b><b>Revenue</b></div>
+        <anvil-component type="RepeatingPanel" name="ads_panel" prop:item_template="Sayback.Items.AdRow"></anvil-component>
+      </div>
+
+      <div anvil:name="gifts_part">
+        <div class="ui-card ad-grant">
+          <h3>Make a free gift code</h3>
+          <p class="muted small">For a giveaway, a podcast host or a partner. No payment; redeemed like a bought gift at #redeem/&lt;code&gt;.</p>
+          <div class="ad-grant-row">
+            <label class="ui-field"><span>What it unlocks</span><anvil-component type="DropDown" name="gift_product"></anvil-component></label>
+            <label class="ui-field"><span>Message on the card (optional)</span><anvil-component type="TextBox" name="gift_note"></anvil-component></label>
+            <anvil-component type="Button" name="gift_make_button" prop:text="Make a code" prop:role='["btn", "btn-primary", "ic-plus"]'></anvil-component>
+          </div>
+          <anvil-component type="Label" name="gift_made" prop:role='["ad-code"]' prop:visible="false"></anvil-component>
+        </div>
+        <anvil-component type="Label" name="gifts_line" prop:role='["fine-print", "ad-line"]'></anvil-component>
+        <anvil-component type="RepeatingPanel" name="gifts_panel" prop:item_template="Sayback.Items.GiftAdminRow" prop:role='["ad-list"]'></anvil-component>
       </div>
 
       <div anvil:name="feedback_part">

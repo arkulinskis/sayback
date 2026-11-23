@@ -1,4 +1,4 @@
-/* Sayback landing hero: 90 seconds of the real lesson 1 plays while its phrases drive past on a road.
+/* Spoken Miles landing hero: 90 seconds of the real lesson 1 plays while its phrases drive past on a road.
    Blocks = what you hear (prompt), your turn (the thinking pause, with a countdown), the answer, and "say it after
    the voice" for new phrases. Timings come from tools/make_hero.py (window.SB_HERO).
      SB.road(el, {course: 'en-es', labels: {...}, onEnd}) -> {play, pause, state, destroy}

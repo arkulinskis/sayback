@@ -14,9 +14,9 @@ from . import common as C
 DEMO_USERS = [
     ("Maya Chen", "maya.demo@example.com", "en-es", "esall", [0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11], 23),
     ("Diego Ramírez", "diego.demo@example.com", "es-en", "enall", [0, 1, 2, 4, 5, 6, 8, 9, 12], 31),
-    ("Hannah Okafor", "hannah.demo@example.com", "en-es", "es1", [1, 2, 3, 5, 8], 9),
+    ("Hannah Okafor", "hannah.demo@example.com", "en-fr", "fr1", [1, 2, 3, 5, 8], 9),
     ("Lucía Fernández", "lucia.demo@example.com", "es-en", "en1", [0, 2, 3], 4),
-    ("Tom Bergström", "tom.demo@example.com", "en-es", None, [3], 1),
+    ("Tom Bergström", "tom.demo@example.com", "en-it", None, [3], 1),
 ]
 DEMO_WAITLIST = [
     ("priya.demo@example.com", "en-es", "instagram"),
@@ -24,8 +24,8 @@ DEMO_WAITLIST = [
     ("kate.demo@example.com", "en-es", "landing"),
     ("valentina.demo@example.com", "es-en", "facebook"),
 ]
-PRICES = {"es1": 3900, "esall": 12900, "en1": 3900, "enall": 12900}
-LEVELS = {"es1": [1], "en1": [1], "esall": [1, 2, 3, 4, 5], "enall": [1, 2, 3, 4, 5]}
+PRICES = {"es1": 3900, "esall": 14900, "en1": 3900, "enall": 14900, "fr1": 3900, "it1": 3900}
+LEVELS = {"es1": [1], "en1": [1], "fr1": [1], "it1": [1], "esall": [1, 2, 3, 4, 5], "enall": [1, 2, 3, 4, 5]}
 # Tables that hold demo rows (each has an is_demo column). Children before parents.
 DEMO_TABLES = ["listening", "progress", "purchases", "waitlist"]
 DEMO_GOALS = [150, 225, 90, 45, 90]   # weekly goals (minutes) of the demo people, in DEMO_USERS order

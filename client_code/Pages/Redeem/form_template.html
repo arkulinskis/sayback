@@ -1,0 +1,33 @@
+<anvil-form layout="Sayback.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap ui-narrow sb-redeem">
+      <!-- #redeem/<code>: someone got Spoken Miles as a gift. Shows the card, asks visitors to make a free account,
+           then redeem_gift() puts the course in their library (server_code/Gifts.py). #redeem alone = type the code. -->
+      <anvil-component type="Label" name="heading" prop:text="Open your gift" prop:role='["page-title"]'></anvil-component>
+      <div class="sb-giftcard" anvil:name="card">
+        <div class="sb-gc-top"><img src="_/theme/icon.svg" alt="" width="28" height="28"><span>Spoken Miles</span></div>
+        <anvil-component type="Label" name="gc_to" prop:role='["sb-gc-to"]'></anvil-component>
+        <p class="sb-gc-title" data-t>A language for the road</p>
+        <anvil-component type="Label" name="gc_what" prop:role='["sb-gc-what"]'></anvil-component>
+        <anvil-component type="Label" name="gc_msg" prop:role='["sb-gc-msg"]'></anvil-component>
+        <anvil-component type="Label" name="gc_from" prop:role='["sb-gc-from"]'></anvil-component>
+        <div class="sb-gc-road" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+      <anvil-component type="Label" name="note" prop:role='["msg-note"]' prop:visible="false"></anvil-component>
+      <div class="ui-card sb-redeem-code" anvil:name="code_part">
+        <label class="ui-field"><span data-t>The code on your card</span><anvil-component type="TextBox" name="code_box" prop:placeholder="ABCD-EFGH-JKLM"></anvil-component></label>
+        <anvil-component type="Button" name="look_button" prop:text="Find my gift" prop:role='["btn", "btn-primary", "ic-search"]'></anvil-component>
+      </div>
+      <div class="sb-redeem-actions" anvil:name="act_part">
+        <anvil-component type="Button" name="open_button" prop:text="Open my gift" prop:role='["btn", "btn-primary", "btn-lg", "ic-check"]'></anvil-component>
+        <a class="ui-btn primary lg" href="#auth/signup" anvil:name="signup_link"><span data-t>Make my free account to open it</span> <i class="ic ic-arrow"></i></a>
+        <p class="sb-fine" anvil:name="signin_line"><span data-t>Already have an account?</span> <a href="#auth" anvil:name="signin_link" data-t>Sign in</a></p>
+      </div>
+      <ul class="sb-facts" anvil:name="facts">
+        <li><i class="ic ic-headphones"></i><span data-t>45-minute audio lessons you answer out loud. Made for the car.</span></li>
+        <li><i class="ic ic-download"></i><span data-t>Stream them, or save them to your phone for drives with no signal.</span></li>
+        <li><i class="ic ic-check"></i><span data-t>Yours for life. No subscription, nothing to pay.</span></li>
+      </ul>
+    </div>
+  </anvil-block>
+</anvil-form>
