@@ -79,7 +79,7 @@ SEO = {
  ],
  "free": False,
  "site": "https://spokenmiles.com",
- "updated": "2026-11-23",
+ "updated": "2026-11-24",
  "icon": "icon-512.png",
  "colors": {
   "bg": "#eef2f4",
