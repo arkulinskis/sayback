@@ -1,7 +1,7 @@
-<anvil-form layout="Sayback.Layouts.Shell">
+<anvil-form layout="Spoken_Miles.Layouts.Shell">
   <anvil-block slot="content">
     <div class="ui-wrap sb-lesson">
-      <a class="sb-back" href="#home" anvil:name="back_link"><i class="ic ic-back"></i><span data-t>Library</span></a>
+      <a href="#home" class="sb-back" anvil:name="back_link"><i class="ic ic-back"></i><span data-t>Library</span></a>
       <header class="sb-lesson-head">
         <anvil-component type="Label" name="title" prop:role='["page-title"]'></anvil-component>
         <anvil-component type="Label" name="meta" prop:role='["sb-lesson-meta"]'></anvil-component>
@@ -10,26 +10,26 @@
           <span class="sb-chip"><i class="ic ic-heart"></i><anvil-component type="Label" name="emotion" prop:role='["sb-chip-text"]'></anvil-component></span>
         </div>
       </header>
-
+    
       <section class="ui-card sb-player-card" anvil:name="player_card">
-        <anvil-component type="Sayback.Components.Player" name="player"></anvil-component>
-        <anvil-component type="Label" name="resume_note" prop:role='["fine-print", "sb-resume-note"]' prop:visible="false"></anvil-component>
+        <anvil-component type="Spoken_Miles.Components.Player" name="player"></anvil-component>
+        <anvil-component type="Label" name="resume_note" prop:role='["fine-print","sb-resume-note"]' prop:visible="false"></anvil-component>
         <anvil-component type="Label" name="trip_note" prop:role='["sb-trip-note"]' prop:visible="false"></anvil-component>
         <div class="sb-opts">
           <div class="sb-opt">
-            <span class="sb-opt-label" data-t>How long is your trip?</span>
-            <div class="ui-seg sb-seg-dark" role="group" aria-label="How long is your trip?" data-ta="aria-label">
-              <button type="button" anvil:name="trip_15" data-trip="15" anvil:on-dom:click="self.trip_click" data-t>15 min</button>
-              <button type="button" anvil:name="trip_30" data-trip="30" anvil:on-dom:click="self.trip_click" data-t>30 min</button>
-              <button type="button" anvil:name="trip_0" data-trip="0" anvil:on-dom:click="self.trip_click" data-t>Whole lesson</button>
+            <span data-t class="sb-opt-label">How long is your trip?</span>
+            <div role="group" aria-label="How long is your trip?" data-ta="aria-label" class="ui-seg sb-seg-dark">
+              <button type="button" data-trip="15" anvil:on-dom:click="self.trip_click" data-t anvil:name="trip_15">15 min</button>
+              <button type="button" data-trip="30" anvil:on-dom:click="self.trip_click" data-t anvil:name="trip_30">30 min</button>
+              <button type="button" data-trip="0" anvil:on-dom:click="self.trip_click" data-t anvil:name="trip_0">Whole lesson</button>
             </div>
           </div>
           <div class="sb-opt">
-            <span class="sb-opt-label" data-t>Thinking time</span>
-            <div class="ui-seg sb-seg-dark" role="group" aria-label="Thinking time" data-ta="aria-label">
-              <button type="button" anvil:name="think_0" data-think="0" anvil:on-dom:click="self.think_click" data-t>Normal</button>
-              <button type="button" anvil:name="think_2" data-think="2" anvil:on-dom:click="self.think_click" data-t>+2 s</button>
-              <button type="button" anvil:name="think_4" data-think="4" anvil:on-dom:click="self.think_click" data-t>+4 s</button>
+            <span data-t class="sb-opt-label">Thinking time</span>
+            <div role="group" aria-label="Thinking time" data-ta="aria-label" class="ui-seg sb-seg-dark">
+              <button type="button" data-think="0" anvil:on-dom:click="self.think_click" data-t anvil:name="think_0">Normal</button>
+              <button type="button" data-think="2" anvil:on-dom:click="self.think_click" data-t anvil:name="think_2">+2 s</button>
+              <button type="button" data-think="4" anvil:on-dom:click="self.think_click" data-t anvil:name="think_4">+4 s</button>
             </div>
           </div>
           <anvil-component type="Label" name="opts_hint" prop:role='["sb-opts-hint"]'></anvil-component>
@@ -41,37 +41,37 @@
           <anvil-component type="Label" name="locked_title" prop:role='["sb-card-title"]'></anvil-component>
           <anvil-component type="Label" name="locked_text" prop:role='["sb-card-text"]'></anvil-component>
           <div class="ui-row">
-            <a class="ui-btn primary" href="#buy" anvil:name="unlock_link"><i class="ic ic-cart"></i><span data-t>See the courses</span></a>
+            <a href="#buy" class="ui-btn primary" anvil:name="unlock_link"><i class="ic ic-cart"></i><span data-t>See the courses</span></a>
           </div>
         </div>
       </section>
       <section class="ui-card sb-locked" anvil:name="noaudio_card">
         <i class="ic ic-headphones sb-locked-ic"></i>
         <div>
-          <div class="sb-card-title" data-t>This lesson's audio is on its way</div>
-          <p class="sb-card-text" data-t>The lessons are being uploaded. Try again a little later: your place in the course is saved.</p>
+          <div data-t class="sb-card-title">This lesson's audio is on its way</div>
+          <p data-t class="sb-card-text">The lessons are being uploaded. Try again a little later: your place in the course is saved.</p>
         </div>
       </section>
       <section class="ui-card sb-done" anvil:name="done_card">
-        <div class="sb-stamp" aria-hidden="true"><i class="ic ic-check"></i></div>
+        <div aria-hidden="true" class="sb-stamp"><i class="ic ic-check"></i></div>
         <div>
-          <div class="sb-card-title" data-t>Lesson done. Well spoken!</div>
+          <div data-t class="sb-card-title">Lesson done. Well spoken!</div>
           <anvil-component type="Label" name="done_text" prop:role='["sb-card-text"]'></anvil-component>
           <div class="ui-row">
-            <anvil-component type="Button" name="next_button" prop:text="Next lesson" prop:role='["btn", "btn-primary", "ic-arrow"]'></anvil-component>
-            <a class="ui-btn" href="#home" anvil:name="lib_link"><span data-t>Back to the library</span></a>
+            <anvil-component type="Button" name="next_button" prop:text="Next lesson" prop:role='["btn","btn-primary","ic-arrow"]'></anvil-component>
+            <a href="#home" class="ui-btn" anvil:name="lib_link"><span data-t>Back to the library</span></a>
           </div>
         </div>
       </section>
-
+    
       <div class="sb-lesson-grid">
         <section class="sb-sheet">
           <div class="sb-sheet-head">
             <h2 data-t>Today's new phrases</h2>
-            <anvil-component type="Button" name="quiz_button" prop:text="Quiz yourself" prop:role='["btn", "btn-sm", "ic-eye"]'></anvil-component>
+            <anvil-component type="Button" name="quiz_button" prop:text="Quiz yourself" prop:role='["btn","btn-sm","ic-eye"]'></anvil-component>
           </div>
           <anvil-component type="Label" name="sheet_note" prop:role='["fine-print"]'></anvil-component>
-          <anvil-component type="RepeatingPanel" name="pairs_panel" prop:item_template="Sayback.Items.PairRow" prop:role='["sb-pairs"]'></anvil-component>
+          <anvil-component type="RepeatingPanel" name="pairs_panel" prop:item_template="Spoken_Miles.Items.PairRow" prop:role='["sb-pairs"]'></anvil-component>
         </section>
         <aside class="sb-side">
           <section class="ui-card sb-culture">
@@ -80,13 +80,13 @@
           </section>
           <section class="ui-card sb-files" anvil:name="files_card">
             <h3 data-t>Take it with you</h3>
-            <a class="ui-btn block" anvil:name="dl_mp3" href="#" target="_blank" rel="noopener"><i class="ic ic-download"></i><span data-t>Download the MP3</span></a>
-            <a class="ui-btn block" anvil:name="dl_txt" href="#" target="_blank" rel="noopener"><i class="ic ic-book"></i><span data-t>Download the transcript</span></a>
-            <anvil-component type="Button" name="done_button" prop:role='["btn", "btn-block", "btn-ghost", "ic-check"]'></anvil-component>
+            <a href="#" target="_blank" rel="noopener" class="ui-btn block" anvil:name="dl_mp3"><i class="ic ic-download"></i><span data-t>Download the MP3</span></a>
+            <a href="#" target="_blank" rel="noopener" class="ui-btn block" anvil:name="dl_txt"><i class="ic ic-book"></i><span data-t>Download the transcript</span></a>
+            <anvil-component type="Button" name="done_button" prop:role='["btn","btn-block","btn-ghost","ic-check"]'></anvil-component>
           </section>
-          <nav class="sb-prevnext" aria-label="Lessons" data-ta="aria-label">
-            <a class="sb-pn" href="#home" anvil:name="prev_link"><small data-t>Previous lesson</small><anvil-component type="Label" name="prev_title" prop:role='["sb-pn-title"]'></anvil-component></a>
-            <a class="sb-pn sb-pn-next" href="#home" anvil:name="next_link"><small data-t>Next lesson</small><anvil-component type="Label" name="next_title" prop:role='["sb-pn-title"]'></anvil-component></a>
+          <nav aria-label="Lessons" data-ta="aria-label" class="sb-prevnext">
+            <a href="#home" class="sb-pn" anvil:name="prev_link"><small data-t>Previous lesson</small><anvil-component type="Label" name="prev_title" prop:role='["sb-pn-title"]'></anvil-component></a>
+            <a href="#home" class="sb-pn sb-pn-next" anvil:name="next_link"><small data-t>Next lesson</small><anvil-component type="Label" name="next_title" prop:role='["sb-pn-title"]'></anvil-component></a>
           </nav>
         </aside>
       </div>

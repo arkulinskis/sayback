@@ -1,4 +1,4 @@
-<anvil-form layout="Sayback.Layouts.Shell">
+<anvil-form layout="Spoken_Miles.Layouts.Shell">
   <anvil-block slot="content">
     <div class="ui-wrap sb-dl">
       <!-- #downloads[/<course>]: save lessons on this phone for drives with no signal (a pack of 5, a level, the whole
@@ -9,49 +9,49 @@
           <anvil-component type="Label" name="heading" prop:text="Offline and downloads" prop:role='["page-title"]'></anvil-component>
           <anvil-component type="Label" name="sub" prop:role='["fine-print"]'></anvil-component>
         </div>
-        <nav class="ui-seg sb-switch" aria-label="Course" data-ta="aria-label" anvil:name="switch">
-          <a href="#downloads/en-es" anvil:name="sw_es" data-t>Spanish</a>
-          <a href="#downloads/en-fr" anvil:name="sw_fr" data-t>French</a>
-          <a href="#downloads/en-it" anvil:name="sw_it" data-t>Italian</a>
-          <a href="#downloads/es-en" anvil:name="sw_en" data-t>English</a>
+        <nav aria-label="Course" data-ta="aria-label" class="ui-seg sb-switch" anvil:name="switch">
+          <a href="#downloads/en-es" data-t anvil:name="sw_es">Spanish</a>
+          <a href="#downloads/en-fr" data-t anvil:name="sw_fr">French</a>
+          <a href="#downloads/en-it" data-t anvil:name="sw_it">Italian</a>
+          <a href="#downloads/es-en" data-t anvil:name="sw_en">English</a>
         </nav>
       </div>
-
+    
       <anvil-component type="Label" name="offline_note" prop:role='["msg-note"]' prop:visible="false"></anvil-component>
-
+    
       <div class="sb-dl-top">
         <section class="ui-card sb-dl-space">
-          <h2 class="sb-card-h" data-t>On this phone</h2>
+          <h2 data-t class="sb-card-h">On this phone</h2>
           <anvil-component type="Label" name="space_text" prop:role='["sb-card-text"]'></anvil-component>
-          <div class="sb-meter" aria-hidden="true"><i anvil:name="space_fill"></i></div>
+          <div aria-hidden="true" class="sb-meter"><i anvil:name="space_fill"></i></div>
           <anvil-component type="Label" name="space_fine" prop:role='["fine-print"]'></anvil-component>
           <div class="ui-row">
-            <anvil-component type="Button" name="save_all_button" prop:text="Save every lesson I own" prop:role='["btn", "btn-primary", "ic-download"]'></anvil-component>
-            <anvil-component type="Button" name="cancel_button" prop:text="Stop saving" prop:role='["btn", "ic-x"]' prop:visible="false"></anvil-component>
+            <anvil-component type="Button" name="save_all_button" prop:text="Save every lesson I own" prop:role='["btn","btn-primary","ic-download"]'></anvil-component>
+            <anvil-component type="Button" name="cancel_button" prop:text="Stop saving" prop:role='["btn","ic-x"]' prop:visible="false"></anvil-component>
           </div>
           <div class="sb-dl-progress" anvil:name="progress_part">
-            <div class="sb-meter sb-meter-brand" aria-hidden="true"><i anvil:name="progress_fill"></i></div>
+            <div aria-hidden="true" class="sb-meter sb-meter-brand"><i anvil:name="progress_fill"></i></div>
             <anvil-component type="Label" name="progress_text" prop:role='["fine-print"]'></anvil-component>
           </div>
         </section>
         <section class="ui-card sb-dl-install" anvil:name="install_card">
-          <h2 class="sb-card-h" data-t>Put it on your home screen</h2>
-          <p class="sb-card-text" data-t>Opens like an app, full screen, and keeps playing with the screen locked. Play, pause and skip work from the lock screen, your headphones and most car displays.</p>
-          <anvil-component type="Button" name="install_button" prop:text="Install Spoken Miles" prop:role='["btn", "ic-download"]' prop:visible="false"></anvil-component>
-          <p class="fine-print" anvil:name="ios_steps" data-t>On iPhone: tap Share, then "Add to Home Screen".</p>
-          <p class="fine-print" anvil:name="other_steps" data-t>In your browser's menu, choose "Install app" or "Add to Home screen".</p>
+          <h2 data-t class="sb-card-h">Put it on your home screen</h2>
+          <p data-t class="sb-card-text">Opens like an app, full screen, and keeps playing with the screen locked. Play, pause and skip work from the lock screen, your headphones and most car displays.</p>
+          <anvil-component type="Button" name="install_button" prop:text="Install Spoken Miles" prop:role='["btn","ic-download"]' prop:visible="false"></anvil-component>
+          <p data-t class="fine-print" anvil:name="ios_steps">On iPhone: tap Share, then "Add to Home Screen".</p>
+          <p data-t class="fine-print" anvil:name="other_steps">In your browser's menu, choose "Install app" or "Add to Home screen".</p>
         </section>
       </div>
-
+    
       <section class="sb-dl-saved" anvil:name="saved_part">
-        <h2 class="sb-card-h" data-t>Saved lessons</h2>
-        <anvil-component type="RepeatingPanel" name="saved_list" prop:item_template="Sayback.Items.SavedRow" prop:role='["sb-saved-list"]'></anvil-component>
+        <h2 data-t class="sb-card-h">Saved lessons</h2>
+        <anvil-component type="RepeatingPanel" name="saved_list" prop:item_template="Spoken_Miles.Items.SavedRow" prop:role='["sb-saved-list"]'></anvil-component>
       </section>
-
+    
       <section class="sb-dl-levels" anvil:name="levels_part">
-        <h2 class="sb-card-h" data-t>Save by level or by pack of 5</h2>
-        <p class="fine-print" data-t>A saved lesson plays from your phone, with no signal and no data. Stream anything you haven't saved.</p>
-        <anvil-component type="RepeatingPanel" name="levels" prop:item_template="Sayback.Items.PackRow" prop:role='["sb-pack-list"]'></anvil-component>
+        <h2 data-t class="sb-card-h">Save by level or by pack of 5</h2>
+        <p data-t class="fine-print">A saved lesson plays from your phone, with no signal and no data. Stream anything you haven't saved.</p>
+        <anvil-component type="RepeatingPanel" name="levels" prop:item_template="Spoken_Miles.Items.PackRow" prop:role='["sb-pack-list"]'></anvil-component>
       </section>
     </div>
   </anvil-block>

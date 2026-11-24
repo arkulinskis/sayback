@@ -1,26 +1,26 @@
 ---
 custom_component: true
 events:
-  - name: tick
-    parameters:
-      - name: position
-      - name: listened
-      - name: done
-  - name: ended
-  - name: failed
-    parameters:
-      - name: wanted
-  - name: stopped
-    parameters:
-      - name: part
-  - name: next
-toolbox_item:
-  title: Lesson player
-  group: Spoken Miles
-help_text: |
+- name: tick
+  parameters:
+  - name: position
+  - name: listened
+  - name: done
+- name: ended
+- name: failed
+  parameters:
+  - name: wanted
+- name: stopped
+  parameters:
+  - name: part
+- name: next
+help_text: |-
   The lesson player (theme/assets/sb-player.js): big controls, chapter marks, lock-screen controls, car mode.
   Call load(src, start, title, album, marks, labels, trip, think, cues); it raises tick every ~20 s of listening, on
   pause and at the end, stopped(part) when a trip ends at a pep talk, failed(wanted) when the audio link fails.
+toolbox_item:
+  group: Spoken Miles
+  title: Lesson player
 ---
 <div class="pl-host">
   <div anvil:dom-node="mount"></div>

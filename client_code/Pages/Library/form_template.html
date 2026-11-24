@@ -1,4 +1,4 @@
-<anvil-form layout="Sayback.Layouts.Shell">
+<anvil-form layout="Spoken_Miles.Layouts.Shell">
   <anvil-block slot="content">
     <div class="ui-wrap sb-lib">
       <div class="sb-lib-head">
@@ -6,29 +6,29 @@
           <anvil-component type="Label" name="hello" prop:role='["page-title"]'></anvil-component>
           <anvil-component type="Label" name="course_line" prop:role='["fine-print"]'></anvil-component>
         </div>
-        <nav class="ui-seg sb-switch" aria-label="Course" data-ta="aria-label">
-          <a href="#home/en-es" anvil:name="sw_es" data-t>Spanish</a>
-          <a href="#home/en-fr" anvil:name="sw_fr" data-t>French</a>
-          <a href="#home/en-it" anvil:name="sw_it" data-t>Italian</a>
-          <a href="#home/es-en" anvil:name="sw_en" data-t>English</a>
+        <nav aria-label="Course" data-ta="aria-label" class="ui-seg sb-switch">
+          <a href="#home/en-es" data-t anvil:name="sw_es">Spanish</a>
+          <a href="#home/en-fr" data-t anvil:name="sw_fr">French</a>
+          <a href="#home/en-it" data-t anvil:name="sw_it">Italian</a>
+          <a href="#home/es-en" data-t anvil:name="sw_en">English</a>
         </nav>
       </div>
-
+    
       <div class="sb-lib-top">
         <section class="ui-card sb-next" anvil:name="next_card">
           <anvil-component type="Label" name="next_title" prop:role='["sb-next-title"]'></anvil-component>
           <anvil-component type="Label" name="next_meta" prop:role='["sb-next-meta"]'></anvil-component>
           <div class="sb-next-bar" anvil:name="next_bar"><i anvil:name="next_fill"></i></div>
           <div class="ui-row sb-next-actions">
-            <anvil-component type="Button" name="play_button" prop:text="Play lesson" prop:role='["btn", "btn-primary", "btn-lg", "ic-play"]'></anvil-component>
-            <anvil-component type="Button" name="car_button" prop:text="Car mode" prop:role='["btn", "btn-lg", "ic-car"]'></anvil-component>
+            <anvil-component type="Button" name="play_button" prop:text="Play lesson" prop:role='["btn","btn-primary","btn-lg","ic-play"]'></anvil-component>
+            <anvil-component type="Button" name="car_button" prop:text="Car mode" prop:role='["btn","btn-lg","ic-car"]'></anvil-component>
           </div>
           <div class="sb-opt sb-next-trip">
-            <span class="sb-opt-label" data-t>How long is your trip?</span>
-            <div class="ui-seg sb-seg-dark" role="group" aria-label="How long is your trip?" data-ta="aria-label">
-              <button type="button" anvil:name="trip_15" data-trip="15" anvil:on-dom:click="self.trip_click" data-t>15 min</button>
-              <button type="button" anvil:name="trip_30" data-trip="30" anvil:on-dom:click="self.trip_click" data-t>30 min</button>
-              <button type="button" anvil:name="trip_0" data-trip="0" anvil:on-dom:click="self.trip_click" data-t>Whole lesson</button>
+            <span data-t class="sb-opt-label">How long is your trip?</span>
+            <div role="group" aria-label="How long is your trip?" data-ta="aria-label" class="ui-seg sb-seg-dark">
+              <button type="button" data-trip="15" anvil:on-dom:click="self.trip_click" data-t anvil:name="trip_15">15 min</button>
+              <button type="button" data-trip="30" anvil:on-dom:click="self.trip_click" data-t anvil:name="trip_30">30 min</button>
+              <button type="button" data-trip="0" anvil:on-dom:click="self.trip_click" data-t anvil:name="trip_0">Whole lesson</button>
             </div>
           </div>
         </section>
@@ -36,27 +36,27 @@
           <anvil-component type="Label" name="unlock_title" prop:role='["sb-next-title"]'></anvil-component>
           <anvil-component type="Label" name="unlock_text" prop:role='["sb-next-meta"]'></anvil-component>
           <div class="ui-row sb-next-actions">
-            <a class="ui-btn primary lg" href="#buy" anvil:name="unlock_link"><i class="ic ic-cart"></i><span data-t>See the courses</span></a>
+            <a href="#buy" class="ui-btn primary lg" anvil:name="unlock_link"><i class="ic ic-cart"></i><span data-t>See the courses</span></a>
           </div>
         </section>
         <section class="ui-card sb-next sb-finished" anvil:name="finished_card">
-          <div class="sb-next-title" data-t>You finished all 150 lessons.</div>
-          <p class="sb-next-meta" data-t>That's about 112 hours of speaking out loud. Pick any lesson to keep it fresh, or try the other direction with a friend.</p>
+          <div data-t class="sb-next-title">You finished all 150 lessons.</div>
+          <p data-t class="sb-next-meta">That's about 112 hours of speaking out loud. Pick any lesson to keep it fresh, or try the other direction with a friend.</p>
         </section>
         <section class="ui-card sb-stats">
           <div class="sb-goal">
-            <div class="sb-ring" aria-hidden="true">
-              <svg viewBox="0 0 120 120"><circle class="sb-ring-bg" cx="60" cy="60" r="52" pathLength="100"></circle><circle class="sb-ring-fg" anvil:dom-node="ring_fg" cx="60" cy="60" r="52" pathLength="100"></circle></svg>
+            <div aria-hidden="true" class="sb-ring">
+              <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" pathLength="100" class="sb-ring-bg"></circle><circle anvil:dom-node="ring_fg" cx="60" cy="60" r="52" pathLength="100" class="sb-ring-fg"></circle></svg>
               <anvil-component type="Label" name="week_min" prop:role='["sb-ring-num"]'></anvil-component>
             </div>
             <div class="sb-goal-body">
               <anvil-component type="Label" name="goal_line" prop:role='["sb-goal-line"]'></anvil-component>
-              <anvil-component type="Label" name="goal_sub" prop:role='["fine-print", "sb-goal-sub"]'></anvil-component>
-              <div class="ui-seg sb-goal-seg" role="group" aria-label="Weekly goal in minutes" data-ta="aria-label">
-                <button type="button" anvil:name="goal_45" data-goal="45" anvil:on-dom:click="self.goal_click">45</button>
-                <button type="button" anvil:name="goal_90" data-goal="90" anvil:on-dom:click="self.goal_click">90</button>
-                <button type="button" anvil:name="goal_150" data-goal="150" anvil:on-dom:click="self.goal_click">150</button>
-                <button type="button" anvil:name="goal_225" data-goal="225" anvil:on-dom:click="self.goal_click">225</button>
+              <anvil-component type="Label" name="goal_sub" prop:role='["fine-print","sb-goal-sub"]'></anvil-component>
+              <div role="group" aria-label="Weekly goal in minutes" data-ta="aria-label" class="ui-seg sb-goal-seg">
+                <button type="button" data-goal="45" anvil:on-dom:click="self.goal_click" anvil:name="goal_45">45</button>
+                <button type="button" data-goal="90" anvil:on-dom:click="self.goal_click" anvil:name="goal_90">90</button>
+                <button type="button" data-goal="150" anvil:on-dom:click="self.goal_click" anvil:name="goal_150">150</button>
+                <button type="button" data-goal="225" anvil:on-dom:click="self.goal_click" anvil:name="goal_225">225</button>
               </div>
             </div>
           </div>
@@ -66,23 +66,23 @@
             <div class="sb-stat"><anvil-component type="Label" name="done_count" prop:role='["sb-stat-num"]'></anvil-component><span data-t>lessons done</span></div>
           </div>
           <anvil-component type="Label" name="rest_note" prop:role='["sb-rest-note"]'></anvil-component>
-          <anvil-component type="RepeatingPanel" name="bars" prop:item_template="Sayback.Items.DayBar" prop:role='["sb-bars"]'></anvil-component>
-          <p class="small muted sb-stats-note" data-t>The last two weeks. A day counts once you've listened for a minute.</p>
+          <anvil-component type="RepeatingPanel" name="bars" prop:item_template="Spoken_Miles.Items.DayBar" prop:role='["sb-bars"]'></anvil-component>
+          <p data-t class="small muted sb-stats-note">The last two weeks. A day counts once you've listened for a minute.</p>
         </section>
       </div>
-
-      <anvil-component type="Label" name="audio_warn" prop:role='["msg-note", "sb-audio-warn"]' prop:visible="false"></anvil-component>
-
-      <anvil-component type="RepeatingPanel" name="levels_panel" prop:item_template="Sayback.Items.LevelChip" prop:role='["sb-levels"]'></anvil-component>
+    
+      <anvil-component type="Label" name="audio_warn" prop:role='["msg-note","sb-audio-warn"]' prop:visible="false"></anvil-component>
+    
+      <anvil-component type="RepeatingPanel" name="levels_panel" prop:item_template="Spoken_Miles.Items.LevelChip" prop:role='["sb-levels"]'></anvil-component>
       <div class="sb-level-head">
         <anvil-component type="Label" name="level_title" prop:role='["sb-level-title"]'></anvil-component>
         <anvil-component type="Label" name="level_note" prop:role='["fine-print"]'></anvil-component>
       </div>
-      <anvil-component type="RepeatingPanel" name="lessons_panel" prop:item_template="Sayback.Items.LessonTile" prop:role='["sb-tiles"]'></anvil-component>
-
+      <anvil-component type="RepeatingPanel" name="lessons_panel" prop:item_template="Spoken_Miles.Items.LessonTile" prop:role='["sb-tiles"]'></anvil-component>
+    
       <section class="sb-lib-offer" anvil:name="offer_part">
         <h2 data-t>Unlock the rest of the course</h2>
-        <anvil-component type="RepeatingPanel" name="offers" prop:item_template="Sayback.Items.ProductCard" prop:role='["sb-plans-panel"]'></anvil-component>
+        <anvil-component type="RepeatingPanel" name="offers" prop:item_template="Spoken_Miles.Items.ProductCard" prop:role='["sb-plans-panel"]'></anvil-component>
       </section>
     </div>
   </anvil-block>

@@ -1,6 +1,6 @@
-<anvil-form layout="Sayback.Layouts.Shell">
+<anvil-form layout="Spoken_Miles.Layouts.Shell">
   <anvil-block slot="content">
-    <div class="page-landing sb-landing" lang="es">
+    <div lang="es" class="page-landing sb-landing">
       <!-- La página de ventas en español (Spoken Miles Inglés). Su gemela en inglés es Pages/Landing: cambia las dos.
            Keep .lp-hero and the sign-up link inside it (tests and hero shots look for them). -->
       <section class="lp-hero sb-hero">
@@ -9,12 +9,12 @@
             <h1>Habla inglés en el camino que ya haces todos los días.</h1>
             <p class="lp-lead">Lecciones de audio de 45 minutos para el carro, los platos y la ropa. Lo escuchas en español, lo dices en inglés, en voz alta. Sin pantalla, sin tareas.</p>
             <div class="lp-cta" anvil:name="guest_cta">
-              <a class="ui-btn primary lg" href="#auth/signup">Escucha la lección 1 gratis <i class="ic ic-arrow"></i></a>
-              <a class="ui-btn lg" href="#offer" data-scroll>Ver el precio</a>
+              <a href="#auth/signup" class="ui-btn primary lg">Escucha la lección 1 gratis <i class="ic ic-arrow"></i></a>
+              <a href="#offer" data-scroll class="ui-btn lg">Ver el precio</a>
             </div>
             <div class="lp-cta" anvil:name="member_cta">
-              <a class="ui-btn primary lg" href="#home">Abre tu biblioteca <i class="ic ic-arrow"></i></a>
-              <a class="ui-btn lg" href="#buy/es-en">Ver los cursos</a>
+              <a href="#home" class="ui-btn primary lg">Abre tu biblioteca <i class="ic ic-arrow"></i></a>
+              <a href="#buy/es-en" class="ui-btn lg">Ver los cursos</a>
             </div>
             <ul class="sb-proof">
               <li><b>150</b> lecciones</li>
@@ -25,13 +25,13 @@
           </div>
           <div class="sb-windshield">
             <div class="sb-ws-head"><span class="sb-ws-dot"></span><span>Lección 1 · Hola y primeras palabras</span></div>
-            <anvil-component type="Sayback.Components.RoadDemo" name="road" prop:course="es-en" prop:lang="es"></anvil-component>
+            <anvil-component type="Spoken_Miles.Components.RoadDemo" name="road" prop:course="es-en" prop:lang="es"></anvil-component>
             <p class="sb-ws-note">Dale play y responde en voz alta en la pausa. Sí, de verdad. En voz alta.</p>
           </div>
         </div>
       </section>
-
-      <section class="sb-band" id="minutes">
+    
+      <section id="minutes" class="sb-band">
         <div class="ui-wrap">
           <h2>No necesitas más tiempo. Necesitas el tiempo que ya pierdes.</h2>
           <p class="sb-band-lead">Todas las apps y todas las clases te piden que <em>encuentres</em> tiempo: sentarte, abrir una pantalla, concentrarte. Por eso casi todo el mundo lo deja a la tercera semana. Spoken Miles no te pide nada nuevo. Llena los minutos en que tus manos están ocupadas y tu cabeza está libre.</p>
@@ -44,8 +44,8 @@
           <p class="sb-math">45 minutos al día, cinco días laborales = <b>3 horas y 45 minutos de práctica hablando</b>. El nivel 1 terminado en seis semanas, sin "buscar tiempo" ni una sola vez.</p>
         </div>
       </section>
-
-      <section class="lp-section" id="how">
+    
+      <section id="how" class="lp-section">
         <div class="ui-wrap sb-why">
           <div class="sb-why-text">
             <h2>Las apps te hacen tocar la pantalla. Spoken Miles te hace hablar.</h2>
@@ -53,7 +53,7 @@
             <p>Ese pequeño esfuerzo es lo que la fija. En los años sesenta, el lingüista Paul Pimsleur demostró que una frase recordada a intervalos cada vez más largos (segundos, luego minutos, luego días) pasa a la memoria de largo plazo. Spoken Miles programa cada frase así. Tú no organizas nada: las lecciones lo hacen por ti.</p>
             <p class="sb-question">¿Ves por qué 45 minutos hablando valen más que 45 minutos tocando una pantalla?</p>
           </div>
-          <ol class="sb-item" aria-label="Un ejercicio">
+          <ol aria-label="Un ejercicio" class="sb-item">
             <li class="sb-item-p"><small>Escuchas</small><span>“¿Dónde está la estación?”</span></li>
             <li class="sb-item-say"><small>Tu turno · 3 segundos y un poco más</small><span>Lo dices en inglés</span></li>
             <li class="sb-item-a"><small>Luego escuchas</small><span lang="en">“Where is the station?”</span></li>
@@ -61,11 +61,11 @@
           </ol>
         </div>
       </section>
-
+    
       <section class="lp-section sb-inside">
         <div class="ui-wrap">
           <h2>Exactamente 45 minutos. Siempre el mismo ritmo.</h2>
-          <div class="sb-tl" role="img" aria-label="Línea de tiempo: introducción al inicio, ánimo a los 15 y 30 minutos, cierre a los 44 minutos">
+          <div role="img" aria-label="Línea de tiempo: introducción al inicio, ánimo a los 15 y 30 minutos, cierre a los 44 minutos" class="sb-tl">
             <div class="sb-tl-bar"><i class="t-intro"></i><i class="t-part"></i><i class="t-pep"></i><i class="t-part"></i><i class="t-pep"></i><i class="t-part"></i><i class="t-outro"></i></div>
             <div class="sb-tl-marks">
               <span style="left:0%"><b>0:00</b>Intro: la situación, la emoción y un momento cultural</span>
@@ -77,7 +77,7 @@
           <p class="sb-inside-note">Cada lección empieza con una situación real, una emoción para expresar y un momento cultural, para que aprendas cómo <em>vive</em> la gente, no solo lo que dice. Entre 250 y 320 veces por lección, una frase sale de tu propia boca.</p>
         </div>
       </section>
-
+    
       <section class="lp-section sb-beliefs">
         <div class="ui-wrap">
           <h2>Si ya lo intentaste antes, lee esto.</h2>
@@ -86,8 +86,8 @@
           <div class="sb-belief"><blockquote>“No tengo tiempo.”</blockquote><p>No necesitas tiempo nuevo. Si manejas, limpias, cocinas o caminas, ya tienes los 45 minutos. Spoken Miles solo les da un segundo trabajo.</p></div>
         </div>
       </section>
-
-      <section class="lp-section sb-levels-sec" id="lessons">
+    
+      <section id="lessons" class="lp-section sb-levels-sec">
         <div class="ui-wrap">
           <h2>30 situaciones reales en el nivel 1. 3.000 frases en total.</h2>
           <p class="sb-sec-lead">Cada lección es un momento de la vida real con la emoción que lo acompaña: los nervios al conocer a alguien, el alivio de encontrar el camino, el orgullo cuando te entienden a la primera.</p>
@@ -134,7 +134,7 @@
           </ol>
         </div>
       </section>
-
+    
       <section class="lp-section sb-bridge">
         <div class="ui-wrap">
           <h2>Tu vecino está aprendiendo las mismas frases. En español.</h2>
@@ -145,8 +145,8 @@
           </div>
         </div>
       </section>
-
-      <section class="lp-section sb-offer" id="offer">
+    
+      <section id="offer" class="lp-section sb-offer">
         <div class="ui-wrap">
           <h2>Menos que una clase con un profesor particular.</h2>
           <p class="sb-sec-lead">Un profesor particular cuesta normalmente entre 25 y 40 dólares la hora. Solo el nivel 1 son 22 horas y media de práctica guiada, y cabe en tu carro.</p>
@@ -161,7 +161,7 @@
                 <li><i class="ic ic-check"></i>Hoja de frases y transcripción de cada lección</li>
                 <li><i class="ic ic-check"></i>Escúchalas en la app o descarga los MP3</li>
               </ul>
-              <anvil-component type="Button" name="buy_level1" prop:text="Quiero el nivel 1" prop:role='["btn", "btn-block", "btn-lg"]'></anvil-component>
+              <anvil-component type="Button" name="buy_level1" prop:text="Quiero el nivel 1" prop:role='["btn","btn-block","btn-lg"]'></anvil-component>
             </div>
             <div class="ui-card sb-plan sb-plan-best">
               <h3>Curso completo · Niveles 1 a 5</h3>
@@ -173,7 +173,7 @@
                 <li><i class="ic ic-check"></i>Inglés de EE. UU., Reino Unido, Canadá y Australia en el nivel 5</li>
                 <li><i class="ic ic-check"></i>Menos que comprar los niveles uno por uno</li>
               </ul>
-              <anvil-component type="Button" name="buy_complete" prop:text="Quiero el curso completo" prop:role='["btn", "btn-primary", "btn-block", "btn-lg"]'></anvil-component>
+              <anvil-component type="Button" name="buy_complete" prop:text="Quiero el curso completo" prop:role='["btn","btn-primary","btn-block","btn-lg"]'></anvil-component>
             </div>
           </div>
           <div class="sb-guarantee">
@@ -182,8 +182,8 @@
           </div>
         </div>
       </section>
-
-      <section class="lp-section" id="faq">
+    
+      <section id="faq" class="lp-section">
         <div class="ui-wrap">
           <h2 class="sb-center">Preguntas</h2>
           <div class="lp-faq">
@@ -198,12 +198,12 @@
           </div>
         </div>
       </section>
-
+    
       <section class="lp-section">
         <div class="ui-wrap">
           <div class="lp-band sb-final">
             <div><h2>El camino de mañana puede ser tu primera clase de inglés.</h2><p>O pueden ser otros 45 minutos de la misma radio. Tú decides.</p></div>
-            <a class="ui-btn lg sb-final-btn" href="#auth/signup" anvil:name="band_link">Escucha la lección 1 gratis</a>
+            <a href="#auth/signup" class="ui-btn lg sb-final-btn" anvil:name="band_link">Escucha la lección 1 gratis</a>
           </div>
           <p class="sb-credit">Inspirado en la investigación publicada del Dr. Paul Pimsleur sobre el recuerdo espaciado. Sin relación con Pimsleur® ni con Simon &amp; Schuster.</p>
         </div>

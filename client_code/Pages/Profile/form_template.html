@@ -1,4 +1,4 @@
-<anvil-form layout="Sayback.Layouts.Shell">
+<anvil-form layout="Spoken_Miles.Layouts.Shell">
   <anvil-block slot="content">
     <div class="ui-wrap ui-narrow">
       <div class="pf-head">
@@ -9,9 +9,9 @@
         </div>
       </div>
       <div class="ui-card pf-courses">
-        <div class="ui-row between"><h3 data-t>Your courses</h3><a class="ui-btn sm" href="#buy"><i class="ic ic-cart"></i><span data-t>Prices</span></a></div>
-        <anvil-component type="RepeatingPanel" name="purchases_panel" prop:item_template="Sayback.Items.PurchaseRow"></anvil-component>
-        <p class="muted small" anvil:name="no_purchases" data-t>Nothing bought yet. Lesson 1 of each course is free with your account.</p>
+        <div class="ui-row between"><h3 data-t>Your courses</h3><a href="#buy" class="ui-btn sm"><i class="ic ic-cart"></i><span data-t>Prices</span></a></div>
+        <anvil-component type="RepeatingPanel" name="purchases_panel" prop:item_template="Spoken_Miles.Items.PurchaseRow"></anvil-component>
+        <p data-t class="muted small" anvil:name="no_purchases">Nothing bought yet. Lesson 1 of each course is free with your account.</p>
       </div>
       <div class="pf-grid">
         <div class="ui-card ui-stack">
@@ -19,24 +19,24 @@
           <label class="ui-field"><span data-t>How we greet you</span>
             <anvil-component type="TextBox" name="name_box"></anvil-component>
           </label>
-          <anvil-component type="Button" name="save_button" prop:text="Save" prop:role='["btn", "btn-primary"]'></anvil-component>
-          <h3 class="pf-pw" data-t>Language of the app</h3>
-          <div class="ui-seg" role="group" aria-label="Language" data-ta="aria-label">
-            <button type="button" anvil:name="lang_en" data-lang="en" anvil:on-dom:click="self.lang_click" lang="en">English</button>
-            <button type="button" anvil:name="lang_es" data-lang="es" anvil:on-dom:click="self.lang_click" lang="es">Español</button>
+          <anvil-component type="Button" name="save_button" prop:text="Save" prop:role='["btn","btn-primary"]'></anvil-component>
+          <h3 data-t class="pf-pw">Language of the app</h3>
+          <div role="group" aria-label="Language" data-ta="aria-label" class="ui-seg">
+            <button type="button" data-lang="en" anvil:on-dom:click="self.lang_click" lang="en" anvil:name="lang_en">English</button>
+            <button type="button" data-lang="es" anvil:on-dom:click="self.lang_click" lang="es" anvil:name="lang_es">Español</button>
           </div>
         </div>
         <div class="ui-card ui-stack">
           <h3 data-t>Appearance</h3>
-          <p class="muted small" data-t>Follow your device, or pick one.</p>
+          <p data-t class="muted small">Follow your device, or pick one.</p>
           <div class="ui-seg">
-            <button type="button" anvil:name="theme_auto" data-theme-pick="auto" anvil:on-dom:click="self.theme_click" data-t>Auto</button>
-            <button type="button" anvil:name="theme_light" data-theme-pick="light" anvil:on-dom:click="self.theme_click" data-t>Light</button>
-            <button type="button" anvil:name="theme_dark" data-theme-pick="dark" anvil:on-dom:click="self.theme_click" data-t>Dark</button>
+            <button type="button" data-theme-pick="auto" anvil:on-dom:click="self.theme_click" data-t anvil:name="theme_auto">Auto</button>
+            <button type="button" data-theme-pick="light" anvil:on-dom:click="self.theme_click" data-t anvil:name="theme_light">Light</button>
+            <button type="button" data-theme-pick="dark" anvil:on-dom:click="self.theme_click" data-t anvil:name="theme_dark">Dark</button>
           </div>
-          <h3 class="pf-pw" data-t>Password</h3>
-          <p class="muted small" data-t>We'll email you a link to choose a new one.</p>
-          <anvil-component type="Button" name="reset_button" prop:text="Email me a reset link" prop:role='["btn", "ic-mail"]'></anvil-component>
+          <h3 data-t class="pf-pw">Password</h3>
+          <p data-t class="muted small">We'll email you a link to choose a new one.</p>
+          <anvil-component type="Button" name="reset_button" prop:text="Email me a reset link" prop:role='["btn","ic-mail"]'></anvil-component>
         </div>
       </div>
       <div class="ui-card pf-more">

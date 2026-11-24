@@ -1,4 +1,4 @@
-<anvil-form layout="Sayback.Layouts.Shell">
+<anvil-form layout="Spoken_Miles.Layouts.Shell">
   <anvil-block slot="content">
     <div class="page-landing sb-landing">
       <!-- #learn/<spanish|french|italian>: the sales page for English speakers, one template for all three languages.
@@ -8,7 +8,7 @@
       <section class="lp-hero sb-hero">
         <div class="ui-wrap">
           <div class="sb-hero-copy">
-            <nav class="sb-learn-switch" aria-label="Choose a language">
+            <nav aria-label="Choose a language" class="sb-learn-switch">
               <a href="#learn/spanish" anvil:name="sw_es">Spanish</a>
               <a href="#learn/french" anvil:name="sw_fr">French</a>
               <a href="#learn/italian" anvil:name="sw_it">Italian</a>
@@ -16,12 +16,12 @@
             <h1>Speak <span data-v="lang">Spanish</span> on the drive you're already taking.</h1>
             <p class="lp-lead">45-minute audio lessons made for the car. You hear it in English, you say it in <span data-v="lang">Spanish</span>, out loud. No screen, no tapping, no homework.</p>
             <div class="lp-cta" anvil:name="guest_cta">
-              <a class="ui-btn primary lg" href="#auth/signup">Listen to lesson 1 free <i class="ic ic-arrow"></i></a>
-              <a class="ui-btn lg" href="#offer" data-scroll>See the price</a>
+              <a href="#auth/signup" class="ui-btn primary lg">Listen to lesson 1 free <i class="ic ic-arrow"></i></a>
+              <a href="#offer" data-scroll class="ui-btn lg">See the price</a>
             </div>
             <div class="lp-cta" anvil:name="member_cta">
-              <a class="ui-btn primary lg" href="#home" anvil:name="member_lib">Open your library <i class="ic ic-arrow"></i></a>
-              <a class="ui-btn lg" href="#buy/en-es" anvil:name="member_buy">See the courses</a>
+              <a href="#home" class="ui-btn primary lg" anvil:name="member_lib">Open your library <i class="ic ic-arrow"></i></a>
+              <a href="#buy/en-es" class="ui-btn lg" anvil:name="member_buy">See the courses</a>
             </div>
             <ul class="sb-proof">
               <li><b>150</b> lessons</li>
@@ -32,13 +32,13 @@
           </div>
           <div class="sb-windshield">
             <div class="sb-ws-head"><span class="sb-ws-dot"></span><span><span data-v="lang">Spanish</span> · Lesson 1 · Hello and first words</span></div>
-            <anvil-component type="Sayback.Components.RoadDemo" name="road" prop:course="en-es" prop:lang="en"></anvil-component>
+            <anvil-component type="Spoken_Miles.Components.RoadDemo" name="road" prop:course="en-es" prop:lang="en"></anvil-component>
             <p class="sb-ws-note">Press play, then answer out loud in the pause. Yes, really. Out loud.</p>
           </div>
         </div>
       </section>
-
-      <section class="sb-band" id="miles">
+    
+      <section id="miles" class="sb-band">
         <div class="ui-wrap">
           <h2>You don't need more time. You need the miles you already drive.</h2>
           <p class="sb-band-lead">Every app and every class asks you to <em>find</em> time: sit down, open a screen, focus. That's why most people quit by week three. Spoken Miles asks for nothing new. It fills the time your hands are on the wheel and your head is free.</p>
@@ -51,8 +51,8 @@
           <p class="sb-math">45 minutes a workday = <b>3¾ hours of speaking practice a week</b>. Level 1 done in six weeks, without "finding time" once.</p>
         </div>
       </section>
-
-      <section class="lp-section" id="how">
+    
+      <section id="how" class="lp-section">
         <div class="ui-wrap sb-why">
           <div class="sb-why-text">
             <h2>Apps make you tap. Spoken Miles makes you talk.</h2>
@@ -60,34 +60,34 @@
             <p>That moment of effort is what locks it in. In the 1960s, the linguist Dr. Paul Pimsleur showed that a phrase recalled at growing intervals (seconds, then minutes, then days) moves into long-term memory. Spoken Miles times every phrase that way. You don't schedule anything. The lessons do it for you.</p>
             <p class="sb-question">Can you see why 45 minutes of speaking does more than 45 minutes of tapping?</p>
           </div>
-          <ol class="sb-item" aria-label="One practice item">
+          <ol aria-label="One practice item" class="sb-item">
             <li class="sb-item-p"><small>You hear</small><span>“Where is the station?”</span></li>
             <li class="sb-item-say"><small>Your turn · 3 seconds and a beat</small><span>You say it in <span data-v="lang">Spanish</span></span></li>
-            <li class="sb-item-a"><small>Then you hear</small><span anvil:name="sample_a" lang="es">“¿Dónde está la estación?”</span></li>
+            <li class="sb-item-a"><small>Then you hear</small><span lang="es" anvil:name="sample_a">“¿Dónde está la estación?”</span></li>
             <li class="sb-item-m"><small>Underneath</small><span>Soft, slow music</span></li>
           </ol>
         </div>
       </section>
-
+    
       <section class="lp-section sb-vs">
         <div class="ui-wrap">
           <h2>Great at the app. Stuck in the conversation?</h2>
           <p class="sb-sec-lead">A 300-day streak and you still freeze when someone talks to you? It isn't you. Most apps train you to <em>recognise</em> words on a screen. Conversation needs <em>recall</em>: the phrase out of your own head and out of your mouth. That's the only thing Spoken Miles trains.</p>
-          <div class="sb-compare" role="table" aria-label="Tap-and-streak apps compared with Spoken Miles">
-            <div class="sb-cmp-row sb-cmp-head" role="row"><span role="columnheader"></span><span role="columnheader">Tap-and-streak apps</span><span role="columnheader">Spoken Miles</span></div>
-            <div class="sb-cmp-row" role="row"><span role="rowheader">What you do</span><span role="cell">Tap, match, type</span><span role="cell"><b>Say every phrase out loud</b></span></div>
-            <div class="sb-cmp-row" role="row"><span role="rowheader">Where your eyes are</span><span role="cell">On a screen</span><span role="cell"><b>On the road</b></span></div>
-            <div class="sb-cmp-row" role="row"><span role="rowheader">Phrases you speak</span><span role="cell">A few, if any</span><span role="cell"><b>250 to 320 a lesson</b></span></div>
-            <div class="sb-cmp-row" role="row"><span role="rowheader">What it trains</span><span role="cell">Recognising</span><span role="cell"><b>Recalling and speaking</b></span></div>
-            <div class="sb-cmp-row" role="row"><span role="rowheader">How you pay</span><span role="cell">Every month</span><span role="cell"><b>Once. Yours for life.</b></span></div>
+          <div role="table" aria-label="Tap-and-streak apps compared with Spoken Miles" class="sb-compare">
+            <div role="row" class="sb-cmp-row sb-cmp-head"><span role="columnheader"></span><span role="columnheader">Tap-and-streak apps</span><span role="columnheader">Spoken Miles</span></div>
+            <div role="row" class="sb-cmp-row"><span role="rowheader">What you do</span><span role="cell">Tap, match, type</span><span role="cell"><b>Say every phrase out loud</b></span></div>
+            <div role="row" class="sb-cmp-row"><span role="rowheader">Where your eyes are</span><span role="cell">On a screen</span><span role="cell"><b>On the road</b></span></div>
+            <div role="row" class="sb-cmp-row"><span role="rowheader">Phrases you speak</span><span role="cell">A few, if any</span><span role="cell"><b>250 to 320 a lesson</b></span></div>
+            <div role="row" class="sb-cmp-row"><span role="rowheader">What it trains</span><span role="cell">Recognising</span><span role="cell"><b>Recalling and speaking</b></span></div>
+            <div role="row" class="sb-cmp-row"><span role="rowheader">How you pay</span><span role="cell">Every month</span><span role="cell"><b>Once. Yours for life.</b></span></div>
           </div>
         </div>
       </section>
-
+    
       <section class="lp-section sb-inside">
         <div class="ui-wrap">
           <h2>Exactly 45 minutes. Exactly one rhythm.</h2>
-          <div class="sb-tl" role="img" aria-label="Lesson timeline: intro at the start, a pep talk at 15 and 30 minutes, the wrap-up at 44 minutes">
+          <div role="img" aria-label="Lesson timeline: intro at the start, a pep talk at 15 and 30 minutes, the wrap-up at 44 minutes" class="sb-tl">
             <div class="sb-tl-bar"><i class="t-intro"></i><i class="t-part"></i><i class="t-pep"></i><i class="t-part"></i><i class="t-pep"></i><i class="t-part"></i><i class="t-outro"></i></div>
             <div class="sb-tl-marks">
               <span style="left:0%"><b>0:00</b>Intro: today's situation, feeling and a culture moment</span>
@@ -99,7 +99,7 @@
           <p class="sb-inside-note">Each lesson opens with a real-life situation, a feeling to express and a culture moment, so you learn how people <em>live</em>, not just what they say. Short trip? Pick 15 or 30 minutes and the lesson stops at a natural break, then picks up there next time.</p>
         </div>
       </section>
-
+    
       <section class="lp-section sb-beliefs">
         <div class="ui-wrap">
           <h2>If you've tried before, read this.</h2>
@@ -108,14 +108,14 @@
           <div class="sb-belief"><blockquote>“I don't have time.”</blockquote><p>You don't need any new time. If you drive, you already have the 45 minutes. Spoken Miles just gives those miles a second job.</p></div>
         </div>
       </section>
-
-      <section class="lp-section sb-levels-sec" id="lessons">
+    
+      <section id="lessons" class="lp-section sb-levels-sec">
         <div class="ui-wrap">
           <h2>30 real situations in Level 1. 3,000 phrases in all.</h2>
           <p class="sb-sec-lead">Every lesson is a moment from real life with the feeling that comes with it: nerves when you meet someone, relief when you find your way, pride when the waiter understands you the first time.</p>
           <!-- lessons:start (tools/make_landing_lists.py writes this list; don't edit by hand) -->
           <ol class="sb-lessons">
-            <li><b>Hello and first words</b><span>You meet someone new at a friend&#x27;s house.</span></li>
+            <li><b>Hello and first words</b><span>You meet someone new at a friend's house.</span></li>
             <li><b>Please, thank you and sorry</b><span>You ask small favours and say thank you in a busy shop.</span></li>
             <li><b>Where are you from?</b><span>A taxi driver asks where you are from, and you ask back.</span></li>
             <li><b>At the café</b><span>You order breakfast at a busy café counter.</span></li>
@@ -130,7 +130,7 @@
             <li><b>Buses, taxis and trains</b><span>You are running late and need to get across the city.</span></li>
             <li><b>Talking about the weather</b><span>You make small talk with a neighbour about the weather.</span></li>
             <li><b>What do you like?</b><span>You talk about hobbies with a new friend.</span></li>
-            <li><b>Invited to someone&#x27;s home</b><span>A friend invites you for dinner at their home.</span></li>
+            <li><b>Invited to someone's home</b><span>A friend invites you for dinner at their home.</span></li>
             <li><b>On the phone</b><span>You call to make an appointment and the line is bad.</span></li>
             <li><b>At the pharmacy</b><span>You feel unwell and ask a pharmacist for advice.</span></li>
             <li><b>What do you do?</b><span>At a party, people ask what you do for a living.</span></li>
@@ -140,7 +140,7 @@
             <li><b>Food and flavours</b><span>You try local dishes at a food market and talk about flavours.</span></li>
             <li><b>Help! Emergencies</b><span>Something goes wrong in the street and you need help fast.</span></li>
             <li><b>Describing people</b><span>You describe a friend you want someone to meet.</span></li>
-            <li><b>Money and the bank</b><span>Your card doesn&#x27;t work and you need cash.</span></li>
+            <li><b>Money and the bank</b><span>Your card doesn't work and you need cash.</span></li>
             <li><b>My neighbourhood</b><span>You meet your new neighbours and explore the area.</span></li>
             <li><b>Love and compliments</b><span>You go on a first date.</span></li>
             <li><b>Goodbyes and keeping in touch</b><span>Your trip is ending and you say goodbye to new friends.</span></li>
@@ -156,7 +156,7 @@
           </ol>
         </div>
       </section>
-
+    
       <section class="lp-section sb-bridge" anvil:name="bridge">
         <div class="ui-wrap">
           <h2>Your neighbour is learning the same phrases. In English.</h2>
@@ -167,7 +167,7 @@
           </div>
         </div>
       </section>
-
+    
       <section class="lp-section sb-offline-sec">
         <div class="ui-wrap sb-offline-grid">
           <div>
@@ -183,8 +183,8 @@
           </ul>
         </div>
       </section>
-
-      <section class="lp-section sb-offer" id="offer">
+    
+      <section id="offer" class="lp-section sb-offer">
         <div class="ui-wrap">
           <h2>Pay once. Speak for life.</h2>
           <p class="sb-sec-lead">No subscription, nothing to cancel. A private tutor typically costs $25 to $40 an hour. Level 1 alone is 22½ hours of guided speaking, and it fits in your car.</p>
@@ -198,7 +198,7 @@
                 <li><i class="ic ic-check"></i>A culture moment in every lesson</li>
                 <li><i class="ic ic-check"></i>Stream, save offline, or download the MP3s</li>
               </ul>
-              <anvil-component type="Button" name="buy_level1" prop:text="Get Level 1" prop:role='["btn", "btn-block", "btn-lg"]'></anvil-component>
+              <anvil-component type="Button" name="buy_level1" prop:text="Get Level 1" prop:role='["btn","btn-block","btn-lg"]'></anvil-component>
             </div>
             <div class="ui-card sb-plan sb-plan-best">
               <h3>Complete <span data-v="lang">Spanish</span> · Levels 1 to 5</h3>
@@ -209,7 +209,7 @@
                 <li><i class="ic ic-check"></i><span data-v="level5">Mexico, Spain, Argentina and Colombia in Level 5</span></li>
                 <li><i class="ic ic-check"></i>Less than buying the levels one by one</li>
               </ul>
-              <anvil-component type="Button" name="buy_complete" prop:text="Get the complete course" prop:role='["btn", "btn-primary", "btn-block", "btn-lg"]'></anvil-component>
+              <anvil-component type="Button" name="buy_complete" prop:text="Get the complete course" prop:role='["btn","btn-primary","btn-block","btn-lg"]'></anvil-component>
             </div>
             <div class="ui-card sb-plan">
               <h3>Every language · Spanish, French, Italian</h3>
@@ -220,7 +220,7 @@
                 <li><i class="ic ic-check"></i>Switch languages any time, progress kept for each</li>
                 <li><i class="ic ic-check"></i>Less than two complete courses</li>
               </ul>
-              <anvil-component type="Button" name="buy_bundle" prop:text="Get every language" prop:role='["btn", "btn-block", "btn-lg"]'></anvil-component>
+              <anvil-component type="Button" name="buy_bundle" prop:text="Get every language" prop:role='["btn","btn-block","btn-lg"]'></anvil-component>
             </div>
           </div>
           <p class="sb-gift-line"><i class="ic ic-heart"></i> Buying for someone else? <a href="#gift/en-es" anvil:name="gift_link">Give it as a gift</a>: a card to print or send, opened with one tap.</p>
@@ -230,8 +230,8 @@
           </div>
         </div>
       </section>
-
-      <section class="lp-section" id="faq">
+    
+      <section id="faq" class="lp-section">
         <div class="ui-wrap">
           <h2 class="sb-center">Questions</h2>
           <div class="lp-faq">
@@ -247,12 +247,12 @@
           </div>
         </div>
       </section>
-
+    
       <section class="lp-section">
         <div class="ui-wrap">
           <div class="lp-band sb-final">
             <div><h2>Tomorrow's drive can be your first <span data-v="lang">Spanish</span> lesson.</h2><p>Or it can be another 45 minutes of the same radio. You choose.</p></div>
-            <a class="ui-btn lg sb-final-btn" href="#auth/signup" anvil:name="band_link">Listen to lesson 1 free</a>
+            <a href="#auth/signup" class="ui-btn lg sb-final-btn" anvil:name="band_link">Listen to lesson 1 free</a>
           </div>
           <p class="sb-credit">Inspired by the published spaced-recall research of Dr. Paul Pimsleur. Not affiliated with Pimsleur® or Simon &amp; Schuster, or with Duolingo®, a trademark of Duolingo, Inc.</p>
         </div>
