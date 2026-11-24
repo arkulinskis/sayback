@@ -78,7 +78,7 @@ SEO = {
   ]
  ],
  "free": False,
- "site": "https://sayback.anvil.app",
+ "site": "https://spokenmiles.com",
  "updated": "2026-11-23",
  "icon": "icon-512.png",
  "colors": {

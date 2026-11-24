@@ -15,7 +15,7 @@ Pay once, lifetime access. Stream, save offline on the phone (a pack of 5, a lev
 Gifts with a printable card. Built on [Anvil](https://anvil.works) as native Anvil Forms.
 
 - **App repo:** github.com/arkulinskis/sayback (branch `master`; the folder and key stay `sayback`). Anvil pulls `master`.
-- **Live:** https://sayback.anvil.app · **Domain planned:** https://spokenmiles.com
+- **Live:** https://spokenmiles.com · **Domain planned:** https://spokenmiles.com
 - **The course itself** (sentences, scripts, audio): `Documents/CLAUDE/sayback` and `Documents/CLAUDE/sayback-audio`.
 - **Costs and pricing:** `Documents/CLAUDE/sayback/PRICING.md` (kept out of this public repo).
 
@@ -80,7 +80,7 @@ Links, webhook, audio), Feedback, Users, Demo data.
    - Cloudflare: R2 > Create bucket (private, e.g. `spokenmiles-audio`), then R2 > Manage API tokens (Object Read & Write).
    - Upload: in `Documents/CLAUDE/sayback` run `python tools/upload_r2.py "r2://KEY:SECRET@ACCOUNT_ID/BUCKET"` (resumable).
    - **CORS rule for "save offline"** (bucket > Settings > CORS policy):
-     `[{"AllowedOrigins": ["https://spokenmiles.com", "https://sayback.anvil.app"], "AllowedMethods": ["GET", "HEAD"], "AllowedHeaders": ["*"], "MaxAgeSeconds": 86400}]`
+     `[{"AllowedOrigins": ["https://spokenmiles.com", "https://spokenmiles.com"], "AllowedMethods": ["GET", "HEAD"], "AllowedHeaders": ["*"], "MaxAgeSeconds": 86400}]`
    - In the Anvil editor, add the App Secret `r2_url` with that same `r2://...` text.
 2. **Stripe**: 13 products + Payment Links (table in PRICING.md), each link's "after payment" redirect = the address under
    its box; webhook to `<app>/_/api/stripe` with `checkout.session.completed`, `checkout.session.async_payment_succeeded`

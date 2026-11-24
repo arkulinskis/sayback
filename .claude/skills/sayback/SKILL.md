@@ -14,7 +14,7 @@ es-en) × 5 levels × 30 lessons × 45 min). Pages: `#landing` chooser, `#learn/
 
 **Where it lives:**
 - Folder `C:\Users\arkvi\Documents\CLAUDE\sayback-app\` = the git clone of **github.com/arkulinskis/sayback**, branch `master`.
-  "git" layout: the folder *is* the Anvil app. Anvil pulls master; pushing is the deploy. Live: https://sayback.anvil.app
+  "git" layout: the folder *is* the Anvil app. Anvil pulls master; pushing is the deploy. Live: https://spokenmiles.com
   The folder is `sayback-app` because `sayback` is the course project.
 - Made from `C:\Users\arkvi\Documents\CLAUDE\APP_MAKER\template-forms` (native Anvil Forms, Nov 2026). Anvil's own agent
   skills describe the same model: `client-forms`, `data-models`, `server-code`, `client-modules`, `anvil-yaml`
