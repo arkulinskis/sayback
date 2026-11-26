@@ -34,6 +34,10 @@ VALUES: dict = {
 }
 
 
+# The app's video on the Addanapp YouTube channel (APP_MAKER/youtube/manifest.json), shown in the Watch section.
+YT_VIDEO = "xlkFBbenusw"
+
+
 class Landing(LandingTemplate):
     """#learn/<spanish|french|italian>: the sales page for English speakers, one template for the three languages
     (VALUES fills the <span data-v> words). Persuade mode: the live road demo, the car promise, the method, speaking vs
@@ -42,6 +46,7 @@ class Landing(LandingTemplate):
 
     def __init__(self, args=(), **properties):
         super().__init__(**properties)
+        self.dom_nodes["yt_cover"].addEventListener("click", self._play)
         self.course = courses.by_slug(args[0] if args else "") or "en-es"
         if self.course not in VALUES:
             self.course = "en-es"
@@ -71,6 +76,13 @@ class Landing(LandingTemplate):
             state.set_attr(self.band_link, "href", "#home")
             anvil.js.get_dom_node(self.band_link).textContent = "Open your library"
         self._fill()
+
+    def _play(self, event):
+        """Swap the video's cover for YouTube's player (privacy-enhanced); nothing loads from YouTube before this click."""
+        self.dom_nodes["yt_frame"].innerHTML = (
+            '<iframe src="https://www.youtube-nocookie.com/embed/' + YT_VIDEO + '?autoplay=1&rel=0&playsinline=1" '
+            'title="Spoken Miles video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen '
+            'referrerpolicy="strict-origin-when-cross-origin"></iframe>')
 
     def _fill(self):
         s = shop.info(self.course)
