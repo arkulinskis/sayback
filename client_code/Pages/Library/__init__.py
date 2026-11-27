@@ -161,7 +161,7 @@ class Library(LibraryTemplate):
             self.level_note.text = i18n.t("Locked. Lesson titles are here so you can see what's coming.")
         self.lessons_panel.items = d["lessons"]
         shop = d["shop"]
-        offers = [dict(p, currency=shop["currency"], course=d["course"], best=p["kind"] in ("complete", "upgrade"))
+        offers = [dict(p, currency=shop["currency"], course=d["course"], best=p["kind"] == "complete")
                   for p in shop["products"] if not p["owned"]]
         self.offers.items = offers
         self.offer_part.visible = bool(offers)

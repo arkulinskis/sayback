@@ -138,7 +138,7 @@
     // ---- a locked lesson: a taste and the offer
     await page('#lesson/en-es/L1-02', () => $('.sb-locked'));
     ok($$('.anvil-role-sb-pairs .sb-pr').length === 3 && !$('.sb-player-card .pl'), 'locked lesson: 3 phrases, no player');
-    ok($('.sb-locked a[href="#buy/en-es"]'), 'locked lesson: link to the courses');
+    ok($('.sb-locked a[href="#buy/en-es/es1"]'), 'locked lesson: link to the Buy page with its level picked');
 
     // ---- levels
     window.UI_READY = false;

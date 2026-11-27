@@ -91,8 +91,8 @@ class Landing(LandingTemplate):
         prices = {p["kind"]: p["price"] for p in s["products"]}
         for g in s.get("gifts") or []:
             prices.setdefault(g["kind"], g["price"])
-        if "level1" in prices:
-            self.price_level1.text = shop.money(s, prices["level1"])
+        if "level" in prices:
+            self.price_level1.text = shop.money(s, prices["level"])
         if "complete" in prices:
             self.price_complete.text = shop.money(s, prices["complete"])
         if "bundle" in prices:
@@ -101,7 +101,7 @@ class Landing(LandingTemplate):
 
     @handle("buy_level1", "click")
     def buy_level1_click(self, **event_args):
-        shop.buy(courses.product_for(self.course, "level1"))
+        shop.buy(courses.product_for(self.course, "level", 1))
 
     @handle("buy_complete", "click")
     def buy_complete_click(self, **event_args):

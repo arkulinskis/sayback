@@ -64,8 +64,10 @@ class Thanks(ThanksTemplate):
             return
         self.heading.text = i18n.t("You're in. Welcome to Spoken Miles.")
         upgrade = self.product.endswith("up") or self.product.endswith("all") or self.product == "trio"
+        level = self.product[-1:] if self.product[-1:].isdigit() else "1"
         self.text.text = (i18n.t("Every level is unlocked. Your next lesson is waiting in the library.") if upgrade else
-                          i18n.t("All 30 lessons of Level 1 are yours. Tomorrow's drive is lesson 2."))
+                          i18n.t("All 30 lessons of Level 1 are yours. Tomorrow's drive is lesson 2.") if level == "1" else
+                          i18n.t("All 30 lessons of Level {n} are yours. Your next lesson is waiting in the library.").replace("{n}", level))
         self.start_button.text = i18n.t("Play my next lesson")
         self.start_button.visible = True
         state.set_attr(self.lib_link, "href", router.href("home", self.course))

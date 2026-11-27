@@ -81,10 +81,10 @@ def can_play(user, course, code):
 
 
 def why_locked(user, course, code):
-    """'' when it plays, else 'signin' / 'level1' / 'complete' (what the person would need)."""
+    """'' when it plays, else 'signin' / 'level1' ... 'level5' (the level the person would need)."""
     if user is None:
         return "signin"
     if can_play(user, course, code):
         return ""
     ls = lesson(course, code)
-    return "level1" if ls and ls["level"] == 1 else "complete"
+    return "level%d" % (ls["level"] if ls else 1)

@@ -35,8 +35,14 @@ Gifts with a printable card. Built on [Anvil](https://anvil.works) as native Anv
   first-touch for 60 days in the browser (no cookies, no scripts) and saved on the account at sign-up (`users.ad_source`).
 
 **Buying**
-- Stripe Payment Links (Admin > Shop & setup), 13 in all: Level 1 / complete / Levels 2-5 for each of the 4 courses, plus
-  `trio` = Spanish + French + Italian complete. Codes and courses live in `client_code/courses.py` (shared with the server).
+- Prices (2026-11-26): **$15 a level** (Levels 1 to 5 sold one by one), **$59 the whole course**, $119 every language
+  (`trio` = Spanish + French + Italian). Levels you own count toward the course: the "rest of the course" offer costs
+  $59 minus $15 per owned level, a level never costs more than that, and once the paid levels reach $59 the last level
+  unlocks free. Change prices in Admin > Shop & setup.
+- Checkout: with the App Secret `stripe_secret_key`, Shop.checkout creates a **Stripe Checkout Session** at the exact
+  price (nothing to set up in Stripe). Without it, Payment Links pasted per product in Admin are a fallback (fixed prices,
+  no credit). Codes: `<short>1`..`<short>5`, `<short>all`, `trio` (old `<short>up` kept for old purchases) in
+  `client_code/courses.py` (shared with the server).
 - Opened with `client_reference_id=<user>-<product>` (a gift: `<user>-g<product>`) and the email filled in.
 - The Stripe webhook (`/_/api/stripe`, signed) unlocks lessons the moment people pay (the bundle = 3 purchase rows, the
   amount on the first), or makes a **gift code** for a gift. `charge.refunded` locks them again (also an opened gift).
@@ -82,10 +88,10 @@ Links, webhook, audio), Feedback, Users, Demo data.
    - **CORS rule for "save offline"** (bucket > Settings > CORS policy):
      `[{"AllowedOrigins": ["https://spokenmiles.com", "https://spokenmiles.com"], "AllowedMethods": ["GET", "HEAD"], "AllowedHeaders": ["*"], "MaxAgeSeconds": 86400}]`
    - In the Anvil editor, add the App Secret `r2_url` with that same `r2://...` text.
-2. **Stripe**: 13 products + Payment Links (table in PRICING.md), each link's "after payment" redirect = the address under
-   its box; webhook to `<app>/_/api/stripe` with `checkout.session.completed`, `checkout.session.async_payment_succeeded`
-   and `charge.refunded`; its signing secret in the App Secret `stripe_webhook_secret`. Gifts need nothing extra.
-3. Keep the prices on the page (Admin) and in Stripe the same.
+2. **Stripe**: App Secret `stripe_secret_key` (a restricted key with Checkout Sessions: Write is enough); webhook to
+   `<app>/_/api/stripe` with `checkout.session.completed`, `checkout.session.async_payment_succeeded` and
+   `charge.refunded`; its signing secret in the App Secret `stripe_webhook_secret`. Gifts need nothing extra.
+3. Prices live in Admin > Shop & setup only (no products to create in Stripe).
 
 <!-- libraries:start -->
 ## Libraries and outside services

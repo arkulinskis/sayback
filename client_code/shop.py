@@ -1,7 +1,8 @@
 """Buying, from any page: the sales pages' plan buttons, the Buy page, the gift page, a locked lesson.
 
 buy(product, gift=False): visitors sign up first and come back to #buy/<course> (or #gift); members go straight to
-Stripe's checkout (a Payment Link set in Admin -> Shop), or, while no link is set yet, get the waitlist dialog.
+Stripe's checkout (a Checkout Session, or a Payment Link set in Admin -> Shop), a free unlock when the levels they
+own already add up to the course price, or, while the shop isn't set up, the waitlist dialog.
 A gift uses the same Payment Link; the webhook turns it into a gift code (server_code/Gifts.py).
 """
 from anvil import alert
@@ -13,10 +14,11 @@ from . import courses, i18n, router, state
 COURSE_OF = {code: p["courses"][0] for code, p in courses.PRODUCTS.items()}
 
 
-def info(course):
-    """Prices and offers for a course (no spinner: pages show their own defaults until it arrives)."""
+def info(course, want=""):
+    """Prices and offers for a course (no spinner: pages show their own defaults until it arrives).
+    want = a product to offer first (a level picked on a sales page or a locked lesson)."""
     try:
-        r = anvil.server.call_s("shop_info", course)
+        r = anvil.server.call_s("shop_info", course, want)
     except Exception:
         return None
     return r if isinstance(r, dict) and r.get("ok") else None
@@ -46,6 +48,10 @@ def buy(product, gift=False):
         return
     if r.get("waitlist"):
         waitlist(course)
+        return
+    if r.get("granted"):     # owned levels already add up to the course price: unlocked without paying
+        state.store_set("sayback.pending_gift", False)
+        router.go("thanks", r.get("product") or product)
         return
     state.store_set("sayback.pending", product)
     state.store_set("sayback.pending_gift", bool(gift))

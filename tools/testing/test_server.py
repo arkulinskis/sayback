@@ -148,7 +148,7 @@ assert les["locked"] == "" and les["url"] is None and les["audio"] is False, "no
 assert len(les["pairs"]) == 20 and les["next"]["code"] == "L1-02" and les["next"]["locked"]
 lk = ok(call("get_lesson", "en-es", "L1-02"))
 assert lk["locked"] == "level1" and len(lk["pairs"]) == 3 and lk["url"] is None, "locked: a taste of 3 sentences, no audio"
-assert ok(call("get_lesson", "en-es", "L2-01"))["locked"] == "complete"
+assert ok(call("get_lesson", "en-es", "L2-01"))["locked"] == "level2"
 bad(call("get_lesson", "en-es", "L9-99"))
 bad(call("get_lesson", "xx-yy", "L1-01"))
 
@@ -191,10 +191,12 @@ bad(call("set_done", "en-es", "L3-01", True))
 
 # shop: closed -> waitlist, then Payment Links
 info = ok(call("shop_info", "en-es"))
-assert [p["kind"] for p in info["products"]] == ["level1", "complete", "bundle"] and not any(p["open"] for p in info["products"])
-assert [g["kind"] for g in info["gifts"]] == ["level1", "complete", "bundle"]
-assert [p["kind"] for p in ok(call("shop_info", "es-en"))["products"]] == ["level1", "complete"], "no bundle for Spanish speakers"
+assert [p["kind"] for p in info["products"]] == ["level", "complete", "bundle"] and not any(p["open"] for p in info["products"])
+assert [p["price"] for p in info["products"]] == [15, 59, 119], "$15 a level, $59 the course"
+assert [g["kind"] for g in info["gifts"]] == ["level", "complete", "bundle"] and info["gifts"][0]["product"] == "es1"
+assert [p["kind"] for p in ok(call("shop_info", "es-en"))["products"]] == ["level", "complete"], "no bundle for Spanish speakers"
 assert [p["product"] for p in ok(call("shop_info", "en-fr"))["products"]] == ["fr1", "frall", "trio"]
+assert ok(call("shop_info", "en-fr", "fr3"))["products"][0]["product"] == "fr3", "a locked lesson's level is offered first"
 bad(call("shop_info", "zz"))
 assert ok(call("checkout", "es1"))["waitlist"] is True
 bad(call("checkout", "nope"))
@@ -205,10 +207,11 @@ ok(call("join_waitlist", "fan@example.com", "en-es", "landing"))
 assert ok(call("join_waitlist", "FAN@example.com", "en-es"))["already"] is True
 as_user(admin)
 bad(call("admin_save_shop", {"links": {"es1": "http://not-secure"}}))
-bad(call("admin_save_shop", {"prices": {"level1": "free"}}))
+bad(call("admin_save_shop", {"prices": {"level": "free"}}))
 sh = ok(call("admin_save_shop", {"links": {"es1": "https://buy.stripe.com/test_es1", "esall": "https://buy.stripe.com/test_esall"},
-                                  "prices": {"level1": 35}, "free_lessons": 2}))
-assert sh["settings"]["prices"]["level1"] == 35 and sh["free_lessons"] == 2
+                                  "prices": {"level": 35}, "free_lessons": 2}))
+assert sh["settings"]["prices"]["level"] == 35 and sh["free_lessons"] == 2
+assert not any(x["kind"] == "upgrade" for x in sh["products"]), "the old upgrade isn't offered any more"
 assert sh["products"][0]["success_url"].endswith("/#thanks/es1") and sh["webhook_url"].endswith("/_/api/stripe")
 as_user(carla)
 assert ok(call("get_lesson", "en-es", "L1-02"))["locked"] == "", "free lessons follow the setting"
@@ -238,7 +241,8 @@ assert Cat.owned_levels(carla, "en-es") == {1}
 assert call("has_product", "es1")["owned"] and not call("has_product", "esall")["owned"]
 lib = call("library", "en-es", 1, now.date().isoformat())
 assert lib["lessons"][5]["state"] == "open" and lib["lessons"][0]["state"] != "locked"
-assert [p["kind"] for p in lib["shop"]["products"]] == ["level1", "upgrade", "bundle"], "Level 1 owners see the upgrade"
+assert [(p["product"], p["kind"]) for p in lib["shop"]["products"]] == [("es2", "level"), ("esall", "complete"), ("trio", "bundle")], \
+    "Level 1 owners see Level 2 and the rest of the course"
 bad(call("checkout", "es1"), "already owned")
 assert len(call("my_purchases")["purchases"]) == 1
 assert Shop.handle_event({"type": "checkout.session.completed", "data": {"object": {"id": "cs_2", "payment_status": "unpaid",
@@ -290,6 +294,53 @@ ok(call("demo_load"))
 ok(call("demo_load"))
 assert len(T.users.search(is_demo=True)) == len(M["DemoData"].DEMO_USERS), "reloading replaces the demo instead of doubling it"
 
+# ---------------------------------------------------------------------------------- Stripe Checkout (secret key): exact prices, credit, $59 cap
+import anvil.http as _http  # noqa: E402
+as_user(admin)
+ok(call("admin_save_shop", {"prices": {"level": 15, "complete": 59, "bundle": 119}}))
+_sec.SECRETS["stripe_secret_key"] = "sk_test_x"
+_http.REPLIES["https://api.stripe.com/v1/checkout/sessions"] = {"id": "cs_new", "url": "https://checkout.stripe.com/c/pay/cs_new"}
+gus = person("gus@example.com", "Gus")
+as_user(gus)
+assert all(p["open"] for p in ok(call("shop_info", "en-fr"))["products"]), "a secret key opens the shop"
+r = ok(call("checkout", "fr2"))
+assert r["url"] == "https://checkout.stripe.com/c/pay/cs_new"
+sent = _http.CALLS[-1]
+assert "unit_amount%5D=1500" in sent["data"] and ("client_reference_id=%s-fr2" % Shop.user_ref(gus)) in sent["data"]
+assert sent["headers"]["Authorization"] == "Bearer sk_test_x" and "thanks%2Ffr2" in sent["data"]
+
+
+def paid(user, product, cents, sid):
+    return Shop.handle_event({"type": "checkout.session.completed", "data": {"object": {
+        "id": sid, "client_reference_id": "%s-%s" % (Shop.user_ref(user), product), "payment_status": "paid",
+        "amount_total": cents, "currency": "usd", "payment_intent": "pi_" + sid}}})
+
+
+assert paid(gus, "fr1", 1500, "g1") == "granted" and paid(gus, "fr2", 1500, "g2") == "granted"
+offers = ok(call("shop_info", "en-fr"))["products"]
+assert [(o["product"], o["price"]) for o in offers[:2]] == [("fr3", 15), ("frall", 29)], offers
+assert offers[1]["credit"] and offers[1]["levels"] == [3, 4, 5]
+call("checkout", "frall")
+assert "unit_amount%5D=2900" in _http.CALLS[-1]["data"], "the rest of the course: $59 minus two levels"
+assert paid(gus, "fr3", 1500, "g3") == "granted"
+assert ok(call("shop_info", "en-fr"))["products"][0]["price"] == 14, "a level never costs more than the rest of the course"
+assert paid(gus, "fr4", 1400, "g4") == "granted"
+last = ok(call("shop_info", "en-fr"))["products"]
+assert [(o["product"], o["price"]) for o in last] == [("fr5", 0), ("trio", 119)], last
+n = len(_http.CALLS)
+r = ok(call("checkout", "fr5"))
+assert r["granted"] and len(_http.CALLS) == n, "the last level is free once $59 is paid, no Stripe call"
+assert Cat.owned_levels(gus, "en-fr") == {1, 2, 3, 4, 5}
+assert ok(call("shop_info", "en-fr"))["products"][0] == dict(ok(call("shop_info", "en-fr"))["products"][0], kind="complete", owned=True)
+gr = call("checkout", "esall", True)
+assert "unit_amount%5D=5900" in _http.CALLS[-1]["data"] and "client_reference_id=%s-gesall" % Shop.user_ref(gus) in _http.CALLS[-1]["data"]
+_http.REPLIES["https://api.stripe.com/v1/checkout/sessions"] = _http.HttpError(402, "card_declined")
+bad(call("checkout", "es1"), "Stripe down -> a friendly error")
+del _http.REPLIES["https://api.stripe.com/v1/checkout/sessions"]
+del _sec.SECRETS["stripe_secret_key"]
+as_user(admin)
+assert call("admin_shop")["status"]["stripe_secret_key"] is False
+
 # ---------------------------------------------------------------------------------- Spoken Miles: 4 courses, bundle, gifts, offline, ads
 assert Cat.COURSES == ("en-es", "en-fr", "en-it", "es-en"), Cat.COURSES
 assert len(Cat.lessons("en-fr")) == 150 and len(Cat.lessons("en-it")) == 150
@@ -320,6 +371,7 @@ bad(call("checkout", "trio"), "already owned")
 gurl = ok(call("checkout", "itall", True))["url"]
 assert "client_reference_id=%s-gitall" % eref in gurl, "owners can still buy it as a gift"
 bad(call("checkout", "itup", True), "upgrades aren't gifts")
+bad(call("checkout", "it3", True), "level gifts start at Level 1")
 assert Shop.handle_event({"type": "checkout.session.completed", "data": {"object": {
     "id": "cs_gift", "client_reference_id": eref + "-gitall", "payment_status": "paid", "amount_total": 14900,
     "currency": "usd", "payment_intent": "pi_gift", "customer_details": {"email": "eva@example.com"}}}}) == "gift"

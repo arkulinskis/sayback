@@ -67,16 +67,15 @@
         <div class="ui-card ui-stack">
           <h3>Prices</h3>
           <div class="ad-form-grid">
-            <label class="ui-field"><span>Level 1</span><anvil-component type="TextBox" name="price_level1" prop:type="number"></anvil-component></label>
+            <label class="ui-field"><span>Each level (1 to 5)</span><anvil-component type="TextBox" name="price_level1" prop:type="number"></anvil-component></label>
             <label class="ui-field"><span>Complete course</span><anvil-component type="TextBox" name="price_complete" prop:type="number"></anvil-component></label>
-            <label class="ui-field"><span>Upgrade (Levels 2 to 5, for Level 1 owners)</span><anvil-component type="TextBox" name="price_upgrade" prop:type="number"></anvil-component></label>
             <label class="ui-field"><span>Every language (Spanish + French + Italian, complete)</span><anvil-component type="TextBox" name="price_bundle" prop:type="number"></anvil-component></label>
             <label class="ui-field"><span>Currency sign</span><anvil-component type="TextBox" name="currency"></anvil-component></label>
             <label class="ui-field"><span>Currency code</span><anvil-component type="TextBox" name="currency_code"></anvil-component></label>
             <label class="ui-field"><span>Guarantee (days)</span><anvil-component type="TextBox" name="guarantee_days" prop:type="number"></anvil-component></label>
             <label class="ui-field"><span>Free lessons (Level 1, with an account)</span><anvil-component type="TextBox" name="free_lessons" prop:type="number"></anvil-component></label>
           </div>
-          <p class="muted small">The prices shown on the pages. The amount people actually pay is set in each Stripe Payment Link: keep them the same.</p>
+          <p class="muted small">With the App Secret <code>stripe_secret_key</code> set, these are the prices people pay (Stripe Checkout, no links needed). Levels someone owns count toward the complete course: it costs the course price minus a level price per owned level, so nobody pays more than the course price. Payment Links below are only a fallback without the key, and their prices are set in Stripe.</p>
         </div>
       
         <div class="ui-card ui-stack">

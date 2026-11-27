@@ -26,8 +26,8 @@ class LandingEs(LandingEsTemplate):
         if not s:
             return
         prices = {p["kind"]: p["price"] for p in s["products"]}
-        if "level1" in prices:
-            self.price_level1.text = shop.money(s, prices["level1"])
+        if "level" in prices:
+            self.price_level1.text = shop.money(s, prices["level"])
         if "complete" in prices:
             self.price_complete.text = shop.money(s, prices["complete"])
         self.guarantee_days.text = str(s.get("guarantee_days") or 30)

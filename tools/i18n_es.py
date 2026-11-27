@@ -206,6 +206,17 @@ ES = {
     "450 lessons, 336 hours of speaking": "450 lecciones, 336 horas hablando",
     "Switch languages any time, progress kept for each": "Cambia de idioma cuando quieras; se guarda tu avance en cada uno",
     "Less than two complete courses": "Menos que dos cursos completos",
+    "About the price of two complete courses": "Más o menos el precio de dos cursos completos",
+    "Less than buying the five levels one by one": "Menos que comprar los cinco niveles uno por uno",
+    "Level {n} · 30 lessons": "Nivel {n} · 30 lecciones", "Get Level {n}": "Quiero el nivel {n}", "Give Level {n}": "Regalar el nivel {n}",
+    "The rest of the course · {count} levels": "El resto del curso · {count} niveles",
+    "your levels already add up to the course price": "tus niveles ya suman el precio del curso",
+    "the levels you own count toward it": "los niveles que ya tienes cuentan",
+    "Unlock Level {n} free": "Desbloquear el nivel {n} gratis",
+    "Unlock Level {n} to hear this lesson": "Desbloquea el nivel {n} para escuchar esta lección",
+    "All 30 lessons of Level {n} are yours. Your next lesson is waiting in the library.":
+        "Las 30 lecciones del nivel {n} son tuyas. Tu próxima lección te espera en la biblioteca.",
+    "One level": "Un nivel",
     "Every language": "Todos los idiomas", "Play {title}": "Reproducir {title}",
     "Remove from this phone": "Quitar de este teléfono",
     "Pay once. Lifetime access. Listen anywhere, even with no signal.":

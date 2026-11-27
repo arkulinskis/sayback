@@ -1,7 +1,13 @@
-"""Buying Spoken Miles: prices, Stripe Payment Links, the Stripe webhook that unlocks lessons, refunds, the waitlist.
+"""Buying Spoken Miles: prices, Stripe Checkout, the Stripe webhook that unlocks lessons, refunds, the waitlist.
 
-Spoken Miles never touches card details. For each product the admin pastes a Stripe Payment Link (Admin -> Shop).
-Checkout opens that link with client_reference_id = "<user id>-<product>" and the person's email filled in.
+Prices (2026-11-26): $15 a level, $59 the whole course (Admin -> Shop changes them). What you already own counts toward
+the course price: the "whole course" offer costs $59 minus $15 per level you have, and a single level never costs more
+than that, so nobody pays more than $59 for one language (the last level can come free, see checkout()).
+
+Spoken Miles never touches card details. With the App Secret stripe_secret_key set, checkout() asks Stripe for a
+Checkout Session at the exact price (no products or links to set up in Stripe). Without it, it falls back to a Stripe
+Payment Link pasted per product in Admin -> Shop (fixed prices, no credit for owned levels).
+Either way client_reference_id = "<user id>-<product>" and the person's email are filled in.
 Stripe then calls <app>/_/api/stripe (event checkout.session.completed), signed with the webhook secret
 (App Secret stripe_webhook_secret); the purchase row unlocks the levels. A refund in Stripe (charge.refunded)
 locks them again, which is how the "Speak or it's free" guarantee is honoured.
@@ -23,9 +29,9 @@ from . import courses as K
 from . import Gifts
 
 PRODUCTS: dict = K.PRODUCTS          # client_code/courses.py: <short>1 / <short>all / <short>up per course + "trio"
-GIFT_KINDS = ("level1", "complete", "bundle")   # what can be bought as a gift (an upgrade only makes sense for yourself)
+GIFT_KINDS = ("level", "complete", "bundle")   # what can be bought as a gift (Level 1 only, as the level gift)
 DEFAULTS: dict = {"currency": "$", "currency_code": "USD",
-                  "prices": {"level1": 39, "complete": 149, "upgrade": 110, "bundle": 249},
+                  "prices": {"level": 15, "complete": 59, "bundle": 119},
             "links": {}, "guarantee_days": 30}
 TOLERANCE = 300     # seconds, as Stripe recommends
 EMAIL = re.compile(r"^[^@\s]+@[^@\s]+\.[a-z]{2,}$", re.I)
@@ -39,30 +45,72 @@ def settings():
         s.update({k: v for k, v in saved.items() if k in DEFAULTS})
     prices: dict = dict(DEFAULTS["prices"])
     got = s.get("prices")
-    if isinstance(got, dict):
-        prices.update(got)
+    if isinstance(got, dict) and "level" in got:   # prices saved before 2026-11-26 ($39 Level 1 etc.) are ignored
+        prices.update({k: v for k, v in got.items() if k in prices})
     links = s.get("links")
     s["prices"] = prices
     s["links"] = dict(links) if isinstance(links, dict) else {}
     return s
 
 
-def products_for(course, user=None):
-    """The offers for one course, as the Buy page and the library show them."""
-    s = settings()
+def stripe_key():
+    try:
+        import anvil.secrets
+        return anvil.secrets.get_secret("stripe_secret_key") or ""
+    except Exception:
+        return ""
+
+
+def is_open(s, product):
+    """Can people pay for this product right now? (Stripe key set, or a Payment Link for it.)"""
+    return bool(stripe_key()) or bool(s["links"].get(product))
+
+
+def course_left(user, course, s=None):
+    """(levels still locked, price of the rest of the course): the course price minus a level price per owned level."""
+    s = s or settings()
     owned = Catalog.owned_levels(user, course) if user is not None else set()
+    missing = [n for n in K.ALL_LEVELS if n not in owned]
+    if not stripe_key():     # Payment Links have fixed prices: no credit
+        return missing, s["prices"]["complete"]
+    have = len(K.ALL_LEVELS) - len(missing)
+    return missing, max(0, s["prices"]["complete"] - s["prices"]["level"] * have)
+
+
+def price_of(user, product, gift=False, s=None):
+    """What this person pays for a product now (gifts: the full price)."""
+    s = s or settings()
+    p = PRODUCTS[product]
+    kind = p["kind"]
+    if kind == "bundle":
+        return s["prices"]["bundle"]
+    if gift:
+        return s["prices"]["level" if kind == "level" else "complete"]
+    missing, rest = course_left(user, p["courses"][0], s)
+    if kind == "level":
+        return min(s["prices"]["level"], rest)
+    return rest   # complete (and the old upgrade): the rest of the course
+
+
+def products_for(course, user=None, want=""):
+    """The offers for one course, as the Buy page and the library show them: the next level to buy (or the level
+    asked for with want, e.g. from a locked lesson), the rest of the course, and (English speakers) every language."""
+    s = settings()
+    missing, rest = course_left(user, course, s)
+    short = str(K.COURSES[course]["short"])
     out = []
-    for code, p in PRODUCTS.items():
-        if p["courses"] != [course]:
-            continue
-        have = set(p["levels"]) <= owned
-        everything = {1, 2, 3, 4, 5} <= owned
-        # nothing yet: Level 1 + complete · Level 1 owners: Level 1 (owned) + the upgrade · everything: complete (owned)
-        wanted = {"complete"} if everything else ({"level1", "upgrade"} if 1 in owned else {"level1", "complete"})
-        if p["kind"] not in wanted:
-            continue
-        out.append({"product": code, "kind": p["kind"], "price": s["prices"].get(p["kind"]), "owned": have,
-                    "open": bool(s["links"].get(code))})
+    if missing:
+        wp = PRODUCTS.get(want) or {}
+        n = wp["level"] if wp.get("kind") == "level" and wp["courses"] == [course] and wp["level"] in missing else missing[0]
+        code = short + str(n)
+        out.append({"product": code, "kind": "level", "level": n, "price": min(s["prices"]["level"], rest),
+                    "owned": False, "open": is_open(s, code), "levels": [n]})
+    if len(missing) > 1 or not missing:
+        code = short + "all"
+        out.append({"product": code, "kind": "complete", "price": rest if missing else s["prices"]["complete"],
+                    "owned": not missing, "open": is_open(s, code), "levels": missing or list(K.ALL_LEVELS),
+                    "credit": bool(missing) and len(missing) < len(K.ALL_LEVELS),
+                    "full": s["prices"]["level"] * len(missing)})
     b = bundle_offer(course, user, s)
     if b:
         out.append(b)
@@ -76,8 +124,8 @@ def bundle_offer(course, user=None, s=None):
         return None
     s = s or settings()
     have = user is not None and all(set(p["levels"]) <= Catalog.owned_levels(user, c) for c in p["courses"])
-    return {"product": "trio", "kind": "bundle", "price": s["prices"].get("bundle"), "owned": have,
-            "open": bool(s["links"].get("trio"))}
+    return {"product": "trio", "kind": "bundle", "price": s["prices"]["bundle"], "owned": have,
+            "open": is_open(s, "trio")}
 
 
 def gift_offers(course):
@@ -88,24 +136,25 @@ def gift_offers(course):
         if kind == "bundle" and course not in PRODUCTS["trio"]["courses"]:
             continue
         code = K.product_for(course, kind)
-        out.append({"product": code, "kind": kind, "price": s["prices"].get(kind), "owned": False,
-                    "open": bool(s["links"].get(code)), "gift": True})
+        out.append({"product": code, "kind": kind, "level": 1 if kind == "level" else None,
+                    "price": s["prices"]["level" if kind == "level" else kind], "owned": False,
+                    "open": is_open(s, code), "gift": True})
     return out
 
 
-def shop_public(course, user=None):
+def shop_public(course, user=None, want=""):
     s = settings()
     return {"course": course, "name": Catalog.course_name(course), "currency": s["currency"],
             "currency_code": s["currency_code"], "guarantee_days": s["guarantee_days"],
-            "products": products_for(course, user), "owned": sorted(Catalog.owned_levels(user, course)),
+            "products": products_for(course, user, want), "owned": sorted(Catalog.owned_levels(user, course)),
             "gifts": gift_offers(course), "signed_in": user is not None}
 
 
 @anvil.server.callable
-def shop_info(course):
+def shop_info(course, want=""):
     if not Catalog.course_ok(course):
         return C.fail("There's no such course.")
-    return C.ok(**shop_public(course, C.me()))
+    return C.ok(**shop_public(course, C.me(), C.text(want, 20)))
 
 
 def user_ref(user):
@@ -123,11 +172,38 @@ def owns(user, product):
     return all(set(p["levels"]) <= Catalog.owned_levels(user, c) for c in p["courses"])
 
 
+def stripe_session(user, product, gift, cents, s):
+    """Create a Stripe Checkout Session for one product at the exact price; returns its address."""
+    import anvil.http
+    p = PRODUCTS[product]
+    origin = (anvil.server.get_app_origin() or "").rstrip("/")
+    course = p["courses"][0]
+    name = product_name(product) + (" (gift)" if gift else "")
+    fields = [("mode", "payment"),
+              ("success_url", "%s/#thanks/%s" % (origin, product)),
+              ("cancel_url", "%s/#%s/%s" % (origin, "gift" if gift else "buy", course)),
+              ("client_reference_id", "%s-%s%s" % (user_ref(user), "g" if gift else "", product)),
+              ("customer_email", user["email"] or ""),
+              ("line_items[0][quantity]", "1"),
+              ("line_items[0][price_data][currency]", (s["currency_code"] or "USD").lower()),
+              ("line_items[0][price_data][unit_amount]", str(cents)),
+              ("line_items[0][price_data][product_data][name]", name),
+              ("line_items[0][price_data][product_data][description]", "Spoken Miles audio course, lifetime access"),
+              ("metadata[product]", product), ("metadata[gift]", "1" if gift else "0"),
+              ("payment_intent_data[metadata][product]", product),
+              ("allow_promotion_codes", "true")]
+    body = urllib.parse.urlencode([(k, v) for k, v in fields if v != ""])
+    r = anvil.http.request("https://api.stripe.com/v1/checkout/sessions", method="POST", data=body, json=True,
+                           headers={"Authorization": "Bearer " + stripe_key(),
+                                    "Content-Type": "application/x-www-form-urlencoded"})
+    return str(r.get("url") or "") if isinstance(r, dict) else ""
+
+
 @anvil.server.callable(require_user=True)
 def checkout(product, gift=False):
-    """The Stripe address for one product, or {waitlist: True} while the shop isn't open yet.
-    gift=True: the same Payment Link, but the webhook makes a gift code instead of unlocking the buyer's library
-    (client_reference_id "<user>-g<product>")."""
+    """The Stripe address for one product, {granted: True} when it costs nothing (the $59 cap reached), or
+    {waitlist: True} while the shop isn't open yet. gift=True: the webhook makes a gift code instead of unlocking the
+    buyer's library (client_reference_id "<user>-g<product>")."""
     me = C.require_user()
     p = PRODUCTS.get(product)
     if p is None:
@@ -136,7 +212,27 @@ def checkout(product, gift=False):
         return C.fail("That one can't be given as a gift.")
     if not gift and owns(me, product):
         return C.fail("You already own this. It's in your library.")
-    link = settings()["links"].get(product) or ""
+    if p["kind"] == "upgrade":
+        product, p = K.product_for(p["courses"][0], "complete"), PRODUCTS[K.product_for(p["courses"][0], "complete")]
+    s = settings()
+    if gift and p["kind"] == "level" and p["level"] != 1:
+        return C.fail("Gifts start at Level 1.")
+    if stripe_key():
+        price = price_of(me, product, gift, s)
+        if not gift and price <= 0:   # owned levels already add up to the course price: the rest is free
+            missing, _ = course_left(me, p["courses"][0], s)
+            grant(me, me["email"], product, "included", amount=0, currency=s["currency_code"],
+                  note="Free: owned levels reached the course price")
+            return C.ok(granted=True, product=product, course=p["courses"][0], levels=missing)
+        try:
+            url = stripe_session(me, product, bool(gift), int(round(float(price) * 100)), s)
+        except Exception as e:
+            print("Stripe checkout failed: %r" % e)
+            url = ""
+        if not url:
+            return C.fail("We couldn't reach the payment page. Please try again in a minute.")
+        return C.ok(url=url)
+    link = s["links"].get(product) or ""
     if not link.startswith("https://"):
         return C.ok(waitlist=True, course=p["courses"][0])
     sep = "&" if "?" in link else "?"
@@ -176,13 +272,16 @@ def product_name(product, course=None):
     if p.get("kind") == "bundle":
         return "Every language (Spanish, French, Italian)"
     c = course or (p.get("courses") or ["en-es"])[0]
-    part = {"level1": "Level 1", "complete": "complete course", "upgrade": "Levels 2 to 5"}.get(p.get("kind"), "")
+    kind = p.get("kind")
+    part = ("Level %d, %s" % (p["level"], Catalog.level_name(p["level"])) if kind == "level" else
+            {"complete": "complete course", "upgrade": "Levels 2 to 5"}.get(kind, ""))
     return "%s, %s" % (Catalog.course_name(c), part)
 
 
 def purchase_dict(p, with_email=False):
     d = {"id": p.get_id(), "product": p["product"], "course": p["course"], "course_name": Catalog.course_name(p["course"]),
-         "kind": PRODUCTS.get(p["product"], {}).get("kind", ""), "levels": list(p["levels"] or []),
+         "kind": PRODUCTS.get(p["product"], {}).get("kind", ""), "product_name": product_name(p["product"], p["course"]),
+         "levels": list(p["levels"] or []),
          "amount": p["amount"], "currency": p["currency"] or "", "source": p["source"], "refunded": bool(p["refunded"]),
          "created": C.iso(p["created"]), "note": p["note"] or "", "demo": bool(p["is_demo"])}
     if with_email:
@@ -328,7 +427,8 @@ def join_waitlist(email, course, source=""):
 # ------------------------------------------------------------------------------------------------ admin
 def _secrets_status():
     from . import Audio
-    return {"stripe_webhook_secret": bool(webhook_secret()), "audio": Audio.status()}
+    return {"stripe_webhook_secret": bool(webhook_secret()), "stripe_secret_key": bool(stripe_key()),
+            "audio": Audio.status()}
 
 
 @anvil.server.callable(require_user=True)
@@ -340,7 +440,7 @@ def admin_shop():
     return {"settings": s, "products": [{"product": k, "course": v["courses"][0], "course_name": product_name(k),
                                          "kind": v["kind"], "link": s["links"].get(k, ""),
                                          "success_url": "%s/#thanks/%s" % (origin.rstrip("/"), k)}
-                                        for k, v in PRODUCTS.items()],
+                                        for k, v in PRODUCTS.items() if v["kind"] != "upgrade"],
             "webhook_url": api + "/stripe", "status": _secrets_status(), "audio_base": C.get_setting("audio_base") or "",
             "free_lessons": Catalog.free_count()}
 
@@ -458,4 +558,4 @@ def overview():
     cents = sum((p["amount"] or 0) for p in live if p["source"] == "stripe")
     return {"buyers": len({p["email"] for p in live}), "sales": len([p for p in live if p["source"] == "stripe"]),
             "revenue_cents": cents, "waitlist": len(app_tables.waitlist.search()),
-            "currency": settings()["currency"], "shop_open": any(settings()["links"].values())}
+            "currency": settings()["currency"], "shop_open": bool(stripe_key()) or any(settings()["links"].values())}

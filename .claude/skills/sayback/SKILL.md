@@ -157,8 +157,12 @@ tools/                     check.py, assets.py, build_icons.py, make_icons.py, u
 - **Prices / Stripe links / free lessons / test audio address:** Admin > Shop & setup (app_settings `shop`,
   `audio_base`, `free_lessons`). Real audio: App Secret `r2_url` = `r2://KEY:SECRET@ACCOUNT/BUCKET` (Audio.py signs
   6-hour links, AWS SigV4, checked against AWS's own example in the server tests).
-- **Products:** Shop.PRODUCTS (es1/esall/esup = en-es, en1/enall/enup = es-en). client_reference_id = `<row id digits
-  with _>-<product>`. Offers: nothing owned -> Level 1 + complete; Level 1 owned -> Level 1 (owned) + upgrade; all -> complete (owned).
+- **Products (2026-11-26):** Shop.PRODUCTS: `<short>1`..`<short>5` (kind `level`, $15), `<short>all` (kind `complete`, $59),
+  `trio` ($119); `<short>up` is legacy (never offered, checkout maps it to `all`). client_reference_id = `<row id digits
+  with _>-<product>`. Offers (products_for): the next missing level (or `want`, from a locked lesson's #buy/<course>/<product>)
+  + the rest of the course at max(0, complete - level x owned) + trio. A level costs min(level, rest); price 0 -> checkout
+  grants it free (source `included`). Credit only with `stripe_secret_key` (Checkout Sessions via anvil.http, tested with
+  the http mock); Payment Links fallback = fixed prices. Prices saved before 2026-11-26 (no `level` key) are ignored.
 - **Spanish text:** templates mark English with `data-t` (attributes `data-ta`); Python uses `i18n.t("...")`. Add the
   Spanish in `tools/i18n_es.py`, run it (it rewrites sb-i18n.js and lists anything missing). The sales pages are two
   separate Forms (Landing, LandingEs): change both. Admin stays English.

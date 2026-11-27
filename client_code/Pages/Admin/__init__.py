@@ -6,15 +6,19 @@ from ._anvil_designer import AdminTemplate
 from ... import courses, state
 
 TABS = ["overview", "sales", "customers", "ads", "gifts", "waitlist", "shop", "feedback", "users", "demo"]
-KIND_NAMES = {"level1": "Level 1", "complete": "Levels 1-5", "upgrade": "Levels 2-5"}
+KIND_NAMES = {"complete": "Levels 1-5"}
 
 
-def product_names(kinds=("level1", "complete", "upgrade")):
+def product_names(kinds=("level", "complete")):
+    """(label, product) for the admin's grant / free-gift menus. kinds: level (all five), level1 (Level 1 only), complete, bundle."""
     out = []
     for c in courses.ORDER:
-        for kind in kinds:
-            if kind in KIND_NAMES:
-                out.append(("%s · %s" % (courses.COURSES[c]["name"], KIND_NAMES[kind]), courses.product_for(c, kind)))
+        name = courses.COURSES[c]["name"]
+        if "level" in kinds or "level1" in kinds:
+            for n in (courses.ALL_LEVELS if "level" in kinds else [1]):
+                out.append(("%s · Level %d" % (name, n), courses.product_for(c, "level", n)))
+        if "complete" in kinds:
+            out.append(("%s · %s" % (name, KIND_NAMES["complete"]), courses.product_for(c, "complete")))
     if "bundle" in kinds:
         out.append(("Every language (Spanish + French + Italian, Levels 1-5)", "trio"))
     return out
@@ -60,9 +64,14 @@ class Admin(AdminTemplate):
                      "public": "Lesson audio: a public test address is set. Switch to the private R2 bucket before selling.",
                      "none": "Lesson audio: not connected yet, so lessons can't play."}[audio])
         total = len(s["products"])
-        self._check(self.chk_links, self.chk_links_text, links == total,
-                    "Stripe Payment Links: %d of %d set. %s" % (links, total, "Buy buttons go to Stripe." if links else
-                                                              "Until then, buy buttons collect waitlist emails."))
+        if s["status"]["stripe_secret_key"]:
+            self._check(self.chk_links, self.chk_links_text, True,
+                        "Stripe secret key: set. Buy buttons open Stripe Checkout at the right price.")
+        else:
+            self._check(self.chk_links, self.chk_links_text, False,
+                        "Stripe secret key: not set (App Secrets > stripe_secret_key). %s" % (
+                            "%d of %d Payment Links set as a fallback." % (links, total) if links else
+                            "Until then, buy buttons collect waitlist emails."))
         self._check(self.chk_webhook, self.chk_webhook_text, s["status"]["stripe_webhook_secret"],
                     "Stripe webhook secret: %s" % ("set. Payments unlock lessons by themselves." if s["status"]["stripe_webhook_secret"]
                                                    else "missing. Payments won't unlock anything until it's set."))
@@ -80,7 +89,7 @@ class Admin(AdminTemplate):
         money = ", ".join("%s %s" % (r["currency"] or "", "{:,.2f}".format(r["cents"] / 100.0)) for r in d["revenue"]) or "nothing yet"
         self.sales_line.text = "%s · %s · revenue %s · %d refunded" % (
             state.plural(d["total"], "purchase"), state.plural(d["buyers"], "buyer"), money, d["refunded"])
-        self.grant_product.items = product_names(("level1", "complete", "upgrade", "bundle"))
+        self.grant_product.items = product_names(("level", "complete", "bundle"))
         state.set_control_attr(self.grant_product, "aria-label", "What to give")
 
     @handle("grant_button", "click")
@@ -111,9 +120,8 @@ class Admin(AdminTemplate):
     def _shop(self):
         s = state.call("admin_shop")
         st = s["settings"]
-        self.price_level1.text = st["prices"]["level1"]
+        self.price_level1.text = st["prices"]["level"]
         self.price_complete.text = st["prices"]["complete"]
-        self.price_upgrade.text = st["prices"]["upgrade"]
         self.price_bundle.text = st["prices"].get("bundle", "")
         self.currency.text, self.currency_code.text = st["currency"], st["currency_code"]
         self.guarantee_days.text, self.free_lessons.text = st["guarantee_days"], s["free_lessons"]
@@ -134,8 +142,8 @@ class Admin(AdminTemplate):
         links = {}
         for row in self.links_panel.get_components():
             links[getattr(row, "item")["product"]] = (getattr(row, "link_box").text or "").strip()
-        data = {"prices": {"level1": self.price_level1.text, "complete": self.price_complete.text,
-                           "upgrade": self.price_upgrade.text, "bundle": self.price_bundle.text},
+        data = {"prices": {"level": self.price_level1.text, "complete": self.price_complete.text,
+                           "bundle": self.price_bundle.text},
                 "links": links,
                 "currency": self.currency.text, "currency_code": self.currency_code.text,
                 "guarantee_days": self.guarantee_days.text, "free_lessons": self.free_lessons.text,

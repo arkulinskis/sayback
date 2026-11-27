@@ -3,7 +3,7 @@ from anvil import *
 from ._anvil_designer import SaleRowTemplate
 from ... import state
 
-KINDS = {"level1": "Level 1", "complete": "Levels 1-5", "upgrade": "Levels 2-5"}
+KINDS = {"level": "Level", "complete": "Levels 1-5", "upgrade": "Levels 2-5", "bundle": "Every language"}
 
 
 class SaleRow(SaleRowTemplate):

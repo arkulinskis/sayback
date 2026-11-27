@@ -24,7 +24,7 @@ DEMO_WAITLIST = [
     ("kate.demo@example.com", "en-es", "landing"),
     ("valentina.demo@example.com", "es-en", "facebook"),
 ]
-PRICES = {"es1": 3900, "esall": 14900, "en1": 3900, "enall": 14900, "fr1": 3900, "it1": 3900}
+PRICES = {"es1": 1500, "esall": 5900, "en1": 1500, "enall": 5900, "fr1": 1500, "it1": 1500}
 LEVELS = {"es1": [1], "en1": [1], "fr1": [1], "it1": [1], "esall": [1, 2, 3, 4, 5], "enall": [1, 2, 3, 4, 5]}
 # Tables that hold demo rows (each has an is_demo column). Children before parents.
 DEMO_TABLES = ["listening", "progress", "purchases", "waitlist"]

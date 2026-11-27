@@ -5,7 +5,7 @@ from ... import courses, i18n, router, shop, state
 
 
 class Buy(BuyTemplate):
-    """#buy/<course>[/<product>]: the offers for one course (Level 1 + complete, or the upgrade for Level 1 owners),
+    """#buy/<course>[/<product>]: the offers for one course (the next level, or the one picked, + the rest of the course),
     the guarantee and the checkout facts. A visitor who picked a plan on a sales page comes back here after signing
     up, with that plan marked "You picked this one"."""
 
@@ -14,7 +14,7 @@ class Buy(BuyTemplate):
         default = "es-en" if i18n.lang() == "es" else "en-es"
         self.course = args[0] if args and args[0] in courses.COURSES else default
         picked = args[1] if len(args) > 1 else ""
-        s: dict = shop.info(self.course) or {}
+        s: dict = shop.info(self.course, picked) or {}
         products: list = s.get("products") or []
         self.heading.text = s.get("name") or "Spoken Miles"
         state.heading(self.heading, 1)
@@ -23,8 +23,8 @@ class Buy(BuyTemplate):
             el.classes["on"] = code == self.course
         state.set_attr(self.gift_link, "href", router.href("gift", self.course))
         self.offers.items = [dict(p, currency=s.get("currency") or "$", course=self.course,
-                                  best=p["kind"] in ("complete", "upgrade") and not picked, picked=p["product"] == picked)
-                             for p in products]   # Level 1 + complete (or the upgrade) + every language (English speakers)
+                                  best=p["kind"] == "complete" and not picked, picked=p["product"] == picked)
+                             for p in products]   # a level + the rest of the course + every language (English speakers)
         self.days.text = str(s.get("guarantee_days") or 30)
         closed = bool(products) and not any(p["open"] for p in products if not p["owned"])
         if closed:

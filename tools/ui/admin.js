@@ -47,13 +47,13 @@
     await until(() => /Test mode/.test($('.ad-shop').textContent), 'audio status says test mode');
     ok(/\/_\/api\/stripe/.test($('.anvil-role-ad-code').textContent), 'shop: shows the Stripe webhook address');
     ok(/#thanks\/es1/.test($('.anvil-role-ad-links').textContent) && /#thanks\/trio/.test($('.anvil-role-ad-links').textContent)
-       && $$('.ad-link-row').length === 13, 'shop: 13 Payment Link boxes, each with its success address');
+       && $$('.ad-link-row').length === 25, 'shop: 25 Payment Link boxes (fallback), each with its success address');
     ok(/Test mode/.test($('.ad-shop').textContent), 'shop: a test audio address can be saved');
 
     // ---- overview + setup checklist
     await page('#admin/overview', () => $$('.ad-stat').length >= 3 && $('.ad-check li.bad, .ad-check li.good'));
     ok(/\d/.test($('.ad-stat').textContent), 'overview: the numbers');
-    ok(/0 of 13 set/.test($('.ad-setup').textContent) && $('.ad-check li.bad'), 'overview: setup checklist (no Stripe links yet)');
+    ok(/Stripe secret key: not set/.test($('.ad-setup').textContent) && $('.ad-check li.bad'), 'overview: setup checklist (no Stripe links yet)');
 
     // ---- an admin plays a Level 3 lesson (everything is open to admins)
     await page('#lesson/en-es/L3-05', () => $('.pl-play') && window.SB._player);

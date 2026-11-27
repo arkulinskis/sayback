@@ -134,8 +134,9 @@ class Lesson(LessonTemplate):
         state.set_attr(self.culture, "lang", courses.COURSES.get(d["course"], courses.COURSES["en-es"])["learner"])
         state.set_attr(self.back_link, "href", router.href("home", d["course"], d["level"]))
         state.set_attr(self.lib_link, "href", router.href("home", d["course"], d["level"]))
-        state.set_attr(self.unlock_link, "href", router.href("buy", d["course"]))
         locked = d["locked"]
+        want = courses.product_for(d["course"], "level", d["level"]) if str(locked).startswith("level") else ""
+        state.set_attr(self.unlock_link, "href", router.href("buy", d["course"], want) if want else router.href("buy", d["course"]))
         playable = not locked and bool(d["url"])
         self.player_card.visible = playable
         self.locked_card.visible = bool(locked)
@@ -143,8 +144,7 @@ class Lesson(LessonTemplate):
         self.done_card.visible = False
         self.files_card.visible = playable and bool(d.get("download"))
         if locked:
-            self.locked_title.text = i18n.t("Unlock Level 1 to hear this lesson") if locked == "level1" else \
-                i18n.t("This lesson is in Levels 2 to 5")
+            self.locked_title.text = i18n.t("Unlock Level {n} to hear this lesson").replace("{n}", str(d["level"]))
             self.locked_text.text = i18n.t("Here's a taste: the first 3 of its 20 new phrases. Pay once and every lesson in the level is yours to keep.")
         if playable:
             self._links(d)

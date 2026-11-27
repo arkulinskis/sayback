@@ -5,7 +5,9 @@ English speakers learning Spanish, French and Italian, and to Spanish speakers l
 later = one more entry here, a column in Documents/CLAUDE/sayback/content/L*.txt and a render.
 
 Ad pages: #learn/<slug> (spanish, french, italian) and #es (Spanish speakers). PRODUCT codes are what Stripe's
-client_reference_id carries (letters and digits only): <short><kind> (es1, esall, esup, fr1, ...) and the bundle "trio".
+client_reference_id carries (letters and digits only): <short><level> for one level (es1 ... es5), <short>all for the
+whole course, the bundle "trio", and the old <short>up upgrade (no longer offered; kept so old purchases still read).
+Prices (2026-11-26): $15 a level, $59 the whole course; owning levels counts toward the $59 (server_code/Shop.py).
 """
 
 ORDER = ["en-es", "en-fr", "en-it", "es-en"]
@@ -28,14 +30,15 @@ TARGET_NAMES: dict = {"en": {"es": "Spanish", "fr": "French", "it": "Italian", "
                 "es": {"es": "español", "fr": "francés", "it": "italiano", "en": "inglés"}}
 
 ALL_LEVELS = [1, 2, 3, 4, 5]
-KINDS: dict = {"level1": [1], "complete": [1, 2, 3, 4, 5], "upgrade": [2, 3, 4, 5]}
+KINDS: dict = {"complete": [1, 2, 3, 4, 5], "upgrade": [2, 3, 4, 5]}
 
 
 def _products():
     out: dict = {}
     for c in ORDER:
         s = str(COURSES[c]["short"])
-        out[s + "1"] = {"courses": [c], "kind": "level1", "levels": KINDS["level1"]}
+        for n in ALL_LEVELS:
+            out[s + str(n)] = {"courses": [c], "kind": "level", "level": n, "levels": [n]}
         out[s + "all"] = {"courses": [c], "kind": "complete", "levels": KINDS["complete"]}
         out[s + "up"] = {"courses": [c], "kind": "upgrade", "levels": KINDS["upgrade"]}
     # Every language for English speakers, lifetime: Spanish + French + Italian, all five levels.
@@ -59,7 +62,11 @@ def by_slug(slug):
     return None
 
 
-def product_for(course, kind):
+def product_for(course, kind, level=1):
+    """kind = level (with level=1..5), level1 (old name for Level 1), complete, upgrade, bundle."""
     if kind == "bundle":
         return "trio"
-    return str(COURSES[course]["short"]) + {"level1": "1", "complete": "all", "upgrade": "up"}[kind]
+    s = str(COURSES[course]["short"])
+    if kind in ("level", "level1"):
+        return s + str(level)
+    return s + {"complete": "all", "upgrade": "up"}[kind]
